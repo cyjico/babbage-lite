@@ -1,0 +1,15 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  #root {
+    display: grid;
+    grid-template-columns: 75fr 25fr;
+  }
+
+  header,
+  footer {
+    grid-column: 1 / 3;
+  }
+}

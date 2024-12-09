@@ -1,0 +1,39 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer components {
+  .editor {
+    display: flex;
+  }
+
+  .editor__gutters {
+    .gutter {
+    }
+  }
+
+  .gutter.breakpoints {
+    .breakpoint {
+    }
+  }
+
+  .gutter.line-numbers {
+    .line-number {
+    }
+  }
+
+  .editor__lines {
+    outline: none;
+
+    .line {
+      white-space: pre;
+    }
+
+    .line:empty:after {
+      content: "\00a0";
+    }
+
+    .line--active {
+    }
+  }
+}
