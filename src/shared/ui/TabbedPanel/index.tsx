@@ -1,4 +1,4 @@
-import "./styles.css";
+import styles from "./styles.module.css";
 import { For, JSX } from "solid-js";
 
 interface Props {
@@ -32,9 +32,10 @@ export default function TabbedPanel(props: Props) {
                 type="radio"
                 name="tab"
                 id={index().toString()}
+                class={styles["input"]}
                 checked={index() === 0}
               />
-              <div class="tab-content">{item.content}</div>
+              <div class={styles["tab-content"]}>{item.content}</div>
             </>
           );
         }}
