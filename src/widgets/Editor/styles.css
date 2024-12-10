@@ -23,8 +23,6 @@
   }
 
   .editor__lines {
-    outline: none;
-
     .line {
       white-space: pre;
     }
@@ -35,5 +33,11 @@
 
     .line--active {
     }
+  }
+
+  .editor__lines:focus {
+    outline: none;
+    box-shadow: none;
+    border: 0;
   }
 }
