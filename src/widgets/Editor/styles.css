@@ -4,10 +4,13 @@
 
 @layer components {
   .editor {
+    margin: 1rem;
     display: flex;
   }
 
   .editor__gutters {
+    margin-right: 1rem;
+
     .gutter {
     }
   }
@@ -20,18 +23,25 @@
   .gutter.line-numbers {
     .line-number {
     }
+
+    .line-number.--active {
+    }
   }
 
   .editor__lines {
+    flex: 1 1 0%;
+
     .line {
       white-space: pre;
     }
 
-    .line:empty:after {
-      content: "\00a0";
+    .line:empty::after {
+      content: ">> empty here!! should not happen! plez report! <<";
+      background-color: red;
     }
 
-    .line--active {
+    .line.--active {
+      background-color: rebeccapurple;
     }
   }
 
