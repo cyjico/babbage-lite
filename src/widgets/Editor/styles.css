@@ -8,7 +8,7 @@
     display: flex;
   }
 
-  .editor__gutters {
+  .editor .gutters {
     margin-right: 1rem;
 
     .gutter {
@@ -28,26 +28,26 @@
     }
   }
 
-  .editor__lines {
+  .editor .content {
     flex: 1 1 0%;
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+      border: 0;
+    }
 
     .line {
       white-space: pre;
-    }
 
-    .line:empty::after {
-      content: ">> empty here!! should not happen! plez report! <<";
-      background-color: red;
-    }
+      &:empty::after {
+        content: ">> empty here!! should not happen! plez report! <<";
+        background-color: red;
+      }
 
-    .line.--active {
-      background-color: rebeccapurple;
+      &.--active {
+        background-color: rebeccapurple;
+      }
     }
-  }
-
-  .editor__lines:focus {
-    outline: none;
-    box-shadow: none;
-    border: 0;
   }
 }
