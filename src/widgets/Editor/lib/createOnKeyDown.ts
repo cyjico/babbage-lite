@@ -37,20 +37,28 @@ function onEnterKeyDown(
       break;
     case "Range":
       {
-        const endline = getSelf(selRange.endContainer);
-        const endline_isEmpty =
-          endline.textContent?.slice(selRange.endOffset).length === 0;
+        const startLine = getSelf(selRange.startContainer);
+        const startLine_isEmpty =
+          startLine.textContent?.slice(0, selRange.startOffset).length === 0;
+
+        const endLine = getSelf(selRange.endContainer);
+        const endLine_isEmpty =
+          endLine.textContent?.slice(selRange.endOffset).length === 0;
 
         // Remove selected text
         selRange.deleteContents();
 
         if (selRange.commonAncestorContainer === ref_content) {
           // selRange has multiple lines
-          if (endline_isEmpty) {
-            endline.appendChild(document.createElement("br"));
+          if (startLine_isEmpty) {
+            startLine.appendChild(document.createElement("br"));
           }
 
-          selRange.setStart(endline, 0);
+          if (endLine_isEmpty) {
+            endLine.appendChild(document.createElement("br"));
+          }
+
+          selRange.setStart(endLine, 0);
         } else {
           // selRange has a single line
           selRange.setStart(createNewline(selRange, ref_content), 0);
@@ -68,11 +76,11 @@ function createNewline(selRange: Range, ref_content: HTMLElement) {
   newline.classList.add("line");
   setLine(
     newline,
-    selRange.endContainer.textContent?.slice(selRange.endOffset) || "",
+    selRange.endContainer.textContent?.slice(selRange.endOffset),
   );
 
   const curline = getSelf(selRange.endContainer);
-  setLine(curline, curline.textContent?.slice(0, selRange.endOffset) || "");
+  setLine(curline, curline.textContent?.slice(0, selRange.endOffset));
 
   // Insert newline into the editor
   const nextSibling = getNextSibling(curline);
@@ -85,7 +93,7 @@ function createNewline(selRange: Range, ref_content: HTMLElement) {
   return newline;
 }
 
-function setLine(line: Node, textContent: string) {
+function setLine(line: Node, textContent = "") {
   line.textContent = textContent;
 
   if (textContent.length === 0) {
