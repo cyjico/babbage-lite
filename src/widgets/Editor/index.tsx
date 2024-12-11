@@ -1,10 +1,11 @@
 import getNextSibling from "@/shared/model/getNextSibling";
 import getSelf from "@/shared/model/getSelf";
 import "./styles.css";
-import { For } from "solid-js";
+import { Accessor, For, Setter } from "solid-js";
 
 interface Props {
-  breakpoints: number[];
+  breakpoints: Accessor<number[]>;
+  setBreakpoints: Setter<number[]>;
 }
 
 export default function Editor(props: Props) {
@@ -118,7 +119,7 @@ export default function Editor(props: Props) {
     <div class="editor">
       <div class="editor__gutters">
         <div class="gutter breakpoints">
-          <For each={props.breakpoints}>
+          <For each={props.breakpoints()}>
             {(lineNumber) => {
               const top = `top-[${lineNumber * 1.5}rem]`;
               return <div class={`breakpoint ${top}`}>💗</div>;

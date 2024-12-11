@@ -1,8 +1,11 @@
 import "./styles.css";
 import Editor from "@/widgets/Editor";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
+import { createSignal } from "solid-js";
 
 export default function HomePage() {
+  const [breakpoints, setBreakpoints] = createSignal<number[]>([]);
+
   return (
     <>
       <header>
@@ -22,7 +25,7 @@ export default function HomePage() {
       </header>
 
       <main>
-        <Editor breakpoints={[]} />
+        <Editor breakpoints={breakpoints} setBreakpoints={setBreakpoints} />
 
         <TabbedPanel
           tabs={[
