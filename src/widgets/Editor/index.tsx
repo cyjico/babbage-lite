@@ -1,20 +1,83 @@
 import "./styles.css";
-import { Accessor, For, Setter } from "solid-js";
+import { createEffect, For } from "solid-js";
 import createOnKeyDown from "./lib/createOnKeyDown";
 
-interface Props {
-  breakpoints: Accessor<number[]>;
-  setBreakpoints: Setter<number[]>;
-}
+export type LineEventListener = (added: Map<Node, MutationRecord>) => void;
 
-export default function Editor(props: Props) {
+export default function Editor() {
   let ref_content!: HTMLDivElement;
+  const onLineAddListeners = new Set<LineEventListener>();
+  const onLineRemoveListeners = new Set<LineEventListener>();
+  const onLineTextChangeListeners = new Set<LineEventListener>();
+
+  // Monitor changes in ref_content
+  createEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      // Batch changes to prevent issues where an element is briefly added then removed
+      const added = new Map<Node, MutationRecord>();
+      const removed = new Map<Node, MutationRecord>();
+      const textChanged = new Map<Node, MutationRecord>();
+
+      for (const mutation of mutations) {
+        if (mutation.type === "childList") {
+          for (const node of mutation.removedNodes) {
+            if (
+              !(
+                node.nodeType === Node.ELEMENT_NODE &&
+                (node as HTMLElement).classList.contains("line")
+              )
+            )
+              continue;
+
+            removed.set(node, mutation);
+            added.delete(node);
+          }
+
+          for (const node of mutation.addedNodes) {
+            if (
+              !(
+                node.nodeType === Node.ELEMENT_NODE &&
+                (node as HTMLElement).classList.contains("line")
+              )
+            )
+              continue;
+
+            added.set(node, mutation);
+            removed.delete(node);
+          }
+        } else if (mutation.type === "characterData") {
+          textChanged.set(mutation.target, mutation);
+        }
+      }
+
+      if (removed.size > 0)
+        for (const listener of onLineRemoveListeners) listener(removed);
+
+      if (added.size > 0)
+        for (const listener of onLineAddListeners) listener(added);
+
+      if (textChanged.size > 0)
+        for (const listener of onLineTextChangeListeners) listener(textChanged);
+    });
+
+    observer.observe(ref_content, {
+      // Include entire subtree for monitoring
+      subtree: true,
+      // Monitor child nodes being added/removed
+      childList: true,
+      // Monitor text (character data) changes and include its old value
+      characterData: true,
+      characterDataOldValue: true,
+    });
+
+    return () => observer.disconnect();
+  });
 
   return (
     <div class="editor">
       <div class="gutters">
         <div class="gutter breakpoints">
-          <For each={props.breakpoints()}>
+          <For each={[]}>
             {(lineNumber) => {
               const top = `top-[${lineNumber * 1.5}rem]`;
               return <div class={`breakpoint ${top}`}>💗</div>;
