@@ -6,6 +6,7 @@ export type LineEventListener = (added: Map<Node, MutationRecord>) => void;
 
 export default function Editor() {
   let ref_content!: HTMLDivElement;
+  let ref_gutter_lineNumbers!: HTMLDivElement;
   const onLineAddListeners = new Set<LineEventListener>();
   const onLineRemoveListeners = new Set<LineEventListener>();
   const onLineTextChangeListeners = new Set<LineEventListener>();
@@ -73,6 +74,28 @@ export default function Editor() {
     return () => observer.disconnect();
   });
 
+  onLineAddListeners.add((lines) => {
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < lines.size; i++) {
+      const node = document.createElement("div");
+      node.classList.add("line-number");
+      node.textContent = (
+        ref_gutter_lineNumbers.childElementCount + 1
+      ).toString();
+
+      fragment.appendChild(node);
+    }
+
+    ref_gutter_lineNumbers.appendChild(fragment);
+  });
+
+  onLineRemoveListeners.add((lines) => {
+    for (let i = 0; i < lines.size; i++) {
+      ref_gutter_lineNumbers.lastChild?.remove();
+    }
+  });
+
   return (
     <div class="editor">
       <div class="gutters">
@@ -85,7 +108,7 @@ export default function Editor() {
           </For>
         </div>
 
-        <div class="gutter line-numbers">
+        <div ref={ref_gutter_lineNumbers} class="gutter line-numbers">
           <div class="line-number">1</div>
           <div class="line-number">2</div>
           <div class="line-number">3</div>
