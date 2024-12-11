@@ -4,6 +4,7 @@
 
 @layer base {
   #root {
+    margin: 1rem;
     display: grid;
     grid-template-columns: 70fr 30fr;
   }
