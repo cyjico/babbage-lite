@@ -1,5 +1,5 @@
-import getNextSibling from "@/shared/model/getNextSibling";
-import getSelf from "@/shared/model/getSelf";
+import getNextSibling from "@/shared/lib/getNextSibling";
+import getSelf from "@/shared/lib/getSelf";
 import "./styles.css";
 import { Accessor, For, Setter } from "solid-js";
 
