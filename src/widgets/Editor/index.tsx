@@ -1,99 +1,165 @@
 import "./styles.css";
-import { createEffect, For } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import createOnKeyDown from "./lib/createOnKeyDown";
+import getSelf from "@/shared/lib/getSelf";
 
-export type LineEventListener = (added: Map<Node, MutationRecord>) => void;
-
+/**
+ * Editor with a hybrid of SolidJS reactivity and direct DOM manipulation for
+ * performance.
+ *
+ * Those under direct user manipulation will ***not*** be handled by SolidJS.
+ * Although, we will keep an internal state of the manipulated lines.
+ */
 export default function Editor() {
-  let ref_content!: HTMLDivElement;
-  let ref_gutter_lineNumbers!: HTMLDivElement;
-  const onLineAddListeners = new Set<LineEventListener>();
-  const onLineRemoveListeners = new Set<LineEventListener>();
-  const onLineTextChangeListeners = new Set<LineEventListener>();
+  let contentRef!: HTMLDivElement;
 
-  // Monitor changes in ref_content
+  const lineToIdx = new Map<HTMLElement, number>();
+  const [lines, setLines] = createSignal<string[]>([
+    "N000 10",
+    "N001 5",
+    "",
+    "L000",
+  ]);
+
+  createEffect(() => {
+    console.log(lines());
+  });
+
+  // Render lines through direct DOM manipulation to avoid re-rendering
+  {
+    const _lines = lines();
+    createEffect(() => {
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < _lines.length; i++) {
+        const div = document.createElement("div");
+        div.classList.add("line");
+
+        div.textContent = _lines[i];
+        if (div.textContent.length === 0)
+          div.appendChild(document.createElement("br"));
+
+        lineToIdx.set(div, i);
+        fragment.appendChild(div);
+      }
+
+      contentRef.appendChild(fragment);
+    });
+  }
+
+  // Update internal state of the manipulated lines
   createEffect(() => {
     const observer = new MutationObserver((mutations) => {
-      // Batch changes to prevent issues where an element is briefly added then removed
-      const added = new Map<Node, MutationRecord>();
-      const removed = new Map<Node, MutationRecord>();
-      const textChanged = new Map<Node, MutationRecord>();
+      // Batch changes to prevent issues where an element is briefly added then
+      // removed
+      const newLines = lines().slice();
 
-      for (const mutation of mutations) {
+      console.log("");
+      for (let i = 0; i < mutations.length; i++) {
+        const mutation = mutations[i];
+        console.log(`mutation ${i}`);
+
         if (mutation.type === "childList") {
-          for (const node of mutation.removedNodes) {
-            if (
-              !(
-                node.nodeType === Node.ELEMENT_NODE &&
-                (node as HTMLElement).classList.contains("line")
-              )
-            )
-              continue;
+          for (let i = 0; i < mutation.addedNodes.length; i++) {
+            const node = mutation.addedNodes[i];
 
-            removed.set(node, mutation);
-            added.delete(node);
+            console.log("added: ", node, " --> ", mutation.target);
+
+            switch (node.nodeType) {
+              case Node.TEXT_NODE:
+                // When?
+                // - A line's textContent was set
+                newLines[lineToIdx.get(mutation.target as HTMLElement)!] =
+                  mutation.target.textContent!;
+                break;
+              case Node.ELEMENT_NODE:
+                if ((node as HTMLElement).classList.contains("line")) {
+                  // When?
+                  // - A newline was inserted
+                  const elem = node as HTMLDivElement;
+
+                  let insertIdx = 0;
+                  if (elem.previousElementSibling) {
+                    insertIdx =
+                      lineToIdx.get(
+                        elem.previousElementSibling as HTMLElement,
+                      )! + 1;
+                  } else if (elem.nextElementSibling) {
+                    insertIdx = lineToIdx.get(
+                      elem.nextElementSibling as HTMLElement,
+                    )!;
+                  }
+
+                  newLines.splice(insertIdx, 0, elem.textContent!);
+
+                  // Update indecies
+                  let curElem: HTMLElement = elem;
+                  let curElemIdx = insertIdx;
+                  while (curElem) {
+                    lineToIdx.set(curElem, curElemIdx);
+
+                    curElem = curElem.nextElementSibling as HTMLElement;
+                    curElemIdx = curElemIdx + 1;
+                  }
+                } else if ((node as HTMLElement).tagName === "BR") {
+                  // When?
+                  // - A line before newline was made empty
+                  // - A line was made empty by the user
+                  newLines[lineToIdx.get(mutation.target as HTMLElement)!] =
+                    mutation.target.textContent!;
+                }
+                break;
+            }
           }
 
-          for (const node of mutation.addedNodes) {
-            if (
-              !(
-                node.nodeType === Node.ELEMENT_NODE &&
-                (node as HTMLElement).classList.contains("line")
-              )
-            )
-              continue;
+          for (let i = 0; i < mutation.removedNodes.length; i++) {
+            const node = mutation.removedNodes[i];
 
-            added.set(node, mutation);
-            removed.delete(node);
+            console.log("removed: ", node, " --> ", mutation.target);
+
+            switch (node.nodeType) {
+              case Node.ELEMENT_NODE:
+                if ((node as HTMLElement).classList.contains("line")) {
+                  // When?
+                  // - A line was removed
+                  const idx = lineToIdx.get(node as HTMLDivElement)!;
+                  newLines.splice(idx, 1);
+
+                  // Update indecies
+                  if (mutation.nextSibling) {
+                    let curElem = getSelf(mutation.nextSibling) as HTMLElement;
+                    let curElemIdx = idx;
+                    while (curElem) {
+                      lineToIdx.set(curElem, curElemIdx);
+
+                      curElem = curElem.nextElementSibling as HTMLElement;
+                      curElemIdx = curElemIdx + 1;
+                    }
+                  }
+                }
+                break;
+            }
           }
         } else if (mutation.type === "characterData") {
-          textChanged.set(mutation.target, mutation);
+          // lineElem is guaranteed to be a <div class="line" /> because
+          // mutation.target.nodeType is always a Node.TEXT_NODE
+          const lineElem = mutation.target.parentElement!;
+          newLines[lineToIdx.get(lineElem)!] = lineElem.textContent!;
         }
       }
 
-      if (removed.size > 0)
-        for (const listener of onLineRemoveListeners) listener(removed);
-
-      if (added.size > 0)
-        for (const listener of onLineAddListeners) listener(added);
-
-      if (textChanged.size > 0)
-        for (const listener of onLineTextChangeListeners) listener(textChanged);
+      setLines(() => newLines);
     });
 
-    observer.observe(ref_content, {
+    observer.observe(contentRef, {
       // Include entire subtree for monitoring
       subtree: true,
       // Monitor child nodes being added/removed
       childList: true,
-      // Monitor text (character data) changes and include its old value
+      // Monitor text (character data) changes
       characterData: true,
-      characterDataOldValue: true,
     });
 
     return () => observer.disconnect();
-  });
-
-  onLineAddListeners.add((lines) => {
-    const fragment = document.createDocumentFragment();
-
-    for (let i = 0; i < lines.size; i++) {
-      const node = document.createElement("div");
-      node.classList.add("line-number");
-      node.textContent = (
-        ref_gutter_lineNumbers.childElementCount + 1
-      ).toString();
-
-      fragment.appendChild(node);
-    }
-
-    ref_gutter_lineNumbers.appendChild(fragment);
-  });
-
-  onLineRemoveListeners.add((lines) => {
-    for (let i = 0; i < lines.size; i++) {
-      ref_gutter_lineNumbers.lastChild?.remove();
-    }
   });
 
   return (
@@ -108,27 +174,19 @@ export default function Editor() {
           </For>
         </div>
 
-        <div ref={ref_gutter_lineNumbers} class="gutter line-numbers">
-          <div class="line-number">1</div>
-          <div class="line-number">2</div>
-          <div class="line-number">3</div>
-          <div class="line-number">4</div>
+        <div class="gutter line-numbers">
+          <For each={lines()}>
+            {(_, index) => <div class="line-number">{index() + 1}</div>}
+          </For>
         </div>
       </div>
 
       <div
-        ref={ref_content}
-        onKeyDown={createOnKeyDown(() => ref_content)}
+        ref={contentRef}
+        onKeyDown={createOnKeyDown(() => contentRef)}
         contentEditable="plaintext-only"
         class="content"
-      >
-        <div class="line">N000 10</div>
-        <div class="line">
-          <br />
-        </div>
-        <div class="line">N001 5</div>
-        <div class="line">L000</div>
-      </div>
+      />
     </div>
   );
 }
