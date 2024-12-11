@@ -1,6 +1,6 @@
 import "./styles.css";
 import { createEffect, createSignal, For } from "solid-js";
-import createOnKeyDown from "./lib/createOnKeyDown";
+import createOnBeforeInput from "./lib/createOnBeforeInput";
 import getSelf from "@/shared/lib/getSelf";
 
 /**
@@ -25,8 +25,9 @@ export default function Editor() {
     console.log(lines());
   });
 
-  // Render lines through direct DOM manipulation to avoid re-rendering
+  // Changes should be ignored to avoid re-rendering
   {
+    // eslint-disable-next-line solid/reactivity
     const _lines = lines();
     createEffect(() => {
       const fragment = document.createDocumentFragment();
@@ -140,10 +141,18 @@ export default function Editor() {
             }
           }
         } else if (mutation.type === "characterData") {
-          // lineElem is guaranteed to be a <div class="line" /> because
           // mutation.target.nodeType is always a Node.TEXT_NODE
-          const lineElem = mutation.target.parentElement!;
-          newLines[lineToIdx.get(lineElem)!] = lineElem.textContent!;
+
+          console.log(
+            "changed: ",
+            mutation.target,
+            " --> ",
+            mutation.target.parentElement,
+          );
+
+          const lineElem = mutation.target.parentElement;
+          if (lineElem)
+            newLines[lineToIdx.get(lineElem)!] = lineElem.textContent!;
         }
       }
 
@@ -183,7 +192,7 @@ export default function Editor() {
 
       <div
         ref={contentRef}
-        onKeyDown={createOnKeyDown(() => contentRef)}
+        onBeforeInput={createOnBeforeInput(() => contentRef)}
         contentEditable="plaintext-only"
         class="content"
       />
