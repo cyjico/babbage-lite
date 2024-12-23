@@ -1,17 +1,13 @@
 import styles from "./styles.module.css";
 import { For, JSX } from "solid-js";
 
-interface Props {
+export default function TabbedPanel(props: {
   class?: string;
-  tabs: Props_Tab[];
-}
-
-interface Props_Tab {
-  label: JSX.Element;
-  content: JSX.Element;
-}
-
-export default function TabbedPanel(props: Props) {
+  tabs: {
+    label: JSX.Element;
+    content: JSX.Element;
+  }[];
+}) {
   // ## If anyone can give a more efficient way, that'd be great.
   return (
     <form class={props.class}>
