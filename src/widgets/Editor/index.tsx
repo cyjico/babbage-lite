@@ -2,6 +2,7 @@ import "./styles.css";
 import { createEffect, createSignal, For } from "solid-js";
 import createOnBeforeInput from "./lib/createOnBeforeInput";
 import getSelf from "@/shared/lib/getSelf";
+import createLineElements from "./lib/createLineElements";
 
 /**
  * Editor with a hybrid of SolidJS reactivity and direct DOM manipulation for
@@ -10,44 +11,26 @@ import getSelf from "@/shared/lib/getSelf";
  * Those under direct user manipulation will ***not*** be handled by SolidJS.
  * Although, we will keep an internal state of the manipulated lines.
  */
-export default function Editor() {
-  let contentRef!: HTMLDivElement;
+export default function Editor(props: { class?: string }) {
+  let ref_content!: HTMLDivElement;
 
   const lineToIdx = new Map<HTMLElement, number>();
-  const [lines, setLines] = createSignal<string[]>([
-    "N000 10",
-    "N001 5",
-    "",
-    "L000",
-  ]);
+  const [lines, setLines] = createSignal<string[]>(
+    [
+      "N000 10",
+      "N001 5",
+      "",
+      "L000",
+      `# Yes, shit... Yes, thank you so much... Thank you... That might just what I need to buss, and thats just what I need to buss, and ambasing! Aughh! Ambasing! Augh!! Ambasing!! Auughhh shit aaauughhh! Auuughh shit! Aughh!`,
+    ].concat(Array(25).fill("")),
+  );
 
-  /*
-  Avoid re-rendering (as well as caret reset) triggered by changes in `lines`.
-
-  Reason:
-  1. DOM is directly manipulated by the user with `contentEditable`.
-  2. Mutation is observed causing `lines` to be updated.
-  3. Reactive re-rendering occurs.
-  */
   {
-    // eslint-disable-next-line solid/reactivity
-    const linesSnapshot = lines();
+    // Untrack changes to avoid re-rendering (see hybrid yap)
+    const lineElements = createLineElements(lines(), lineToIdx);
 
     createEffect(() => {
-      const fragment = document.createDocumentFragment();
-      for (let i = 0; i < linesSnapshot.length; i++) {
-        const div = document.createElement("div");
-        div.classList.add("line");
-
-        div.textContent = linesSnapshot[i];
-        if (div.textContent.length === 0)
-          div.appendChild(document.createElement("br"));
-
-        lineToIdx.set(div, i);
-        fragment.appendChild(div);
-      }
-
-      contentRef.appendChild(fragment);
+      ref_content.appendChild(lineElements);
     });
   }
 
@@ -152,7 +135,7 @@ export default function Editor() {
       setLines(() => newLines);
     });
 
-    observer.observe(contentRef, {
+    observer.observe(ref_content, {
       // Include entire subtree for monitoring
       subtree: true,
       // Monitor child nodes being added/removed
@@ -165,7 +148,7 @@ export default function Editor() {
   });
 
   return (
-    <div class="editor">
+    <div class={`editor ${props.class ?? ""}`}>
       <div class="gutters">
         <div class="gutter breakpoints">
           <For each={[]}>
@@ -184,8 +167,8 @@ export default function Editor() {
       </div>
 
       <div
-        ref={contentRef}
-        onBeforeInput={createOnBeforeInput(() => contentRef)}
+        ref={ref_content}
+        onBeforeInput={createOnBeforeInput(() => ref_content)}
         contentEditable="plaintext-only"
         class="content"
       />
