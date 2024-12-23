@@ -2,6 +2,7 @@ import styles from "./styles.module.css";
 import { For, JSX } from "solid-js";
 
 interface Props {
+  class?: string;
   tabs: Props_Tab[];
 }
 
@@ -13,7 +14,7 @@ interface Props_Tab {
 export default function TabbedPanel(props: Props) {
   // ## If anyone can give a more efficient way, that'd be great.
   return (
-    <form>
+    <form class={props.class}>
       <For each={props.tabs}>
         {(item, index) => {
           return (
