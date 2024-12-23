@@ -21,21 +21,25 @@ export default function Editor() {
     "L000",
   ]);
 
-  createEffect(() => {
-    console.log(lines());
-  });
+  /*
+  Avoid re-rendering (as well as caret reset) triggered by changes in `lines`.
 
-  // Changes should be ignored to avoid re-rendering
+  Reason:
+  1. DOM is directly manipulated by the user with `contentEditable`.
+  2. Mutation is observed causing `lines` to be updated.
+  3. Reactive re-rendering occurs.
+  */
   {
     // eslint-disable-next-line solid/reactivity
-    const _lines = lines();
+    const linesSnapshot = lines();
+
     createEffect(() => {
       const fragment = document.createDocumentFragment();
-      for (let i = 0; i < _lines.length; i++) {
+      for (let i = 0; i < linesSnapshot.length; i++) {
         const div = document.createElement("div");
         div.classList.add("line");
 
-        div.textContent = _lines[i];
+        div.textContent = linesSnapshot[i];
         if (div.textContent.length === 0)
           div.appendChild(document.createElement("br"));
 
@@ -54,16 +58,12 @@ export default function Editor() {
       // removed
       const newLines = lines().slice();
 
-      console.log("");
       for (let i = 0; i < mutations.length; i++) {
         const mutation = mutations[i];
-        console.log(`mutation ${i}`);
 
         if (mutation.type === "childList") {
           for (let i = 0; i < mutation.addedNodes.length; i++) {
             const node = mutation.addedNodes[i];
-
-            console.log("added: ", node, " --> ", mutation.target);
 
             switch (node.nodeType) {
               case Node.TEXT_NODE:
@@ -108,14 +108,13 @@ export default function Editor() {
                   newLines[lineToIdx.get(mutation.target as HTMLElement)!] =
                     mutation.target.textContent!;
                 }
+
                 break;
             }
           }
 
           for (let i = 0; i < mutation.removedNodes.length; i++) {
             const node = mutation.removedNodes[i];
-
-            console.log("removed: ", node, " --> ", mutation.target);
 
             switch (node.nodeType) {
               case Node.ELEMENT_NODE:
@@ -137,18 +136,12 @@ export default function Editor() {
                     }
                   }
                 }
+
                 break;
             }
           }
         } else if (mutation.type === "characterData") {
           // mutation.target.nodeType is always a Node.TEXT_NODE
-
-          console.log(
-            "changed: ",
-            mutation.target,
-            " --> ",
-            mutation.target.parentElement,
-          );
 
           const lineElem = mutation.target.parentElement;
           if (lineElem)
