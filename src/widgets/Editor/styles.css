@@ -1,53 +1,62 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+.editor {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  overflow: scroll;
 
-@layer components {
-  .editor {
-    margin: 1rem;
-    display: flex;
+  &::-webkit-scrollbar,
+  &::-webkit-scrollbar-corner {
+    width: 0.7rem;
+    height: 0.7rem;
   }
 
-  .editor .gutters {
-    margin-right: 1rem;
+  &::-webkit-scrollbar-thumb {
+    background-color: #5a5a5a;
+  }
+}
 
-    .gutter {
-    }
+.editor .gutters {
+  padding-right: 1rem;
+
+  .gutter {
   }
 
-  .gutter.breakpoints {
+  .breakpoints {
     .breakpoint {
     }
   }
 
-  .gutter.line-numbers {
+  .line-numbers {
+    width: 3rem;
+
     .line-number {
+      text-align: right;
     }
 
     .line-number.--active {
     }
   }
+}
 
-  .editor .content {
-    flex: 1 1 0%;
+.editor .content {
+  flex: 1 1 0%;
 
-    &:focus {
-      outline: none;
-      box-shadow: none;
-      border: 0;
+  &:focus {
+    outline: none;
+    box-shadow: none;
+    border: 0;
+  }
+
+  .line {
+    white-space: pre;
+
+    &:empty::after {
+      content: ">> empty here!! should not happen! plez report! <<";
+      background-color: red;
     }
 
-    .line {
-      white-space: pre;
-
-      &:empty::after {
-        content: ">> empty here!! should not happen! plez report! <<";
-        background-color: red;
-      }
-
-      &.--active {
-        background-color: rebeccapurple;
-      }
+    &.--active {
+      background-color: rebeccapurple;
     }
   }
 }

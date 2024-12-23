@@ -4,13 +4,32 @@
 
 @layer base {
   #root {
-    margin: 1rem;
+    background-color: #323233;
+    height: 100%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     display: grid;
-    grid-template-columns: 70fr 30fr;
+    grid-template-columns: minmax(0, 75fr) minmax(0, 30fr);
+    grid-template-rows: min-content minmax(0, 1fr) min-content;
+    align-items: stretch;
   }
 
   header,
   footer {
     grid-column: 1 / 3;
+  }
+
+  main {
+    background-color: #1e1e1e;
+    display: flex;
+    flex-flow: column wrap;
+
+    > :first-child {
+      flex: 1 1 0%;
+    }
+  }
+
+  aside {
+    background-color: #252526;
   }
 }
