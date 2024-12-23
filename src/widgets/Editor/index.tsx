@@ -3,6 +3,7 @@ import { createEffect, createSignal, For } from "solid-js";
 import createOnBeforeInput from "./lib/createOnBeforeInput";
 import getSelf from "@/shared/lib/getSelf";
 import createLineElements from "./lib/createLineElements";
+import createOnSelectionChange from "./lib/createOnSelectionChange";
 
 /**
  * Editor with a hybrid of SolidJS reactivity and direct DOM manipulation for
@@ -25,12 +26,25 @@ export default function Editor(props: { class?: string }) {
     ].concat(Array(25).fill("")),
   );
 
+  const [selection, setSelection] = createSignal<{
+    startContainer: Node;
+    startOffset: number;
+    endContainer: Node;
+    endOffset: number;
+  }>();
+
   {
     // Untrack changes to avoid re-rendering (see hybrid yap)
     const lineElements = createLineElements(lines(), lineToIdx);
 
     createEffect(() => {
       ref_content.appendChild(lineElements);
+
+      const onSelectionChange = createOnSelectionChange(setSelection);
+      document.addEventListener("selectionchange", onSelectionChange);
+
+      return () =>
+        document.removeEventListener("selectionchange", onSelectionChange);
     });
   }
 
