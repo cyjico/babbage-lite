@@ -1,4 +1,4 @@
-import { getLine } from "./lib/getLine";
+import getLine from "./lib/getLine";
 import setLineContent from "./lib/setLineContent";
 
 export default function onInsertLineBreak(

@@ -5,7 +5,7 @@ import getSelf from "@/shared/lib/getSelf";
  *
  * If the node is a `.line` element, it returns itself.
  */
-export function getLine(node: Node) {
+export default function getLine(node: Node) {
   let line: HTMLElement | null = getSelf(node);
   while (line && !line.classList.contains("line")) {
     line = line.parentElement;
