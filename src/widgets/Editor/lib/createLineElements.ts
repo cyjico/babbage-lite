@@ -1,6 +1,6 @@
 export default function createLineElements(
   lines: string[],
-  out_lineToIdx?: Map<HTMLElement, number>,
+  out_lineElementToIdx?: Map<HTMLElement, number>,
 ) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < lines.length; i++) {
@@ -11,7 +11,7 @@ export default function createLineElements(
     if (div.textContent.length === 0)
       div.appendChild(document.createElement("br"));
 
-    out_lineToIdx?.set(div, i);
+    out_lineElementToIdx?.set(div, i);
 
     fragment.appendChild(div);
   }

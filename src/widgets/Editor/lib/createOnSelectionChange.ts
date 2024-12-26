@@ -1,15 +1,8 @@
 import { Setter } from "solid-js";
+import { EditorSelection } from "..";
 
 export default function createOnSelectionChange(
-  setSelection: Setter<
-    | {
-        startContainer: Node;
-        startOffset: number;
-        endContainer: Node;
-        endOffset: number;
-      }
-    | undefined
-  >,
+  setSelection: Setter<EditorSelection | undefined>,
 ) {
   return () => {
     const sel = window.getSelection();
