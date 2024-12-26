@@ -7,11 +7,11 @@ import createLineElements from "./lib/createLineElements";
 import createOnSelectionChange from "./lib/createOnSelectionChange";
 
 /**
- * Editor with a hybrid of SolidJS reactivity and direct DOM manipulation for
- * performance.
+ * Implementation uses a mix of SolidJS reactivity and DOM manipulation.
  *
- * Those under direct user manipulation will ***not*** be handled by SolidJS.
- * Although, we will keep an internal state of the manipulated lines.
+ * To keep it short, the user editing lines will mean a direct manipulation of
+ * the DOM. But, to keep track of the changes (and to respond to the changes),
+ * we will use SolidJS's `signals`.
  */
 export default function Editor(props: { class?: string }) {
   let ref_content!: HTMLDivElement;
