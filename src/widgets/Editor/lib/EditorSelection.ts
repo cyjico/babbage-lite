@@ -1,6 +1,8 @@
 export default interface EditorSelection {
-  startContainer: Node;
+  startLine: HTMLElement;
+  startLineIndex: number;
   startOffset: number;
-  endContainer: Node;
+  endLine: HTMLElement;
+  endLineIndex: number;
   endOffset: number;
 }

@@ -1,11 +1,11 @@
-import getSelf from "@/shared/lib/getSelf";
+import getLineElement from "../getLineElement";
 
 export default function onInsertLineBreak(
   sel: Selection,
   selRange: Range,
   ref_content: HTMLElement,
 ) {
-  const endLine = getLine(selRange.endContainer);
+  const endLine = getLineElement(selRange.endContainer);
   if (!endLine) throw new Error("No `.line` element was found");
 
   switch (sel.type) {
@@ -20,7 +20,7 @@ export default function onInsertLineBreak(
         // When?
         // - Selection has multiple lines
 
-        const startLine = getLine(selRange.startContainer);
+        const startLine = getLineElement(selRange.startContainer);
         if (!startLine) throw new Error("No `.line` element was found");
 
         selRange.deleteContents();
@@ -72,20 +72,6 @@ function breakLine(line: HTMLElement, start: number, end: number) {
 }
 
 /**
- * Finds the `.line` element that the node is attached to.
- *
- * If the node is a `.line` element, it returns itself.
- */
-function getLine(node: Node) {
-  let line: HTMLElement | null = getSelf(node);
-  while (line && !line.classList.contains("line")) {
-    line = line.parentElement;
-  }
-
-  return line;
-}
-
-/**
  * Sets the `textContent` of a `.line` element.
  *
  * Take note that setting textContent on a node ***removes all*** of the node's
@@ -95,10 +81,7 @@ function getLine(node: Node) {
  * Therefore, it is guaranteed that the ***element will always have a text
  * node*** and, if empty, a `<br />` element.
  */
-function setLineContent(
-  ref_line: HTMLElement,
-  textContent = "",
-) {
+function setLineContent(ref_line: HTMLElement, textContent = "") {
   ref_line.textContent = textContent;
 
   if (textContent.length === 0)

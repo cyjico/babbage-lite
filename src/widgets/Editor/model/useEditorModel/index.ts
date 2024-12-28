@@ -6,7 +6,7 @@ import createLineElements from "./createLineElements";
 
 export default function useEditorModel(ref_content: () => HTMLElement) {
   const { _setSelection, lines, _setLines } = useEditorContext();
-  
+
   const lineElementToIdx = new Map<HTMLElement, number>();
   const lineElements = createLineElements(lines(), lineElementToIdx);
 
@@ -110,7 +110,9 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
   });
 
   const onBeforeInput = createOnBeforeInputListener(ref_content);
-  const onSelectionChange = createOnSelectionChangeListener(_setSelection);
+  const onSelectionChange = createOnSelectionChangeListener(
+    lineElementToIdx, _setSelection,
+  );
 
   return {
     imperativeEffect: () => {
