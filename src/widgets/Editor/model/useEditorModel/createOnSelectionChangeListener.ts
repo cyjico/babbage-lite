@@ -32,6 +32,14 @@ export default function createOnSelectionChange(
           focusLine,
           focusLineIdx: lineElementToIdx.get(focusLine)!,
           focusLineOffset: sel.focusOffset,
+          forEach: (fn: (line?: HTMLElement, idx?: number) => void) => {
+            selRange
+              .cloneContents()
+              .childNodes.forEach((node, idx) =>
+                fn(getLineElement(node)!, idx),
+              );
+          },
+          asString: selRange.toString(),
         });
         return;
       }

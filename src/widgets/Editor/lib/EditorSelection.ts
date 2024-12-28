@@ -8,4 +8,6 @@ export default interface EditorSelection {
   focusLine: HTMLElement;
   focusLineIdx: number;
   focusLineOffset: number;
+  forEach(fn: (line?: HTMLElement, idx?: number) => void): void;
+  asString: string;
 }
