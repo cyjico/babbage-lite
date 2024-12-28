@@ -4,20 +4,20 @@ import { useEditorContext } from "../Editor/ContextProvider";
 export default function EditorStatusBar() {
   const { selection } = useEditorContext();
 
-  const [lastSelLn, setLastSelLn] = createSignal(0);
-  const [lastSelCol, setLastSelCol] = createSignal(0);
+  const [ln, setLn] = createSignal(1);
+  const [col, setCol] = createSignal(1);
 
   createEffect(() => {
     const sel = selection();
     if (!sel) return;
 
-    setLastSelLn(sel.endLineIndex + 1);
-    setLastSelCol(sel.endOffset + 1);
+    setLn(sel.focusLineIdx + 1);
+    setCol(sel.focusLineOffset + 1);
   });
 
   return (
     <span>
-      Ln {lastSelLn()}, Col {lastSelCol()}
+      Ln {ln()}, Col {col()}
     </span>
   );
 }

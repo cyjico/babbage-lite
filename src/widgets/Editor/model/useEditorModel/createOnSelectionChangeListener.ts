@@ -20,14 +20,18 @@ export default function createOnSelectionChange(
         endLine &&
         isInsideEditor(endLine)
       ) {
+        const focusLine = getLineElement(sel.focusNode!)!;
+
         setSelection({
           startLine,
-          startLineIndex: lineElementToIdx.get(startLine)!,
-          startOffset: selRange.startOffset,
+          startLineIdx: lineElementToIdx.get(startLine)!,
+          startLineOffset: selRange.startOffset,
           endLine,
-          endLineIndex: lineElementToIdx.get(endLine)!,
-          endOffset: selRange.endOffset,
-          direction: sel.direction === "backward" ? "backward" : "forward",
+          endLineIdx: lineElementToIdx.get(endLine)!,
+          endLineOffset: selRange.endOffset,
+          focusLine,
+          focusLineIdx: lineElementToIdx.get(focusLine)!,
+          focusLineOffset: sel.focusOffset,
         });
         return;
       }

@@ -1,8 +1,11 @@
 export default interface EditorSelection {
   startLine: HTMLElement;
-  startLineIndex: number;
-  startOffset: number;
+  startLineIdx: number;
+  startLineOffset: number;
   endLine: HTMLElement;
-  endLineIndex: number;
-  endOffset: number;
+  endLineIdx: number;
+  endLineOffset: number;
+  focusLine: HTMLElement;
+  focusLineIdx: number;
+  focusLineOffset: number;
 }
