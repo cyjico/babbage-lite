@@ -1,5 +1,5 @@
 import { Setter } from "solid-js";
-import { EditorSelection } from "..";
+import EditorSelection from "../../lib/EditorSelection";
 
 export default function createOnSelectionChange(
   setSelection: Setter<EditorSelection | undefined>,

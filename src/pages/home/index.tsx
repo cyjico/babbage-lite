@@ -1,12 +1,12 @@
 import "./styles.css";
 import Editor from "@/widgets/Editor";
+import EditorContextProvider from "@/widgets/Editor/ContextProvider";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
-import EditorProvider from "@/widgets/Editor/Provider";
 
 export default function HomePage() {
   return (
     <>
-      <EditorProvider>
+      <EditorContextProvider>
         <header>
           <div id="menubar">
             <button>File</button>
@@ -30,11 +30,15 @@ export default function HomePage() {
             tabs={[
               {
                 label: "PROBLEMS",
-                content: "problem is here",
+                content: <div>
+                  <p> problems </p>
+                </div>,
               },
               {
                 label: "OUTPUT",
-                content: "output is here",
+                content: <div>
+                  <p> output </p>
+                </div>,
               },
             ]}
           />
@@ -72,7 +76,7 @@ export default function HomePage() {
         <footer>
           <span>Ln 1, Col 1</span>
         </footer>
-      </EditorProvider>
+      </EditorContextProvider>
     </>
   );
 }

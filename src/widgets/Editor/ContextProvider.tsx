@@ -6,7 +6,7 @@ import {
   Accessor,
   Setter,
 } from "solid-js";
-import { EditorSelection } from ".";
+import EditorSelection from "./lib/EditorSelection";
 
 interface EditorContextProviderValue {
   selection: Accessor<EditorSelection | undefined>;
@@ -22,7 +22,7 @@ const EditorContext = createContext<EditorContextProviderValue>({
   _setLines: () => undefined,
 });
 
-export default function EditorProvider(props: { children?: JSX.Element[] }) {
+export default function EditorContextProvider(props: { children?: JSX.Element[] }) {
   const [selection, _setSelection] = createSignal<EditorSelection>();
   const [lines, _setLines] = createSignal<string[]>(
     [
@@ -43,6 +43,6 @@ export default function EditorProvider(props: { children?: JSX.Element[] }) {
   );
 }
 
-export function useEditor() {
+export function useEditorContext() {
   return useContext(EditorContext);
 }

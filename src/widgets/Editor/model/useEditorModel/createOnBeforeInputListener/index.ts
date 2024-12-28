@@ -3,9 +3,9 @@ import onInsertLineBreak from "./onInsertLineBreak";
 /**
  * Creates an onKeyDown event handler.
  *
- * @param contentRef Function that points to the `content` element.
+ * @param ref_content Function that points to the `content` element.
  */
-export default function createOnBeforeInput(contentRef: () => HTMLElement) {
+export default function createOnBeforeInputListener(ref_content: () => HTMLElement) {
   return function (ev: InputEvent) {
     const sel = window.getSelection();
     if (!(sel && sel.anchorNode) || sel.type === "None") {
@@ -13,13 +13,13 @@ export default function createOnBeforeInput(contentRef: () => HTMLElement) {
     }
 
     if (ev.inputType === "insertLineBreak") {
-      onInsertLineBreak(sel, sel.getRangeAt(0), contentRef());
+      onInsertLineBreak(sel, sel.getRangeAt(0), ref_content());
 
       ev.preventDefault();
     } else if (
       ev.inputType === "deleteContentBackward" &&
-      contentRef().childElementCount === 1 &&
-      contentRef().firstElementChild!.textContent!.length === 0
+      ref_content().childElementCount === 1 &&
+      ref_content().firstElementChild!.textContent!.length === 0
     ) {
       ev.preventDefault();
     }
