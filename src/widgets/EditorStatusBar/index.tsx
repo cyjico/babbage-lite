@@ -6,6 +6,7 @@ export default function EditorStatusBar() {
 
   const [ln, setLn] = createSignal(1);
   const [col, setCol] = createSignal(1);
+  const [linesSelected, setLinesSelected] = createSignal(0);
 
   createEffect(() => {
     const sel = selection();
@@ -13,11 +14,13 @@ export default function EditorStatusBar() {
 
     setLn(sel.focusLineIdx + 1);
     setCol(sel.focusLineOffset + 1);
+    setLinesSelected(sel.endLineIdx - sel.startLineIdx);
   });
 
   return (
     <span>
       Ln {ln()}, Col {col()}
+      {linesSelected() > 0 ? <> ({linesSelected()} lines selected)</> : ""}
     </span>
   );
 }
