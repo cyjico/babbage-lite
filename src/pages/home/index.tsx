@@ -13,13 +13,10 @@ export default function HomePage() {
         </div>
 
         <div id="toolbar">
-          <button>Pause</button>
-          <button>Play</button>
+          <button>Run</button>
+          <button>Continue/Pause</button>
           <button>Step</button>
           <button>Stop</button>
-          <label>
-            Speed: <input type="range" />
-          </label>
         </div>
       </header>
 
