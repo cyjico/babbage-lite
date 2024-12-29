@@ -23,10 +23,6 @@
     background-color: #1e1e1e;
     display: flex;
     flex-flow: column wrap;
-
-    > :first-child {
-      flex: 1 1 0%;
-    }
   }
 
   aside {

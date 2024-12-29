@@ -1,7 +1,7 @@
 import "./styles.css";
 import Editor from "@/widgets/Editor";
-import EditorContextProvider from "@/widgets/Editor/ContextProvider";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
+import EditorContextProvider from "@/widgets/Editor/ContextProvider";
 import EditorStatusBar from "@/widgets/EditorStatusBar";
 
 export default function HomePage() {
@@ -24,15 +24,23 @@ export default function HomePage() {
       </header>
 
       <main>
-        <Editor />
+        <Editor class="flex-1" />
 
         <TabbedPanel
+          labelClass="flex-initial flex justify-around"
+          contentClass="flex-1 overflow-auto max-h-32"
           tabs={[
             {
               label: "PROBLEMS",
               content: (
                 <div>
-                  <p> problems </p>
+                  <p>
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    Cumque, eum perspiciatis esse consectetur dolorum cupiditate
+                    earum asperiores laboriosam eos? Eveniet, distinctio.
+                    Officia asperiores repudiandae est corporis, praesentium
+                    perspiciatis. Sint, odio!
+                  </p>
                 </div>
               ),
             },
@@ -40,7 +48,17 @@ export default function HomePage() {
               label: "OUTPUT",
               content: (
                 <div>
-                  <p> output </p>
+                  <p>
+                    Incredible! However, if your energy in your pseudo-mind is
+                    not conducive - or yeah, I like the word conducive - to what
+                    I'm saying or what I'm feeling, then there's
+                    incompatibility. So how do you know that? How do you fix
+                    that? Well, first you have to understand. You have to look
+                    at yourself and say, what kind of energy or what kind of
+                    pseudo power do I have to set my atmosphere? Woooooah,
+                    That's good. What kind of pseudo-energy do I have that I can
+                    create?
+                  </p>
                 </div>
               ),
             },
