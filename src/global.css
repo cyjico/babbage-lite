@@ -22,4 +22,16 @@
   body {
     height: 100%;
   }
+
+  * {
+    &::-webkit-scrollbar,
+    &::-webkit-scrollbar-corner {
+      width: 0.7rem;
+      height: 0.7rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #5a5a5a;
+    }
+  }
 }
