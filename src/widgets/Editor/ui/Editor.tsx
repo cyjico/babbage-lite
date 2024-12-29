@@ -18,7 +18,7 @@ export default function Editor(props: { class?: string }) {
   createEffect(imperativeEffect);
   onCleanup(imperativeCleanup);
 
-  const { lines } = useEditorContext();
+  const { viewState } = useEditorContext();
 
   return (
     <div class={`editor ${props.class ?? ""}`}>
@@ -33,7 +33,7 @@ export default function Editor(props: { class?: string }) {
         </div>
 
         <div class="gutter line-numbers">
-          <For each={lines()}>
+          <For each={viewState.lines()}>
             {(_, index) => <div class="line-number">{index() + 1}</div>}
           </For>
         </div>

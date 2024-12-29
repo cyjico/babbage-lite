@@ -9,21 +9,27 @@ import {
 import EditorSelection from "./lib/EditorSelection";
 
 interface EditorContextProviderValue {
-  selection: Accessor<EditorSelection | undefined>;
-  _setSelection: Setter<EditorSelection | undefined>;
-  lines: Accessor<string[]>;
-  _setLines: Setter<string[]>;
+  viewState: {
+    sel: Accessor<EditorSelection | undefined>;
+    _setSel: Setter<EditorSelection | undefined>;
+    lines: Accessor<string[]>;
+    _setLines: Setter<string[]>;
+  };
 }
 
 const EditorContext = createContext<EditorContextProviderValue>({
-  selection: () => undefined,
-  _setSelection: () => undefined,
-  lines: () => [],
-  _setLines: () => undefined,
+  viewState: {
+    sel: () => undefined,
+    _setSel: () => undefined,
+    lines: () => [],
+    _setLines: () => [],
+  },
 });
 
-export default function EditorContextProvider(props: { children?: JSX.Element[] }) {
-  const [selection, _setSelection] = createSignal<EditorSelection>();
+export default function EditorContextProvider(props: {
+  children?: JSX.Element[];
+}) {
+  const [sel, _setSel] = createSignal<EditorSelection>();
   const [lines, _setLines] = createSignal<string[]>(
     [
       "N000 10",
@@ -36,7 +42,7 @@ export default function EditorContextProvider(props: { children?: JSX.Element[] 
 
   return (
     <EditorContext.Provider
-      value={{ selection, _setSelection, lines, _setLines }}
+      value={{ viewState: { sel, _setSel, lines, _setLines } }}
     >
       {props.children}
     </EditorContext.Provider>

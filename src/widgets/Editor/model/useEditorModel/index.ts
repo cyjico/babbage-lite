@@ -5,14 +5,14 @@ import createOnBeforeInputListener from "./createOnBeforeInputListener";
 import createLineElements from "./createLineElements";
 
 export default function useEditorModel(ref_content: () => HTMLElement) {
-  const { _setSelection, lines, _setLines } = useEditorContext();
+  const { viewState } = useEditorContext();
 
   const lineElementToIdx = new Map<HTMLElement, number>();
-  const lineElements = createLineElements(lines(), lineElementToIdx);
+  const lineElements = createLineElements(viewState.lines(), lineElementToIdx);
 
   const observer = new MutationObserver((mutations) => {
     // Batch changes to handle rapid addition & deletion of elements
-    const newLines = lines().slice();
+    const newLines = viewState.lines().slice();
 
     for (let i = 0; i < mutations.length; i++) {
       const mutation = mutations[i];
@@ -106,12 +106,13 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
       }
     }
 
-    _setLines(newLines);
+    viewState._setLines(newLines);
   });
 
   const onBeforeInput = createOnBeforeInputListener(ref_content);
   const onSelectionChange = createOnSelectionChangeListener(
-    lineElementToIdx, _setSelection,
+    lineElementToIdx,
+    viewState._setSel,
   );
 
   return {
