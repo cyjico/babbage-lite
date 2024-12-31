@@ -7,7 +7,7 @@
 export enum TokenType {
   Unknown = "Unknown",
   // Number:
-  // N<3-digit number>
+  // N<3-digit number> <number>
   NumberCard = "NumberCard",
   // Operation:
   // + - * x /
