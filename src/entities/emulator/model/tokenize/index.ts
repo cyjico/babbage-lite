@@ -40,7 +40,10 @@ export default function tokenize(expression: string): Token[] {
         i,
         (char) => isDigit(char) || char === ".",
       );
-      tokens.push({ type: TokenType.LiteralNumber, value: expression.slice(i, lastIndex) });
+      tokens.push({
+        type: TokenType.LiteralNumber,
+        value: expression.slice(i, lastIndex),
+      });
       i += lastIndex - i;
       continue;
     }
@@ -63,3 +66,5 @@ export default function tokenize(expression: string): Token[] {
 
   return tokens;
 }
+
+export type { Token, TokenType };
