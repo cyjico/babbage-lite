@@ -5,8 +5,10 @@ import {
   JSX,
   Accessor,
   Setter,
+  createEffect,
 } from "solid-js";
 import EditorSelection from "./lib/EditorSelection";
+import emulator from "@/entities/emulator";
 
 interface EditorContextProviderValue {
   viewState: {
@@ -32,13 +34,25 @@ export default function EditorContextProvider(props: {
   const [sel, _setSel] = createSignal<EditorSelection>();
   const [lines, _setLines] = createSignal<string[]>(
     [
-      "N000 10",
-      "N001 5",
-      "",
+      "N000 4",
+      "N001 3.28",
+      "N002 1",
+      "*",
       "L000",
+      "L001",
+      "S002",
+      "P",
+      "CF?1",
+      "B # I will get skipped...",
+      "H",
       `# Yes, shit... Yes, thank you so much... Thank you... That might just what I need to buss, and thats just what I need to buss, and ambasing! Aughh! Ambasing! Augh!! Ambasing!! Auughhh shit aaauughhh! Auuughh shit! Aughh!`,
-    ].concat(Array(25).fill("")),
+    ].concat(Array(18).fill("")),
   );
+
+  // TODO: For testing purposes, please remove later.
+  createEffect(() => {
+    emulator.interpret(lines());
+  });
 
   return (
     <EditorContext.Provider
