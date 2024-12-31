@@ -1,9 +1,11 @@
 import { Token, TokenType } from "./types";
+export type { Token, TokenType };
+
 import consumeWhile from "./consumeWhile";
-import findMatchingKeyword from "./findMatchingKeyword";
 import isDigit from "./isDigit";
 import isWhitespace from "./isWhitespace";
 import isOperator from "./isOperator";
+import findKeyword from "./findKeyword";
 
 export default function tokenize(expression: string): Token[] {
   const tokens: Token[] = [];
@@ -18,22 +20,22 @@ export default function tokenize(expression: string): Token[] {
       continue;
     }
 
-    // Handle keywords
-    const keyword = findMatchingKeyword(expression, i);
-    if (keyword) {
-      tokens.push({ type: TokenType.Keyword, value: keyword });
-      i += keyword.length;
+    // Handle keywords (number, action, combinatorial, variable)
+    const keywordMatch = findKeyword(expression, i);
+    if (keywordMatch) {
+      tokens.push(keywordMatch);
+      i += keywordMatch.value.length;
       continue;
     }
 
-    // Handle operators
+    // Handle operation cards
     if (isOperator(curChar)) {
-      tokens.push({ type: TokenType.Operator, value: curChar });
+      tokens.push({ type: TokenType.OperationCard, value: curChar });
       i++;
       continue;
     }
 
-    // Handle literal numbers
+    // Handle numberic literals
     if (isDigit(curChar)) {
       const lastIndex = consumeWhile(
         expression,
@@ -41,7 +43,7 @@ export default function tokenize(expression: string): Token[] {
         (char) => isDigit(char) || char === ".",
       );
       tokens.push({
-        type: TokenType.LiteralNumber,
+        type: TokenType.NumericLiteral,
         value: expression.slice(i, lastIndex),
       });
       i += lastIndex - i;
@@ -50,8 +52,7 @@ export default function tokenize(expression: string): Token[] {
 
     // Handle comments
     if (curChar === "#") {
-      const lastIndex = consumeWhile(expression, i, (char) => char !== "\n");
-      i += lastIndex - i;
+      i = consumeWhile(expression, i, (char) => char !== "\n");
       continue;
     }
 
@@ -66,5 +67,3 @@ export default function tokenize(expression: string): Token[] {
 
   return tokens;
 }
-
-export type { Token, TokenType };
