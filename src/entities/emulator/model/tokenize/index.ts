@@ -73,3 +73,5 @@ export default function tokenize(lines: string[]) {
 
   return tokens;
 }
+
+export { type Token, TokenType };
