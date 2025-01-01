@@ -11,10 +11,10 @@ const cardGroups = new Map([
 
 const cardGroupToTokenType: Record<
   KeyOfMap<typeof cardGroups>,
-  [TokenType, TokenType.NumericLiteral | TokenType.AddressLiteral]
+  [TokenType, TokenType]
 > = {
   number: [TokenType.NumberCard, TokenType.AddressLiteral],
-  combinatorial: [TokenType.CombinatorialCard, TokenType.NumericLiteral],
+  combinatorial: [TokenType.CombinatorialCard, TokenType.CardinalLiteral],
   variable: [TokenType.VariableCard, TokenType.AddressLiteral],
 };
 
