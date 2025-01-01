@@ -18,27 +18,31 @@ const cardGroupToTokenType: Record<
   variable: [TokenType.VariableCard, TokenType.AddressLiteral],
 };
 
-export default function getCardWithInt(input: string, atStart: number) {
+export default function getCardWithInt(line: string, col: number, row: number) {
   for (const [cardGroup, cards] of cardGroups) {
     for (const card of cards) {
-      const idxAfterCard = atStart + card.length;
+      const idxAfterCard = col + card.length;
 
-      if (input.slice(atStart, idxAfterCard) === card) {
+      if (line.slice(col, idxAfterCard) === card) {
         const output: [Token, Token?] = [
           {
             type: cardGroupToTokenType[cardGroup][0],
-            value: card,
+            value: card as string,
+            row,
+            col,
           },
         ];
 
-        const idxAfterInt = findInt(input, idxAfterCard);
+        const idxAfterInt = findInt(line, idxAfterCard);
         if (
           idxAfterInt !== idxAfterCard &&
-          isWhitespace(input[idxAfterInt] || "\n")
+          isWhitespace(line[idxAfterInt] || "\n")
         )
           output.push({
-            type: cardGroupToTokenType[cardGroup][1],
-            value: input.slice(idxAfterCard, idxAfterInt),
+            type: cardGroupToTokenType[cardGroup][1] as TokenType,
+            value: line.slice(idxAfterCard, idxAfterInt),
+            row,
+            col,
           });
 
         return output;

@@ -23,14 +23,14 @@ export default function tokenize(lines: string[]) {
 
       // Handle cards (e.g. 'P')
       let match = null;
-      if ((match = getCard(line, col))) {
+      if ((match = getCard(line, col, row))) {
         tokens.push(match);
         col += match.value.length;
         continue;
       }
 
       // Handle cards with an integer (e.g. `N012`)
-      if ((match = getCardWithInt(line, col))) {
+      if ((match = getCardWithInt(line, col, row))) {
         if (!match[1])
           throw new LexicalError(
             row + 1,
@@ -49,6 +49,8 @@ export default function tokenize(lines: string[]) {
         tokens.push({
           type: TokenType.NumericLiteral,
           value: line.slice(col, afterEnd),
+          row,
+          col,
         });
         col += afterEnd - col;
         continue;

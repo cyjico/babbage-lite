@@ -12,19 +12,21 @@ const cardGroupToTokenType: Record<KeyOfMap<typeof cardGroups>, TokenType> = {
   operation: TokenType.OperationCard,
 };
 
-export default function getCard(input: string, atStart: number): Token | null {
+export default function getCard(line: string, col: number, row: number) {
   for (const [cardGroup, cards] of cardGroups) {
     for (const card of cards) {
-      const idxAfterCard = atStart + card.length;
+      const idxAfterCard = col + card.length;
 
       if (
-        input.slice(atStart, idxAfterCard) === card &&
-        isWhitespace(input[idxAfterCard] || "\n")
+        line.slice(col, idxAfterCard) === card &&
+        isWhitespace(line[idxAfterCard] || "\n")
       )
         return {
           type: cardGroupToTokenType[cardGroup],
           value: card,
-        };
+          row,
+          col,
+        } as Token;
     }
   }
 
