@@ -51,7 +51,11 @@ export default function EditorContextProvider(props: {
 
   // TODO: For testing purposes, please remove later.
   createEffect(() => {
-    emulator.interpret(lines());
+    try {
+      emulator.interpret(lines());
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   return (
