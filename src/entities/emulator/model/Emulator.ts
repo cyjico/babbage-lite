@@ -14,10 +14,7 @@ export default class Emulator {
 
   interpret(lines: string[]) {
     // 1. lexical analysis
-    const tokens = [];
-    for (let i = 0; i < lines.length; i++) {
-      tokens.push(...tokenize(lines[i]));
-    }
+    const tokens = tokenize(lines);
     console.log(tokens);
 
     // 2. syntax analysis

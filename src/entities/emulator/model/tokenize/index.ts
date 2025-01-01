@@ -1,68 +1,74 @@
-import { Token, TokenType } from "./types";
-export type { Token, TokenType };
-
-import consumeWhile from "./consumeWhile";
-import isDigit from "./isDigit";
+import { TokenType, Token } from "./types";
+import findFloat from "./findFloat";
+import getCardWithInt from "./getCardWithInt";
+import getCard from "./getCard";
 import isWhitespace from "./isWhitespace";
-import isOperator from "./isOperator";
-import findKeyword from "./findKeyword";
+import LexicalError from "@/shared/lib/LexicalError";
 
-export default function tokenize(expression: string): Token[] {
+export default function tokenize(lines: string[]) {
   const tokens: Token[] = [];
-  let i = 0;
 
-  while (i < expression.length) {
-    const curChar = expression[i];
+  for (let row = 0; row < lines.length; row++) {
+    const line = lines[row];
 
-    // Handle whitespace
-    if (isWhitespace(curChar)) {
-      i++;
-      continue;
-    }
+    let col = 0;
+    while (col < line.length) {
+      const curChar = line[col];
 
-    // Handle keywords (number, action, combinatorial, variable)
-    const keywordMatch = findKeyword(expression, i);
-    if (keywordMatch) {
-      tokens.push(keywordMatch);
-      i += keywordMatch.value.length;
-      continue;
-    }
+      // Handle whitespace
+      if (isWhitespace(curChar)) {
+        col++;
+        continue;
+      }
 
-    // Handle operation cards
-    if (isOperator(curChar)) {
-      tokens.push({ type: TokenType.OperationCard, value: curChar });
-      i++;
-      continue;
-    }
+      // Handle cards (e.g. 'P')
+      let match = null;
+      if ((match = getCard(line, col))) {
+        tokens.push(match);
+        col += match.value.length;
+        continue;
+      }
 
-    // Handle numberic literals
-    if (isDigit(curChar)) {
-      const lastIndex = consumeWhile(
-        expression,
-        i,
-        (char) => isDigit(char) || char === ".",
+      // Handle cards with an integer (e.g. `N012`)
+      if ((match = getCardWithInt(line, col))) {
+        if (!match[1])
+          throw new LexicalError(
+            row + 1,
+            col + 1,
+            "Expected an integer after " + `'${match[0].value}'`,
+          );
+
+        tokens.push(match[0], match[1]);
+        col += match[0].value.length + match[1].value.length;
+        continue;
+      }
+
+      // Handle numeric literals
+      let afterEnd = null;
+      if ((afterEnd = findFloat(line, col)) !== col) {
+        tokens.push({
+          type: TokenType.NumericLiteral,
+          value: line.slice(col, afterEnd),
+        });
+        col += afterEnd - col;
+        continue;
+      }
+
+      // Handle single-line comments
+      if (curChar === "#") {
+        col = line.length;
+        continue;
+      }
+
+      // Handle unknown characters
+      throw new LexicalError(
+        row + 1,
+        col + 1,
+        `Unrecognized character found '${
+          line[col]
+        }' in '${line.slice(0, col)}' and '${line.slice(col + 1)}'`,
       );
-      tokens.push({
-        type: TokenType.NumericLiteral,
-        value: expression.slice(i, lastIndex),
-      });
-      i += lastIndex - i;
-      continue;
     }
-
-    // Handle comments
-    if (curChar === "#") {
-      i = consumeWhile(expression, i, (char) => char !== "\n");
-      continue;
-    }
-
-    // Handle unknown characters
-    throw new Error(
-      "Unrecognized character found in source:\n\n" +
-        expression.slice(0, i) +
-        `>>${expression[i]}<<` +
-        expression.slice(i + 1),
-    );
   }
 
   return tokens;
