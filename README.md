@@ -1,12 +1,12 @@
 # Babbage Lite
 
-**Babbage Lite** is an **Analytical Engine** emulator based on a *certain professor's* simplified lesson on Charles Babbage's Analytical Engine at *a certain university*. It is inspired by John Walker's [Analytical Engine Emulator](https://fourmilab.ch/babbage/emulator.html).
+**Babbage Lite** is an **Analytical Engine** emulator based on a _certain professor's_ simplified lesson on Charles Babbage's Analytical Engine at _a certain university_. It is inspired by John Walker's [Analytical Engine Emulator](https://fourmilab.ch/babbage/emulator.html).
 
 This emulator aims to provide a simplified yet functional approach to understanding Babbage's design and its basic principles.
 
 ## Key Differences Between the Original Model & the Simplified Model
 
-Below are some key differences between the original machine and the *certain professor's* simplified model:
+Below are some key differences between the original machine and the _certain professor's_ simplified model:
 
 |                           | **Original Analytical Engine**                                                         | **Simplified Analytical Engine**                            |
 | :------------------------ | :------------------------------------------------------------------------------------- | :---------------------------------------------------------- |

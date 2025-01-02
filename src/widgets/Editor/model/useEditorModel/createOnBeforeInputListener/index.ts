@@ -5,7 +5,9 @@ import onInsertLineBreak from "./onInsertLineBreak";
  *
  * @param ref_content Function that points to the `content` element.
  */
-export default function createOnBeforeInputListener(ref_content: () => HTMLElement) {
+export default function createOnBeforeInputListener(
+  ref_content: () => HTMLElement,
+) {
   return function (ev: InputEvent) {
     const sel = window.getSelection();
     if (!(sel && sel.anchorNode) || sel.type === "None") {
