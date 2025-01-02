@@ -12,7 +12,11 @@ const cardGroupToTokenType: Record<KeyOfMap<typeof cardGroups>, TokenType> = {
   operation: TokenType.OperationCard,
 };
 
-export default function getCard(line: string, ln: number, col: number) {
+export default function getCard(
+  line: string,
+  ln: number,
+  col: number,
+): Token | null {
   for (const [cardGroup, cards] of cardGroups) {
     for (const card of cards) {
       const idxAfterCard = col + card.length;
@@ -23,10 +27,11 @@ export default function getCard(line: string, ln: number, col: number) {
       )
         return {
           type: cardGroupToTokenType[cardGroup],
-          value: card,
+          lexeme: card,
           ln,
           col,
-        } as Token;
+          colend: col + card.length,
+        };
     }
   }
 

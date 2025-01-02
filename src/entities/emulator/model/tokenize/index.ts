@@ -25,7 +25,7 @@ export default function tokenize(lines: string[]) {
       let match = null;
       if ((match = getCard(line, ln, col))) {
         tokens.push(match);
-        col += match.value.length;
+        col += match.lexeme.length;
         continue;
       }
 
@@ -35,11 +35,11 @@ export default function tokenize(lines: string[]) {
           throw new LexicalError(
             ln + 1,
             col + 1,
-            "Expected an integer after " + `'${match[0].value}'`,
+            "Expected an integer after " + `'${match[0].lexeme}'`,
           );
 
         tokens.push(match[0], match[1]);
-        col += match[0].value.length + match[1].value.length;
+        col += match[0].lexeme.length + match[1].lexeme.length;
         continue;
       }
 
@@ -48,9 +48,10 @@ export default function tokenize(lines: string[]) {
       if ((afterEnd = findFloat(line, col)) !== col) {
         tokens.push({
           type: TokenType.NumericLiteral,
-          value: line.slice(col, afterEnd),
+          lexeme: line.slice(col, afterEnd),
           ln,
           col,
+          colend: afterEnd,
         });
         col += afterEnd - col;
         continue;

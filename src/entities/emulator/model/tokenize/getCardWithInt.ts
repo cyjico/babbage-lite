@@ -27,9 +27,10 @@ export default function getCardWithInt(line: string, ln: number, col: number) {
         const output: [Token, Token?] = [
           {
             type: cardGroupToTokenType[cardGroup][0],
-            value: card as string,
+            lexeme: card as string,
             ln,
             col,
+            colend: col + card.length,
           },
         ];
 
@@ -37,13 +38,16 @@ export default function getCardWithInt(line: string, ln: number, col: number) {
         if (
           idxAfterInt !== idxAfterCard &&
           isWhitespace(line[idxAfterInt] || "\n")
-        )
+        ) {
+          const intLexeme = line.slice(idxAfterCard, idxAfterInt);
           output.push({
             type: cardGroupToTokenType[cardGroup][1] as TokenType,
-            value: line.slice(idxAfterCard, idxAfterInt),
+            lexeme: intLexeme,
             ln,
-            col,
+            col: output[0].colend,
+            colend: output[0].colend + intLexeme.length,
           });
+        }
 
         return output;
       }
