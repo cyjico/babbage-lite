@@ -1,6 +1,6 @@
 export default class LexicalError extends Error {
-  constructor(row: number, column: number, message: string) {
-    super(`${message} at line ${row}, column ${column}`);
+  constructor(ln: number, col: number, message: string) {
+    super(`${message} at line ${ln}, column ${col}`);
     this.name = "LexicalError";
   }
 }

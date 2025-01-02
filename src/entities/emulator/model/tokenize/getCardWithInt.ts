@@ -18,7 +18,7 @@ const cardGroupToTokenType: Record<
   variable: [TokenType.VariableCard, TokenType.AddressLiteral],
 };
 
-export default function getCardWithInt(line: string, col: number, row: number) {
+export default function getCardWithInt(line: string, ln: number, col: number) {
   for (const [cardGroup, cards] of cardGroups) {
     for (const card of cards) {
       const idxAfterCard = col + card.length;
@@ -28,7 +28,7 @@ export default function getCardWithInt(line: string, col: number, row: number) {
           {
             type: cardGroupToTokenType[cardGroup][0],
             value: card as string,
-            row,
+            ln,
             col,
           },
         ];
@@ -41,7 +41,7 @@ export default function getCardWithInt(line: string, col: number, row: number) {
           output.push({
             type: cardGroupToTokenType[cardGroup][1] as TokenType,
             value: line.slice(idxAfterCard, idxAfterInt),
-            row,
+            ln,
             col,
           });
 

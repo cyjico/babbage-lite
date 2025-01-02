@@ -8,8 +8,8 @@ import LexicalError from "@/shared/lib/LexicalError";
 export default function tokenize(lines: string[]) {
   const tokens: Token[] = [];
 
-  for (let row = 0; row < lines.length; row++) {
-    const line = lines[row];
+  for (let ln = 0; ln < lines.length; ln++) {
+    const line = lines[ln];
 
     let col = 0;
     while (col < line.length) {
@@ -23,17 +23,17 @@ export default function tokenize(lines: string[]) {
 
       // Handle cards (e.g. 'P')
       let match = null;
-      if ((match = getCard(line, col, row))) {
+      if ((match = getCard(line, ln, col))) {
         tokens.push(match);
         col += match.value.length;
         continue;
       }
 
       // Handle cards with an integer (e.g. `N012`)
-      if ((match = getCardWithInt(line, col, row))) {
+      if ((match = getCardWithInt(line, ln, col))) {
         if (!match[1])
           throw new LexicalError(
-            row + 1,
+            ln + 1,
             col + 1,
             "Expected an integer after " + `'${match[0].value}'`,
           );
@@ -49,7 +49,7 @@ export default function tokenize(lines: string[]) {
         tokens.push({
           type: TokenType.NumericLiteral,
           value: line.slice(col, afterEnd),
-          row,
+          ln,
           col,
         });
         col += afterEnd - col;
@@ -64,7 +64,7 @@ export default function tokenize(lines: string[]) {
 
       // Handle unknown characters
       throw new LexicalError(
-        row + 1,
+        ln + 1,
         col + 1,
         `Unrecognized character found '${
           line[col]
