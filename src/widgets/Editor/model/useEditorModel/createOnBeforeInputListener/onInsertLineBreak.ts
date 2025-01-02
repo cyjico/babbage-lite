@@ -1,4 +1,5 @@
 import getLineElement from "../getLineElement";
+import setLineElementContent from "../setLineElementContent";
 
 export default function onInsertLineBreak(
   sel: Selection,
@@ -11,7 +12,7 @@ export default function onInsertLineBreak(
   switch (sel.type) {
     case "Caret":
       selRange.setStart(
-        breakLine(endLine, selRange.startOffset, selRange.endOffset),
+        breakLineElement(endLine, selRange.startOffset, selRange.endOffset),
         0,
       );
       break;
@@ -37,7 +38,7 @@ export default function onInsertLineBreak(
         // - Selection has a single line
 
         selRange.setStart(
-          breakLine(endLine, selRange.startOffset, selRange.endOffset),
+          breakLineElement(endLine, selRange.startOffset, selRange.endOffset),
           0,
         );
       }
@@ -53,7 +54,11 @@ export default function onInsertLineBreak(
  *
  * @returns Newline made from the function.
  */
-function breakLine(line: HTMLElement, start: number, end: number) {
+function breakLineElement(
+  ref_lineElement: HTMLElement,
+  start: number,
+  end: number,
+) {
   if (start > end) {
     // Self-inverse property: a XOR a = 0
     start = start ^ end; // a XOR b
@@ -63,27 +68,13 @@ function breakLine(line: HTMLElement, start: number, end: number) {
 
   const newline = document.createElement("div");
   newline.classList.add("line");
-  setLineContent(newline, line.textContent!.slice(end));
-  line.insertAdjacentElement("afterend", newline);
+  setLineElementContent(newline, ref_lineElement.textContent!.slice(end));
+  ref_lineElement.insertAdjacentElement("afterend", newline);
 
-  setLineContent(line, line.textContent!.slice(0, start));
+  setLineElementContent(
+    ref_lineElement,
+    ref_lineElement.textContent!.slice(0, start),
+  );
 
   return newline;
-}
-
-/**
- * Sets the `textContent` of a `.line` element.
- *
- * Take note that setting textContent on a node ***removes all*** of the node's
- * children. It then replaces them with a single text node with the given string
- * value.
- *
- * Therefore, it is guaranteed that the ***element will always have a text
- * node*** and, if empty, a `<br />` element.
- */
-function setLineContent(ref_line: HTMLElement, textContent = "") {
-  ref_line.textContent = textContent;
-
-  if (textContent.length === 0)
-    ref_line.appendChild(document.createElement("br"));
 }
