@@ -14,7 +14,7 @@ const cardGroupToTokenType: Record<
   [TokenType, TokenType]
 > = {
   number: [TokenType.NumberCard, TokenType.AddressLiteral],
-  combinatorial: [TokenType.CombinatorialCard, TokenType.CardinalLiteral],
+  combinatorial: [TokenType.CombinatorialCard, TokenType.NumericLiteral],
   variable: [TokenType.VariableCard, TokenType.AddressLiteral],
 };
 

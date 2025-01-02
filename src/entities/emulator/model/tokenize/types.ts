@@ -23,7 +23,6 @@ export enum TokenType {
   // L<3-digit number> Z<3-digit number> S<3-digit number>
   VariableCard = "VariableCard",
   AddressLiteral = "AddressLiteral",
-  CardinalLiteral = "CardinalLiteral",
   NumericLiteral = "NumericLiteral",
 }
 
