@@ -2,13 +2,13 @@ import getSelf from "@/shared/lib/getSelf";
 import { useEditorContext } from "../../ContextProvider";
 import createOnSelectionChangeListener from "./createOnSelectionChangeListener";
 import createOnBeforeInputListener from "./createOnBeforeInputListener";
-import createLineElements from "./createLineElements";
+import initLineElements from "./initLineElements";
 
 export default function useEditorModel(ref_content: () => HTMLElement) {
   const { viewState } = useEditorContext();
 
   const lineElementToIdx = new Map<HTMLElement, number>();
-  const lineElements = createLineElements(viewState.lines(), lineElementToIdx);
+  const lineElements = initLineElements(viewState.lines(), lineElementToIdx);
 
   const observer = new MutationObserver((mutations) => {
     // Batch changes to handle rapid addition & deletion of elements

@@ -1,4 +1,4 @@
-export default function createLineElements(
+export default function initLineElements(
   lines: string[],
   ref_lineElementToIdx?: Map<HTMLElement, number>,
 ) {
