@@ -57,7 +57,7 @@ export default function tokenize(lines: string[]) {
       }
 
       // Handle unknown characters
-      throw LexicalError.unexpectedCharacter(lines, ln, col);
+      throw LexicalError.unknownToken(lines, ln, col);
     }
   }
 

@@ -4,13 +4,20 @@ export default class LexicalError extends Error {
     this.name = "LexicalError";
   }
 
-  static unexpectedCharacter(lines: string[], ln: number, col: number) {
+  static unknownToken(lines: string[], ln: number, col: number) {
+    const line = lines[ln];
+
+    let tokenStart = col;
+    while (tokenStart > 0 && line[tokenStart - 1] !== " ") tokenStart--;
+
+    let tokenEnd = col;
+    while (tokenEnd < line.length && line[tokenEnd + 1] !== " ") tokenEnd++;
+
     return new LexicalError(
-      `Unrecognized character '${
-        lines[ln][col]
-      }' found at line ${ln + 1}, column ${col + 1}\n\n` +
-        `${lines[ln]}\n` +
-        `${lines[ln].slice(0, col).replace(/./g, " ")}^`,
+      `Unknown token '${line.slice(
+        tokenStart,
+        tokenEnd,
+      )}' at line ${ln + 1}, column ${col + 1}`,
     );
   }
 }
