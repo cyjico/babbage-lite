@@ -1,17 +1,17 @@
 import isDigit from "./isDigit";
 
-export default function findFloat(input: string, atStart: number) {
+export default function findFloat(input: string, start: number) {
   let hasDecimalPoint = false;
-  for (; atStart < input.length; atStart++) {
-    if (input[atStart] === ".") {
+  for (; start < input.length; start++) {
+    if (input[start] === ".") {
       if (hasDecimalPoint) break;
 
       hasDecimalPoint = true;
       continue;
     }
 
-    if (!isDigit(input[atStart])) break;
+    if (!isDigit(input[start])) break;
   }
 
-  return atStart;
+  return start;
 }
