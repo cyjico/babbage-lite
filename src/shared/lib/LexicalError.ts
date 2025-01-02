@@ -11,7 +11,7 @@ export default class LexicalError extends Error {
     while (tokenStart > 0 && line[tokenStart - 1] !== " ") tokenStart--;
 
     let tokenEnd = col;
-    while (tokenEnd < line.length && line[tokenEnd + 1] !== " ") tokenEnd++;
+    while (tokenEnd < line.length && line[tokenEnd] !== " ") tokenEnd++;
 
     return new LexicalError(
       `Unknown token '${line.slice(
