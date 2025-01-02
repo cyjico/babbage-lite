@@ -25,7 +25,7 @@ export default function tokenize(lines: string[]) {
       let match = null;
       if ((match = getCard(line, ln, col))) {
         tokens.push(match);
-        col += match.lexeme.length;
+        col = match.colend;
         continue;
       }
 
@@ -46,7 +46,7 @@ export default function tokenize(lines: string[]) {
           col,
           colend: afterEnd,
         });
-        col += afterEnd - col;
+        col = afterEnd;
         continue;
       }
 
@@ -57,13 +57,7 @@ export default function tokenize(lines: string[]) {
       }
 
       // Handle unknown characters
-      throw new LexicalError(
-        ln + 1,
-        col + 1,
-        `Unrecognized character found '${
-          line[col]
-        }' in '${line.slice(0, col)}' and '${line.slice(col + 1)}'`,
-      );
+      throw LexicalError.unexpectedCharacter(lines, ln, col);
     }
   }
 
