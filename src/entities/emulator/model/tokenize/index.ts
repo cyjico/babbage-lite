@@ -1,4 +1,4 @@
-import { TokenType, Token } from "./types";
+import { TokenType, Token, TokenWithType } from "./types";
 import findFloat from "./findFloat";
 import getCardWithInt from "./getCardWithInt";
 import getCard from "./getCard";
@@ -31,15 +31,8 @@ export default function tokenize(lines: string[]) {
 
       // Handle cards with an integer (e.g. `N012`)
       if ((match = getCardWithInt(line, ln, col))) {
-        if (!match[1])
-          throw new LexicalError(
-            ln + 1,
-            col + 1,
-            "Expected an integer after " + `'${match[0].lexeme}'`,
-          );
-
-        tokens.push(match[0], match[1]);
-        col += match[0].lexeme.length + match[1].lexeme.length;
+        tokens.push(match);
+        col = match.colend;
         continue;
       }
 
@@ -77,4 +70,4 @@ export default function tokenize(lines: string[]) {
   return tokens;
 }
 
-export { type Token, TokenType };
+export { TokenType, type Token, type TokenWithType as TokenOfType };
