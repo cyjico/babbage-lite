@@ -1,5 +1,5 @@
-import { KeyOfMap } from "@/shared/lib/types";
-import { Token, TokenType } from "./types";
+import { KeyOfMap, valueof } from "@/shared/lib/types";
+import { TokenType, TokenWithType } from "./types";
 import isWhitespace from "./isWhitespace";
 
 const cardGroups = new Map([
@@ -16,7 +16,7 @@ export default function getCard(
   line: string,
   ln: number,
   col: number,
-): Token | null {
+): TokenWithType<valueof<typeof cardGroupToTokenType>> | null {
   for (const [cardGroup, cards] of cardGroups) {
     for (const card of cards) {
       const idxAfterCard = col + card.length;
@@ -30,7 +30,7 @@ export default function getCard(
           lexeme: card,
           ln,
           col,
-          colend: col + card.length,
+          colend: idxAfterCard,
         };
     }
   }
