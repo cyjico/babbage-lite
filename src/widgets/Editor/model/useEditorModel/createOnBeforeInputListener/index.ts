@@ -1,3 +1,4 @@
+import onInsertFrom from "./onInsertFrom";
 import onInsertLineBreak from "./onInsertLineBreak";
 
 /**
@@ -18,12 +19,30 @@ export default function createOnBeforeInputListener(
       onInsertLineBreak(sel, sel.getRangeAt(0), ref_content());
 
       ev.preventDefault();
-    } else if (
+      return;
+    }
+
+    // Handle special case for backspace on empty content
+    if (
       ev.inputType === "deleteContentBackward" &&
       ref_content().childElementCount === 1 &&
       ref_content().firstElementChild!.textContent!.length === 0
     ) {
       ev.preventDefault();
+      return;
+    }
+
+    if (
+      (ev.inputType === "insertFromYank" ||
+        ev.inputType === "insertFromDrop" ||
+        ev.inputType === "insertFromPaste" ||
+        ev.inputType === "insertFromPasteAsQuotation") &&
+      typeof ev.data === "string"
+    ) {
+      onInsertFrom(sel.getRangeAt(0), ref_content(), ev.data);
+
+      ev.preventDefault();
+      return;
     }
   };
 }
