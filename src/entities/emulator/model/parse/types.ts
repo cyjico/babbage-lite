@@ -39,7 +39,7 @@ export interface ActionCardNode extends ASTCard_<ASTCardType.ActionCard> {
 export interface CombinatorialCardNode
   extends ASTCard_<ASTCardType.CombinatorialCard> {
   direction: "F" | "B";
-  condition: "!" | "?";
+  condition: "+" | "?";
   skips: number;
 }
 

@@ -5,7 +5,7 @@ import isWhitespace from "./isWhitespace";
 
 const cardGroups = new Map([
   ["number", ["N"]],
-  ["combinatorial", ["CF?", "CF!", "CB?", "CB!"]],
+  ["combinatorial", ["CF?", "CF+", "CB?", "CB+"]],
   ["variable", ["L", "S"]],
 ] as const);
 

@@ -42,7 +42,7 @@ export default function EditorContextProvider(props: {
       "L001",
       "S002",
       "P",
-      "CF!1",
+      "CF+1",
       "B # I will get skipped...",
       "H",
       `# Yes, shit... Yes, thank you so much... Thank you... That might just what I need to buss, and thats just what I need to buss, and ambasing! Aughh! Ambasing! Augh!! Ambasing!! Auughhh shit aaauughhh! Auuughh shit! Aughh!`,

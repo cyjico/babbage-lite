@@ -17,7 +17,7 @@ export enum TokenType {
   ActionCard = "ActionCard",
   // Combinatorial:
   // CF?<number> CB?<number>
-  // CF!<number> CB!<number>
+  // CF+<number> CB+<number>
   CombinatorialCard = "CombinatorialCard",
   // Variable:
   // L<3-digit number> Z<3-digit number> S<3-digit number>
