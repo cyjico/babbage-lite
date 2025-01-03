@@ -1,6 +1,6 @@
 import { TokenType, Token, TokenWithType } from "./types";
 import findFloat from "./findFloat";
-import getCardWithInt from "./getCardWithInt";
+import getCardWithDigits from "./getCardWithDigits";
 import getCard from "./getCard";
 import isWhitespace from "./isWhitespace";
 import LexicalError from "@/shared/lib/LexicalError";
@@ -29,8 +29,8 @@ export default function tokenize(lines: string[]) {
         continue;
       }
 
-      // Handle cards with an integer (e.g. `N012`)
-      if ((match = getCardWithInt(line, ln, col))) {
+      // Handle cards with a digit (e.g. `N012`)
+      if ((match = getCardWithDigits(line, ln, col))) {
         tokens.push(match);
         col = match.colend;
         continue;

@@ -1,6 +1,6 @@
 import { KeyOfMap, valueof } from "@/shared/lib/types";
 import { TokenType, TokenWithType } from "./types";
-import findInt from "./findInt";
+import isDigit from "./isDigit";
 import isWhitespace from "./isWhitespace";
 
 const cardGroups = new Map([
@@ -15,7 +15,7 @@ const cardGroupToTokenType: Record<KeyOfMap<typeof cardGroups>, TokenType> = {
   variable: TokenType.VariableCard,
 };
 
-export default function getCardWithInt(
+export default function getCardWithDigits(
   line: string,
   ln: number,
   col: number,
@@ -25,34 +25,48 @@ export default function getCardWithInt(
       const idxAfterCard = col + card.length;
 
       if (line.slice(col, idxAfterCard) === card) {
-        let idxAfterInt;
+        let idxAfterDigit;
         switch (cardGroup) {
           case "number":
           case "variable":
-            idxAfterInt = findInt(line, idxAfterCard, 3);
+            idxAfterDigit = findDigits(line, idxAfterCard, 3);
             break;
           case "combinatorial":
-            idxAfterInt = findInt(line, idxAfterCard);
+            idxAfterDigit = findDigits(line, idxAfterCard);
             break;
         }
 
         if (
-          idxAfterInt === idxAfterCard ||
-          !isWhitespace(line[idxAfterInt] || "\n")
-        ) {
+          !(
+            idxAfterDigit !== idxAfterCard &&
+            isWhitespace(line[idxAfterDigit] || "\n")
+          )
+        )
           return null;
-        }
 
         return {
           type: cardGroupToTokenType[cardGroup],
-          lexeme: line.slice(col, idxAfterInt),
+          lexeme: line.slice(col, idxAfterDigit),
           ln,
           col,
-          colend: idxAfterInt,
+          colend: idxAfterDigit,
         };
       }
     }
   }
 
   return null;
+}
+
+function findDigits(
+  input: string,
+  start: number,
+  length = Number.POSITIVE_INFINITY,
+) {
+  let i = start;
+  for (; i < input.length; i++) {
+    if (!isDigit(input[i]) || i - start >= length) break;
+  }
+
+  return i;
 }
