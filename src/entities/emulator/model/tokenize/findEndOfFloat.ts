@@ -1,6 +1,6 @@
 import isDigit from "./isDigit";
 
-export default function findFloat(input: string, start: number) {
+export default function findEndOfFloat(input: string, start: number) {
   let hasDecimalPoint = false;
   for (; start < input.length; start++) {
     if (input[start] === ".") {

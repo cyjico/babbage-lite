@@ -1,5 +1,5 @@
 import { TokenType, Token, TokenWithType } from "./types";
-import findFloat from "./findFloat";
+import findEndOfFloat from "./findEndOfFloat";
 import getCardWithDigits from "./getCardWithDigits";
 import getCard from "./getCard";
 import isWhitespace from "./isWhitespace";
@@ -38,7 +38,7 @@ export default function tokenize(lines: string[]) {
 
       // Handle numeric literals
       let afterEnd = null;
-      if ((afterEnd = findFloat(line, col)) !== col) {
+      if ((afterEnd = findEndOfFloat(line, col)) !== col) {
         tokens.push({
           type: TokenType.NumericLiteral,
           lexeme: line.slice(col, afterEnd),
