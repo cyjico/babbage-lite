@@ -26,6 +26,17 @@ export default [
     },
   },
   {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      // noUnusedLocals, noUnusedParameters
+      "@typescript-eslint/no-unused-vars": "off",
+      // noFallthroughCasesInSwitch
+      "@typescript-eslint/no-fallthrough": "off",
+      // NOTE: noUncheckedSideEffectImports does not work on my end
+      "@typescript-eslint/no-import-type-side-effects": "error",
+    },
+  },
+  {
     files: ["postcss.config.*"],
     languageOptions: {
       globals: globals.node,
