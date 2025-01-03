@@ -29,10 +29,10 @@ export default function getCardWithDigits(
         switch (cardGroup) {
           case "number":
           case "variable":
-            idxAfterDigit = findDigits(line, idxAfterCard, 3);
+            idxAfterDigit = findEndOfDigits(line, idxAfterCard, 3);
             break;
           case "combinatorial":
-            idxAfterDigit = findDigits(line, idxAfterCard);
+            idxAfterDigit = findEndOfDigits(line, idxAfterCard);
             break;
         }
 
@@ -58,7 +58,7 @@ export default function getCardWithDigits(
   return null;
 }
 
-function findDigits(
+function findEndOfDigits(
   input: string,
   start: number,
   length = Number.POSITIVE_INFINITY,
