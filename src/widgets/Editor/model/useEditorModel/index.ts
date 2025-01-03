@@ -1,4 +1,4 @@
-import getSelf from "@/shared/lib/getSelf";
+import getElementOrParentElement from "@/shared/lib/getElementOrParentElement";
 import { useEditorContext } from "../../ContextProvider";
 import createOnSelectionChangeListener from "./createOnSelectionChangeListener";
 import createOnBeforeInputListener from "./createOnBeforeInputListener";
@@ -83,7 +83,9 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
 
                 // Update indecies
                 if (mutation.nextSibling) {
-                  let curElem = getSelf(mutation.nextSibling) as HTMLElement;
+                  let curElem = getElementOrParentElement(
+                    mutation.nextSibling,
+                  ) as HTMLElement;
                   let curElemIdx = idx;
                   while (curElem) {
                     lineElementToIdx.set(curElem, curElemIdx);

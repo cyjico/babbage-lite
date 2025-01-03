@@ -4,7 +4,7 @@
  *
  * @throws `Error` if the node is not inside an element.
  */
-export default function getSelf(node: Node) {
+export default function getElementOrParentElement(node: Node) {
   if (node.nodeType !== Node.ELEMENT_NODE) {
     if (!node.parentElement)
       throw new Error("Node was found to have no parent element");
