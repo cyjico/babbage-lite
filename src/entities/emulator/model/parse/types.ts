@@ -6,6 +6,9 @@ export enum ASTCardType {
   VariableCard = "VariableCard",
 }
 
+/**
+ * Interface that represents _any_ card in the reader.
+ */
 export interface ASTCard {
   type: ASTCardType;
   ln: number;
@@ -13,7 +16,9 @@ export interface ASTCard {
   colend: number;
 }
 
-// Helper interface
+/**
+ * Helper interface ONLY FOR internal use.
+ */
 interface ASTCard_<T extends ASTCardType> extends ASTCard {
   type: T;
 }
@@ -23,8 +28,7 @@ export interface NumberCardNode extends ASTCard_<ASTCardType.NumberCard> {
   number: number;
 }
 
-export interface OperationCardNode
-  extends ASTCard_<ASTCardType.OperationCard> {
+export interface OperationCardNode extends ASTCard_<ASTCardType.OperationCard> {
   operation: "+" | "-" | "*" | "/";
 }
 
