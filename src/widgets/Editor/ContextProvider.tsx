@@ -45,10 +45,13 @@ export default function EditorContextProvider(props: {
     "S000         # Set cur_num to EGRESS",
     "P            # Print the result of the last arithmetic operation performed",
     "-",
-    "L001         # Load end_num",
-    "L000         # Load cur_num => EGRESS = end_num - cur_num",
-    "CB?8         # If the result is negative, skip back to the loop start",
+    "L000         # Load cur_num",
+    "L001         # Load end_num => EGRESS = cur_num - end_num",
+    "CB?9         # If the result is negative, run-up lever (also known as lever) is set.",
     "H            # Halt the program",
+    "# FAQ: Why is line 13 set to moving the reader 9 cards back? Should it not be 8?",
+    "# It is 9 since the reader has to complete reading CB?9 before moving.",
+    "# Therefore, we end up at line 14 before actually moving the reader."
   ]);
 
   createEffect(() => {
