@@ -32,30 +32,26 @@ export default function EditorContextProvider(props: {
   children?: JSX.Element[];
 }) {
   const [sel, _setSel] = createSignal<EditorSelection>();
-  const [lines, _setLines] = createSignal<string[]>(
-    [
-      "N000 4",
-      "N001 3.28",
-      "N002 1",
-      "*",
-      "L000",
-      "L001",
-      "S002",
-      "P",
-      "CF+1",
-      "B # I will get skipped...",
-      "H",
-      `# Yes, shit... Yes, thank you so much... Thank you... That might just what I need to buss, and thats just what I need to buss, and ambasing! Aughh! Ambasing! Augh!! Ambasing!! Auughhh shit aaauughhh! Auuughh shit! Aughh!`,
-    ].concat(Array(18).fill("")),
-  );
+  const [lines, _setLines] = createSignal<string[]>([
+    "# This program will print from 1 to 10",
+    "N000 0       # cur_num",
+    "N001 10      # end_num",
+    "N002 1       # increment",
+    "+",
+    "L000         # Load cur_num",
+    "L002         # Load increment => EGRESS = cur_num + increment",
+    "S000         # Set cur_num to EGRESS",
+    "P            # Print the result of the last arithmetic operation performed",
+    "-",
+    "L001         # Load end_num",
+    "L000         # Load cur_num => EGRESS = end_num - cur_num",
+    "CB?8         # If the result is negative, skip back to the loop start",
+    "H            # Halt the program",
+  ]);
 
-  // TODO: For testing purposes, please remove later.
   createEffect(() => {
-    try {
-      emulator.interpret(lines());
-    } catch (error) {
-      console.error(error);
-    }
+    // TODO: Remove later! This is for testing the emulator.
+    emulator.interpret(lines());
   });
 
   return (
