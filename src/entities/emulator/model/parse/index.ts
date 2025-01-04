@@ -17,7 +17,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
 
     switch (token.type) {
       case TokenType.NumberCard: {
-        const node = nodifyNumericLiteral(tokens[i++]);
+        const node = nodifyNumericLiteral(tokens[i]);
         if (!node) {
           out_problems.push(
             expectedTokenAfterToken(
@@ -30,6 +30,9 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
           );
           break;
         }
+
+        // Now successful, consume the token!
+        i++
 
         nodes.push({
           type: ASTNodeType.NumberCard,
