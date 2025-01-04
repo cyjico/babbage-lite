@@ -1,14 +1,16 @@
+import emulator from "@/entities/emulator";
+import createProblemOutput from "@/shared/lib/createProblemOutput";
+import { ProblemSeverity } from "@/shared/model/types";
 import {
+  Accessor,
   createContext,
-  useContext,
+  createEffect,
   createSignal,
   JSX,
-  Accessor,
   Setter,
-  createEffect,
+  useContext,
 } from "solid-js";
 import EditorSelection from "./lib/EditorSelection";
-import emulator from "@/entities/emulator";
 
 interface EditorContextProviderValue {
   viewState: {
@@ -51,7 +53,21 @@ export default function EditorContextProvider(props: {
 
   createEffect(() => {
     // TODO: Remove later! This is for testing the emulator.
-    emulator.interpret(lines());
+    const problems = emulator.interpret(lines());
+
+    for (const problem of problems) {
+      switch (problem.severity) {
+        case ProblemSeverity.Error:
+          console.error(createProblemOutput(lines(), problem));
+          break;
+        case ProblemSeverity.Warning:
+          console.warn(createProblemOutput(lines(), problem));
+          break;
+        case ProblemSeverity.Information:
+          console.log(createProblemOutput(lines(), problem));
+          break;
+      }
+    }
   });
 
   return (
