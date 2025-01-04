@@ -46,3 +46,19 @@ export function expectedTokenAfterToken(
     colend,
   };
 }
+
+export function multipleCardsOnTheSameLine(
+  ln: number,
+  col: number,
+  colend: number,
+): Problem {
+  return {
+    severity: ProblemSeverity.Error,
+    code: 2004,
+    ln,
+    col,
+    colend,
+    // For user experience, we just simplify card nodes to cards
+    message: `Multiple cards on the same line.`,
+  };
+}

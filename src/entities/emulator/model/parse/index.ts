@@ -1,11 +1,12 @@
-import { Problem } from "@/shared/model/types";
-import { Token, TokenType } from "../lex";
-import { ASTNode, ASTNodeType } from "./types";
-import nodifyNumericLiteral from "./nodifyNumericLiteral";
 import {
   expectedTokenAfterToken,
+  multipleCardsOnTheSameLine,
   unexpectedToken,
 } from "@/shared/lib/problemTemplates";
+import { Problem } from "@/shared/model/types";
+import { Token, TokenType } from "../lex";
+import nodifyNumericLiteral from "./nodifyNumericLiteral";
+import { ASTNode, ASTNodeType } from "./types";
 
 export default function parse(tokens: Token[], out_problems: Problem[]) {
   const nodes: ASTNode[] = [];
@@ -79,6 +80,22 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
           unexpectedToken(token.ln, token.col, token.col + token.lexeme.length),
         );
         break;
+    }
+
+    // Check if the latest added node was in the same line as the previous one
+    if (
+      nodes.length >= 2 &&
+      nodes[nodes.length - 1].ln === nodes[nodes.length - 2].ln
+    ) {
+      out_problems.push(
+        multipleCardsOnTheSameLine(
+          token.ln,
+          token.col,
+          token.col + token.lexeme.length,
+        ),
+      );
+
+      nodes.pop();
     }
   }
 
