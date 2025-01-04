@@ -1,49 +1,58 @@
-export enum ASTCardType {
-  NumberCard = "NumberCard",
-  OperationCard = "OperationCard",
-  ActionCard = "ActionCard",
-  CombinatorialCard = "CombinatorialCard",
-  VariableCard = "VariableCard",
+export const enum ASTNodeType {
+  NumberCard,
+  OperationCard,
+  ActionCard,
+  CombinatorialCard,
+  VariableCard,
+  NumericLiteral,
 }
 
 /**
- * Interface that represents _any_ card in the reader.
+ * Helper for a ASTNode
  */
-export interface ASTCard {
-  type: ASTCardType;
+interface ASTNode_<T extends ASTNodeType> {
+  type: T;
   ln: number;
   col: number;
-  colend: number;
 }
 
-/**
- * Helper interface ONLY FOR internal use.
- */
-interface ASTCard_<T extends ASTCardType> extends ASTCard {
-  type: T;
+export interface NumberCardNode extends ASTNode_<ASTNodeType.NumberCard> {
+  address: number;
+  number: NumericLiteralNode;
 }
 
-export interface NumberCardNode extends ASTCard_<ASTCardType.NumberCard> {
-  address: `${number}`;
-  number: number;
-}
-
-export interface OperationCardNode extends ASTCard_<ASTCardType.OperationCard> {
+export interface OperationCardNode extends ASTNode_<ASTNodeType.OperationCard> {
   operation: "+" | "-" | "*" | "/";
 }
 
-export interface ActionCardNode extends ASTCard_<ASTCardType.ActionCard> {
+export interface ActionCardNode extends ASTNode_<ASTNodeType.ActionCard> {
   action: "P" | "B" | "H";
 }
 
 export interface CombinatorialCardNode
-  extends ASTCard_<ASTCardType.CombinatorialCard> {
+  extends ASTNode_<ASTNodeType.CombinatorialCard> {
   direction: "F" | "B";
   condition: "+" | "?";
   skips: number;
 }
 
-export interface VariableCardNode extends ASTCard_<ASTCardType.VariableCard> {
+export interface VariableCardNode extends ASTNode_<ASTNodeType.VariableCard> {
   action: "L" | "S";
-  address: `${number}`;
+  address: number;
 }
+
+export interface NumericLiteralNode
+  extends ASTNode_<ASTNodeType.NumericLiteral> {
+  value: number;
+}
+
+/**
+ * Discriminated union of all abstract-syntax tree nodes.
+ */
+export type ASTNode =
+  | NumberCardNode
+  | OperationCardNode
+  | ActionCardNode
+  | CombinatorialCardNode
+  | VariableCardNode
+  | NumericLiteralNode;

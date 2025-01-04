@@ -1,5 +1,6 @@
-import parse from "./parse";
-import tokenize from "./tokenize";
+import { Problem } from "@/shared/model/types";
+import lex from "./lex";
+import parse, { ASTNode } from "./parse";
 
 class Mill {
   operation: "add" | "sub" | "div" | "mul" | "" = "";
@@ -9,21 +10,28 @@ class Mill {
   egressAxis = 0;
 }
 
+type Reader = ASTNode[];
+
 export default class Emulator {
   mill = new Mill();
-  store = new Map<`${number}`, number>();
+  reader: Reader[] = [];
+  store = new Array<number>(999).fill(0);
 
   interpret(lines: string[]) {
+    const problems: Problem[] = [];
+
     // 1. lexical analysis
-    const tokens = tokenize(lines);
+    const tokens = lex(lines, problems);
     console.log("tokenize():", tokens);
 
     // 2. syntax analysis
-    const ast = parse(tokens);
-    console.log("parse():", ast);
+    const nodes = parse(tokens, problems);
+    console.log("parse():", nodes);
 
     // 3. semantic analysis
 
     // 4. runtime execution
+
+    return problems;
   }
 }
