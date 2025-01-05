@@ -1,8 +1,8 @@
 import { Problem, ProblemSeverity } from "../model/types";
 
 export default function createProblemOutput(lines: string[], problem: Problem) {
-  const location = `line ${problem.ln}, column ${problem.col}`;
-  const annoGutter = `${problem.ln} | `;
+  const location = `line ${problem.ln + 1}, column ${problem.col + 1}`;
+  const annoGutter = `${problem.ln + 1} | `;
   const annoLine = lines[problem.ln];
   const anno = `${annoGutter}${annoLine}\n${" ".repeat(
     annoGutter.length + annoLine.slice(0, problem.col).length,
