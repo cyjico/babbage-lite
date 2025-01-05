@@ -51,7 +51,7 @@ export default function EditorContextProvider(props: {
     "H            # Halt the program",
     "# FAQ: Why is line 13 set to moving the reader 9 cards back? Should it not be 8?",
     "# It is 9 since the reader has to complete reading CB?9 before moving.",
-    "# Therefore, we end up at line 14 before actually moving the reader."
+    "# Therefore, we end up at line 14 before actually moving the reader.",
   ]);
 
   createEffect(() => {

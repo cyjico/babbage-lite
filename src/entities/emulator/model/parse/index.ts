@@ -32,7 +32,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         }
 
         // Now successful, consume the token!
-        i++
+        i++;
 
         nodes.push({
           type: ASTNodeType.NumberCard,
