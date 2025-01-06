@@ -6,10 +6,10 @@ import {
 import { Problem } from "@/shared/model/types";
 import { Token, TokenType } from "../lex";
 import nodifyNumericLiteral from "./nodifyNumericLiteral";
-import { ASTNode, ASTNodeType } from "./types";
+import { ASTNodeCard, ASTNodeType } from "./types";
 
 export default function parse(tokens: Token[], out_problems: Problem[]) {
-  const nodes: ASTNode[] = [];
+  const reader: ASTNodeCard[] = [];
 
   let i = 0;
   while (i < tokens.length) {
@@ -34,7 +34,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         // Now successful, consume the token!
         i++;
 
-        nodes.push({
+        reader.push({
           type: ASTNodeType.NumberCard,
           ln: token.ln,
           col: token.col,
@@ -44,7 +44,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         break;
       }
       case TokenType.OperationCard:
-        nodes.push({
+        reader.push({
           type: ASTNodeType.OperationCard,
           operation: token.lexeme,
           ln: token.ln,
@@ -52,7 +52,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         });
         break;
       case TokenType.ActionCard:
-        nodes.push({
+        reader.push({
           type: ASTNodeType.ActionCard,
           action: token.lexeme,
           ln: token.ln,
@@ -60,7 +60,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         });
         break;
       case TokenType.CombinatorialCard:
-        nodes.push({
+        reader.push({
           type: ASTNodeType.CombinatorialCard,
           direction: token.lexeme[1] as "F" | "B",
           condition: token.lexeme[2] as "+" | "?",
@@ -70,7 +70,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         });
         break;
       case TokenType.VariableCard:
-        nodes.push({
+        reader.push({
           type: ASTNodeType.VariableCard,
           action: token.lexeme[0] as "L" | "S",
           address: parseInt(token.lexeme.slice(1)),
@@ -87,8 +87,8 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
 
     // Check if the latest added node was in the same line as the previous one
     if (
-      nodes.length >= 2 &&
-      nodes[nodes.length - 1].ln === nodes[nodes.length - 2].ln
+      reader.length >= 2 &&
+      reader[reader.length - 1].ln === reader[reader.length - 2].ln
     ) {
       out_problems.push(
         multipleCardsOnTheSameLine(
@@ -98,11 +98,11 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         ),
       );
 
-      nodes.pop();
+      reader.pop();
     }
   }
 
-  return nodes;
+  return reader;
 }
 
 export * from "./types";

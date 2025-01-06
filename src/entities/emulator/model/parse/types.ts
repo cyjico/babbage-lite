@@ -47,12 +47,16 @@ export interface NumericLiteralNode
 }
 
 /**
- * Discriminated union of all abstract-syntax tree nodes.
+ * Discriminated union of ONLY abstract-syntax tree nodes that are cards.
  */
-export type ASTNode =
+export type ASTNodeCard =
   | NumberCardNode
   | OperationCardNode
   | ActionCardNode
   | CombinatorialCardNode
-  | VariableCardNode
-  | NumericLiteralNode;
+  | VariableCardNode;
+
+/**
+ * Discriminated union of all abstract-syntax tree nodes.
+ */
+export type ASTNode = ASTNodeCard | NumericLiteralNode;

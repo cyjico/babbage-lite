@@ -1,6 +1,6 @@
-import { Problem } from "@/shared/model/types";
+import { Problem, ProblemSeverity } from "@/shared/model/types";
 import lex from "./lex";
-import parse, { ASTNode } from "./parse";
+import parse, { ASTNodeCard } from "./parse";
 
 class Mill {
   operation: "add" | "sub" | "div" | "mul" | "" = "";
@@ -10,11 +10,9 @@ class Mill {
   egressAxis = 0;
 }
 
-type Reader = ASTNode[];
-
 export default class Emulator {
   mill = new Mill();
-  reader: Reader[] = [];
+  reader: ASTNodeCard[] = [];
   store = new Array<number>(999).fill(0);
 
   interpret(lines: string[]) {
@@ -30,8 +28,12 @@ export default class Emulator {
 
     // 3. semantic analysis
 
-    // 4. runtime execution
-
+    // do not run if there are errors
+    this.reader = !problems.find((v) => v.severity === ProblemSeverity.Error)
+      ? nodes
+      : [];
     return problems;
   }
+
+  async run() {}
 }
