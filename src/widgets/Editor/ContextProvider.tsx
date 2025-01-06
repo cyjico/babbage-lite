@@ -56,7 +56,7 @@ export default function EditorContextProvider(props: {
 
   createEffect(() => {
     // TODO: Remove later! This is for testing the emulator.
-    const problems = emulator.interpret(lines());
+    const problems = emulator.prepare(lines());
 
     for (const problem of problems) {
       switch (problem.severity) {

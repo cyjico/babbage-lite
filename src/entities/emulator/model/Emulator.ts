@@ -14,7 +14,7 @@ export default class Emulator {
   reader: ASTNodeCard[] = [];
   store = new Array<number>(999).fill(0);
 
-  interpret(lines: string[]) {
+  prepare(lines: string[]) {
     const problems: Problem[] = [];
 
     // 1. lexical analysis
