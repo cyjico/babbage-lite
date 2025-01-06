@@ -1,17 +1,16 @@
 import { Problem, ProblemSeverity } from "@/shared/model/types";
 import lex from "./lex";
 import parse, { ASTNodeCard } from "./parse";
-
-class Mill {
-  operation: "add" | "sub" | "div" | "mul" | "" = "";
-  runUpLever = false;
-  ingressAxis1 = 0;
-  ingressAxis2 = 0;
-  egressAxis = 0;
-}
+import { Mill } from "./types";
 
 export default class Emulator {
-  mill = new Mill();
+  mill: Mill = {
+    operation: null,
+    runUpLever: false,
+    ingressAxis1: 0,
+    ingressAxis2: 0,
+    egressAxis: 0,
+  };
   reader: ASTNodeCard[] = [];
   store = new Array<number>(999).fill(0);
 
