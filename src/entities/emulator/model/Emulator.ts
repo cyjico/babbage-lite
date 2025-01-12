@@ -5,6 +5,8 @@ import parse, { ASTNode_Card } from "./parse";
 import { Mill } from "./types";
 
 export default class Emulator {
+  cardChain: ASTNode_Card[] = [];
+
   mill: Mill = {
     operation: null,
     runUpLever: false,
@@ -12,7 +14,6 @@ export default class Emulator {
     ingressAxis2: 0,
     egressAxis: 0,
   };
-  reader: ASTNode_Card[] = [];
   store = new Array<number>(999).fill(0);
 
   prepare(lines: string[]) {
@@ -23,18 +24,18 @@ export default class Emulator {
     console.log("tokenize():", tokens);
 
     // 2. syntax analysis
-    const nodes = parse(tokens, problems);
-    console.log("parse():", nodes);
+    const cards = parse(tokens, problems);
+    console.log("parse():", cards);
 
     // 3. semantic analysis
-    analyze(nodes, problems);
+    analyze(cards, problems);
 
     // do not run if there are errors
-    this.reader = !problems.find((v) => v.severity === ProblemSeverity.Error)
-      ? nodes
+    this.cardChain = !problems.find((v) => v.severity === ProblemSeverity.Error)
+      ? cards
       : [];
     return problems;
   }
 
-  async run() {}
+  async readAll() {}
 }
