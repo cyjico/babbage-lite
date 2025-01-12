@@ -15,6 +15,7 @@ import {
   ASTNode_VariableCard,
   ASTNodeType,
 } from "../parse";
+import { createCFG } from "./createCFG";
 
 /**
  * Conduct semantic analysis on the abstract-syntax tree.
@@ -156,4 +157,8 @@ export default function analyze(
       ),
     );
   }
+
+  // TODO: Analyze control flow graph
+  const cfg = createCFG(cards);
+  console.log("createCFG():", cfg);
 }
