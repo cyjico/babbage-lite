@@ -16,6 +16,7 @@ import {
   ASTNodeType,
 } from "../parse";
 import { createCFG } from "./createCFG";
+import analyzeCFG from "./analyzeCFG";
 
 /**
  * Conduct semantic analysis on the abstract-syntax tree.
@@ -158,7 +159,8 @@ export default function analyze(
     );
   }
 
-  // TODO: Analyze control flow graph
   const cfg = createCFG(cards);
   console.log("createCFG():", cfg);
+  const [hasCycle, unreachableCFGNodes] = analyzeCFG(cfg);
+  console.log("analyzeCFG():", `hasCycle: ${hasCycle}`, unreachableCFGNodes);
 }
