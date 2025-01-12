@@ -20,18 +20,22 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
     const card = cards[i];
 
     if (leaders.has(i)) {
-      const prevLeader = curNode.cards[0];
-
+      // Connect edges just before completion
       curNode.edges.push({
         to: i,
       });
 
-      if (prevLeader && prevLeader.type === ASTNodeType.CombinatorialCard) {
+      const firstCard = curNode.cards[0];
+      if (firstCard.type === ASTNodeType.CombinatorialCard) {
+        // Implications:
+        // * curNode.cards.length === 1
+        // * i for firstCard is equal to i - 1
+        // * i - 1 + 1 can be simplified to 1
         const jumpedTo =
-          i + 1 + prevLeader.skips * (prevLeader.direction === "F" ? 1 : -1);
+          i + firstCard.skips * (firstCard.direction === "F" ? 1 : -1);
 
         if (jumpedTo >= 0 && jumpedTo < cards.length) {
-          if (prevLeader.condition === "?") {
+          if (firstCard.condition === "?") {
             curNode.edges.push({
               to: jumpedTo,
               condition: "LEVER_SET",
