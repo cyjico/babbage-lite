@@ -34,7 +34,11 @@ interface Token_VariableCard
   extends Token_<TokenType.VariableCard, `L${number}` | `S${number}`> {}
 
 interface Token_CombinatorialCard
-  extends Token_<TokenType.CombinatorialCard, `CF?${number}`> {}
+  extends Token_<
+    TokenType.CombinatorialCard,
+    `CF?${number}` | `CB?${number}` |
+    `CF+${number}` | `CB+${number}`
+  > {}
 
 interface Token_OperationCard
   extends Token_<TokenType.OperationCard, "+" | "-" | "*" | "/"> {}
