@@ -1,6 +1,7 @@
 import { ASTNode_Card, ASTNodeType } from "../../parse";
 
 export default function getBlockLeaders(cards: ASTNode_Card[]) {
+  // We do not need to add starting cards as leaders because they're implied
   const leaders = new Set<number>();
 
   // A block starts at...
@@ -8,18 +9,16 @@ export default function getBlockLeaders(cards: ASTNode_Card[]) {
     const card = cards[i];
 
     if (card.type === ASTNodeType.CombinatorialCard) {
-      // Combinatorial card
-      leaders.add(i);
+      // A combinatorial card
+      if (i !== 0) leaders.add(i);
 
-      // Target of the combinatorial card
+      // Target of a combinatorial card
       leaders.add(i + 1 + card.skips * (card.direction === "F" ? 1 : -1));
 
-      // Card after the combinatorial card
+      // Card after a combinatorial card
       leaders.add(++i);
       continue;
     }
-
-    // Starting card (no need to add them in the set)
   }
 
   return leaders;
