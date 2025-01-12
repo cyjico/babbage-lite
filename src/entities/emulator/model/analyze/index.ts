@@ -83,10 +83,21 @@ export default function analyze(
 
         break;
       case ASTNodeType.CombinatorialCard:
+        if (card.condition === "?" && !wasPreviousOperationPerformed) {
+          out_problems.push(
+            noArithmeticOperationPerformedPrior(
+              card.ln,
+              card.col,
+              card.col + 3 + card.skips.toString().length,
+            ),
+          );
+          break;
+        }
+
         if (
           (card.direction === "F" && i + 1 + card.skips >= cards.length) ||
           (card.direction === "B" && i + 1 - card.skips < 0)
-        )
+        ) {
           out_problems.push(
             cardReaderMovementOutOfBounds(
               card.ln,
@@ -94,6 +105,8 @@ export default function analyze(
               card.col + 3 + card.skips.toString().length,
             ),
           );
+          break;
+        }
         break;
       case ASTNodeType.VariableCard:
         if (!definedAddresses.has(card.address)) {
