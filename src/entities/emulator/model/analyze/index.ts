@@ -1,4 +1,5 @@
 import {
+  cardReaderMovementOutOfBounds,
   multipleDefinitions,
   noArithmeticOperationPerformedPrior,
   noOperationSet,
@@ -9,19 +10,22 @@ import {
 import { Problem } from "@/shared/model/types";
 import {
   ASTNode_Card,
-  ASTNodeType,
   ASTNode_NumberCard,
   ASTNode_OperationCard,
   ASTNode_VariableCard,
+  ASTNodeType,
 } from "../parse";
 
 /**
  * Conduct semantic analysis on the abstract-syntax tree.
  *
- * @param nodes Abstract-syntax tree.
+ * @param cards Abstract-syntax tree.
  * @param out_problems Output array for problems detected.
  */
-export default function analyze(nodes: ASTNode_Card[], out_problems: Problem[]) {
+export default function analyze(
+  cards: ASTNode_Card[],
+  out_problems: Problem[],
+) {
   const definedAddresses = new Set<number>();
   const unusedAddresses = new Map<number, ASTNode_NumberCard>();
   let wasPreviousOperationPerformed = false;
@@ -30,20 +34,20 @@ export default function analyze(nodes: ASTNode_Card[], out_problems: Problem[]) 
     variableCard_L1: null as ASTNode_VariableCard | null,
   };
 
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
+  for (let i = 0; i < cards.length; i++) {
+    const card = cards[i];
 
-    switch (node.type) {
+    switch (card.type) {
       case ASTNodeType.NumberCard:
-        if (definedAddresses.has(node.address)) {
+        if (definedAddresses.has(card.address)) {
           out_problems.push(
-            multipleDefinitions(node.address, node.ln, node.col, node.col + 4),
+            multipleDefinitions(card.address, card.ln, card.col, card.col + 4),
           );
           break;
         }
 
-        definedAddresses.add(node.address);
-        unusedAddresses.set(node.address, node);
+        definedAddresses.add(card.address);
+        unusedAddresses.set(card.address, card);
         break;
       case ASTNodeType.OperationCard:
         if (
@@ -53,23 +57,23 @@ export default function analyze(nodes: ASTNode_Card[], out_problems: Problem[]) 
           out_problems.push(
             operationOverrides(
               operationToPerform.operationCard.ln,
-              node.ln,
-              node.col,
-              node.col + 1,
+              card.ln,
+              card.col,
+              card.col + 1,
             ),
           );
           break;
         }
 
-        operationToPerform.operationCard = node;
+        operationToPerform.operationCard = card;
         break;
       case ASTNodeType.ActionCard:
-        if (node.action === "P" && !wasPreviousOperationPerformed) {
+        if (card.action === "P" && !wasPreviousOperationPerformed) {
           out_problems.push(
             noArithmeticOperationPerformedPrior(
-              node.ln,
-              node.col,
-              node.col + 1,
+              card.ln,
+              card.col,
+              card.col + 1,
             ),
           );
           break;
@@ -77,21 +81,32 @@ export default function analyze(nodes: ASTNode_Card[], out_problems: Problem[]) 
 
         break;
       case ASTNodeType.CombinatorialCard:
+        if (
+          (card.direction === "F" && i + 1 + card.skips >= cards.length) ||
+          (card.direction === "B" && i + 1 - card.skips < 0)
+        )
+          out_problems.push(
+            cardReaderMovementOutOfBounds(
+              card.ln,
+              card.col,
+              card.col + 3 + card.skips.toString().length,
+            ),
+          );
         break;
       case ASTNodeType.VariableCard:
-        if (!definedAddresses.has(node.address)) {
+        if (!definedAddresses.has(card.address)) {
           out_problems.push(
-            undefinedAddress(node.address, node.ln, node.col, node.col + 4),
+            undefinedAddress(card.address, card.ln, card.col, card.col + 4),
           );
           break;
         }
 
-        unusedAddresses.delete(node.address);
+        unusedAddresses.delete(card.address);
 
-        switch (node.action) {
+        switch (card.action) {
           case "L":
             if (operationToPerform.variableCard_L1 === null) {
-              operationToPerform.variableCard_L1 = node;
+              operationToPerform.variableCard_L1 = card;
             } else {
               // variableCard_L2
               if (
@@ -99,7 +114,7 @@ export default function analyze(nodes: ASTNode_Card[], out_problems: Problem[]) 
                 !operationToPerform.operationCard
               ) {
                 out_problems.push(
-                  noOperationSet(node.ln, node.col, node.col + 4),
+                  noOperationSet(card.ln, card.col, card.col + 4),
                 );
               } else {
                 wasPreviousOperationPerformed = true;
@@ -114,9 +129,9 @@ export default function analyze(nodes: ASTNode_Card[], out_problems: Problem[]) 
             if (!wasPreviousOperationPerformed) {
               out_problems.push(
                 noArithmeticOperationPerformedPrior(
-                  node.ln,
-                  node.col,
-                  node.col + 1,
+                  card.ln,
+                  card.col,
+                  card.col + 1,
                 ),
               );
             }

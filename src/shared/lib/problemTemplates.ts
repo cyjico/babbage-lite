@@ -170,3 +170,19 @@ export function noArithmeticOperationPerformedPrior(
     colend,
   };
 }
+
+export function cardReaderMovementOutOfBounds(
+  ln: number,
+  col: number,
+  colend: number,
+): Problem {
+  return {
+    severity: ProblemSeverity.Error,
+    code: 3007,
+    message:
+      "Attempt card reader movement is out of bounds. The chain does not contain enough cards to support the specified value",
+    ln,
+    col,
+    colend,
+  };
+}
