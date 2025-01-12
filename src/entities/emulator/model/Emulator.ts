@@ -1,7 +1,7 @@
 import { Problem, ProblemSeverity } from "@/shared/model/types";
 import analyze from "./analyze";
 import lex from "./lex";
-import parse, { ASTNodeCard } from "./parse";
+import parse, { ASTNode_Card } from "./parse";
 import { Mill } from "./types";
 
 export default class Emulator {
@@ -12,7 +12,7 @@ export default class Emulator {
     ingressAxis2: 0,
     egressAxis: 0,
   };
-  reader: ASTNodeCard[] = [];
+  reader: ASTNode_Card[] = [];
   store = new Array<number>(999).fill(0);
 
   prepare(lines: string[]) {

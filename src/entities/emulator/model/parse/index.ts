@@ -6,10 +6,10 @@ import {
 import { Problem } from "@/shared/model/types";
 import { Token, TokenType } from "../lex";
 import nodifyNumericLiteral from "./nodifyNumericLiteral";
-import { ASTNodeCard, ASTNodeType } from "./types";
+import { ASTNode_Card, ASTNodeType } from "./types";
 
 export default function parse(tokens: Token[], out_problems: Problem[]) {
-  const reader: ASTNodeCard[] = [];
+  const reader: ASTNode_Card[] = [];
 
   let i = 0;
   while (i < tokens.length) {

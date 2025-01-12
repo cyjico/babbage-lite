@@ -8,11 +8,11 @@ import {
 } from "@/shared/lib/problemTemplates";
 import { Problem } from "@/shared/model/types";
 import {
-  ASTNodeCard,
+  ASTNode_Card,
   ASTNodeType,
-  NumberCardNode,
-  OperationCardNode,
-  VariableCardNode,
+  ASTNode_NumberCard,
+  ASTNode_OperationCard,
+  ASTNode_VariableCard,
 } from "../parse";
 
 /**
@@ -21,14 +21,13 @@ import {
  * @param nodes Abstract-syntax tree.
  * @param out_problems Output array for problems detected.
  */
-export default function analyze(nodes: ASTNodeCard[], out_problems: Problem[]) {
-  // TODO: control flow graph
+export default function analyze(nodes: ASTNode_Card[], out_problems: Problem[]) {
   const definedAddresses = new Set<number>();
-  const unusedAddresses = new Map<number, NumberCardNode>();
+  const unusedAddresses = new Map<number, ASTNode_NumberCard>();
   let wasPreviousOperationPerformed = false;
   const operationToPerform = {
-    operationCard: null as OperationCardNode | null,
-    variableCard_L1: null as VariableCardNode | null,
+    operationCard: null as ASTNode_OperationCard | null,
+    variableCard_L1: null as ASTNode_VariableCard | null,
   };
 
   for (let i = 0; i < nodes.length; i++) {
@@ -78,7 +77,6 @@ export default function analyze(nodes: ASTNodeCard[], out_problems: Problem[]) {
 
         break;
       case ASTNodeType.CombinatorialCard:
-        // TODO: control flow graph
         break;
       case ASTNodeType.VariableCard:
         if (!definedAddresses.has(node.address)) {

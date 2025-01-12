@@ -16,32 +16,32 @@ interface ASTNode_<T extends ASTNodeType> {
   col: number;
 }
 
-export interface NumberCardNode extends ASTNode_<ASTNodeType.NumberCard> {
+export interface ASTNode_NumberCard extends ASTNode_<ASTNodeType.NumberCard> {
   address: number;
-  number: NumericLiteralNode;
+  number: ASTNode_NumericLiteral;
 }
 
-export interface OperationCardNode extends ASTNode_<ASTNodeType.OperationCard> {
+export interface ASTNode_OperationCard extends ASTNode_<ASTNodeType.OperationCard> {
   operation: "+" | "-" | "*" | "/";
 }
 
-export interface ActionCardNode extends ASTNode_<ASTNodeType.ActionCard> {
+export interface ASTNode_ActionCard extends ASTNode_<ASTNodeType.ActionCard> {
   action: "P" | "B" | "H";
 }
 
-export interface CombinatorialCardNode
+export interface ASTNode_CombinatorialCard
   extends ASTNode_<ASTNodeType.CombinatorialCard> {
   direction: "F" | "B";
   condition: "+" | "?";
   skips: number;
 }
 
-export interface VariableCardNode extends ASTNode_<ASTNodeType.VariableCard> {
+export interface ASTNode_VariableCard extends ASTNode_<ASTNodeType.VariableCard> {
   action: "L" | "S";
   address: number;
 }
 
-export interface NumericLiteralNode
+export interface ASTNode_NumericLiteral
   extends ASTNode_<ASTNodeType.NumericLiteral> {
   value: number;
 }
@@ -49,14 +49,14 @@ export interface NumericLiteralNode
 /**
  * Discriminated union of ONLY abstract-syntax tree nodes that are cards.
  */
-export type ASTNodeCard =
-  | NumberCardNode
-  | OperationCardNode
-  | ActionCardNode
-  | CombinatorialCardNode
-  | VariableCardNode;
+export type ASTNode_Card =
+  | ASTNode_NumberCard
+  | ASTNode_OperationCard
+  | ASTNode_ActionCard
+  | ASTNode_CombinatorialCard
+  | ASTNode_VariableCard;
 
 /**
  * Discriminated union of all abstract-syntax tree nodes.
  */
-export type ASTNode = ASTNodeCard | NumericLiteralNode;
+export type ASTNode = ASTNode_Card | ASTNode_NumericLiteral;

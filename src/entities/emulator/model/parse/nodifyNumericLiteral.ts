@@ -1,9 +1,9 @@
 import { Token, TokenType } from "../lex";
-import { ASTNodeType, NumericLiteralNode } from "./types";
+import { ASTNodeType, ASTNode_NumericLiteral } from "./types";
 
 export default function nodifyNumericLiteral(
   token: Token | undefined,
-): NumericLiteralNode | null {
+): ASTNode_NumericLiteral | null {
   if (token?.type !== TokenType.NumericLiteral) return null;
 
   return {
