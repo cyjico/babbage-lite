@@ -9,7 +9,7 @@ import nodifyNumericLiteral from "./nodifyNumericLiteral";
 import { ASTNode_Card, ASTNodeType } from "./types";
 
 export default function parse(tokens: Token[], out_problems: Problem[]) {
-  const reader: ASTNode_Card[] = [];
+  const cards: ASTNode_Card[] = [];
 
   let i = 0;
   while (i < tokens.length) {
@@ -34,7 +34,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         // Now successful, consume the token!
         i++;
 
-        reader.push({
+        cards.push({
           type: ASTNodeType.NumberCard,
           ln: token.ln,
           col: token.col,
@@ -44,7 +44,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         break;
       }
       case TokenType.OperationCard:
-        reader.push({
+        cards.push({
           type: ASTNodeType.OperationCard,
           operation: token.lexeme,
           ln: token.ln,
@@ -52,7 +52,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         });
         break;
       case TokenType.ActionCard:
-        reader.push({
+        cards.push({
           type: ASTNodeType.ActionCard,
           action: token.lexeme,
           ln: token.ln,
@@ -60,7 +60,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         });
         break;
       case TokenType.CombinatorialCard:
-        reader.push({
+        cards.push({
           type: ASTNodeType.CombinatorialCard,
           direction: token.lexeme[1] as "F" | "B",
           condition: token.lexeme[2] as "+" | "?",
@@ -70,7 +70,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         });
         break;
       case TokenType.VariableCard:
-        reader.push({
+        cards.push({
           type: ASTNodeType.VariableCard,
           action: token.lexeme[0] as "L" | "S",
           address: parseInt(token.lexeme.slice(1)),
@@ -87,8 +87,8 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
 
     // Check if the latest added node was in the same line as the previous one
     if (
-      reader.length >= 2 &&
-      reader[reader.length - 1].ln === reader[reader.length - 2].ln
+      cards.length >= 2 &&
+      cards[cards.length - 1].ln === cards[cards.length - 2].ln
     ) {
       out_problems.push(
         multipleCardsOnTheSameLine(
@@ -98,11 +98,11 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         ),
       );
 
-      reader.pop();
+      cards.pop();
     }
   }
 
-  return reader;
+  return cards;
 }
 
 export * from "./types";

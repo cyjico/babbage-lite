@@ -36,8 +36,7 @@ interface Token_VariableCard
 interface Token_CombinatorialCard
   extends Token_<
     TokenType.CombinatorialCard,
-    `CF?${number}` | `CB?${number}` |
-    `CF+${number}` | `CB+${number}`
+    `CF?${number}` | `CB?${number}` | `CF+${number}` | `CB+${number}`
   > {}
 
 interface Token_OperationCard

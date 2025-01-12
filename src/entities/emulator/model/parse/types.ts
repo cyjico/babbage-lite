@@ -21,7 +21,8 @@ export interface ASTNode_NumberCard extends ASTNode_<ASTNodeType.NumberCard> {
   number: ASTNode_NumericLiteral;
 }
 
-export interface ASTNode_OperationCard extends ASTNode_<ASTNodeType.OperationCard> {
+export interface ASTNode_OperationCard
+  extends ASTNode_<ASTNodeType.OperationCard> {
   operation: "+" | "-" | "*" | "/";
 }
 
@@ -36,7 +37,8 @@ export interface ASTNode_CombinatorialCard
   skips: number;
 }
 
-export interface ASTNode_VariableCard extends ASTNode_<ASTNodeType.VariableCard> {
+export interface ASTNode_VariableCard
+  extends ASTNode_<ASTNodeType.VariableCard> {
   action: "L" | "S";
   address: number;
 }
