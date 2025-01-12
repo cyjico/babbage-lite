@@ -13,10 +13,11 @@ export default function getBlockLeaders(cards: ASTNode_Card[]) {
       if (i !== 0) leaders.add(i);
 
       // Target of a combinatorial card
-      leaders.add(i + 1 + card.skips * (card.direction === "F" ? 1 : -1));
+      const jumpedTo = i + 1 + card.skips * (card.direction === "F" ? 1 : -1);
+      if (jumpedTo !== 0) leaders.add(jumpedTo);
 
       // Card after a combinatorial card
-      leaders.add(++i);
+      leaders.add(i + 1);
       continue;
     }
   }
