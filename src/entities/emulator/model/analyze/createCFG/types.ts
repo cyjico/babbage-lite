@@ -12,3 +12,5 @@ export interface CFGEdge {
   to: CFGNode_ID;
   condition?: "LEVER_SET";
 }
+
+export type CFG = Map<CFGNode_ID, CFGNode>;

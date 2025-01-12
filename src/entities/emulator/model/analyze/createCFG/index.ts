@@ -1,6 +1,6 @@
 import { ASTNode_Card, ASTNodeType } from "../../parse";
 import getBlockLeaders from "./getBlockLeaders";
-import { CFGEdge, CFGNode, CFGNode_ID } from "./types";
+import { CFG, CFGEdge, CFGNode, CFGNode_ID } from "./types";
 
 function createCFGNode(id: CFGNode_ID, edges: CFGEdge[] = []): CFGNode {
   return {
@@ -10,35 +10,48 @@ function createCFGNode(id: CFGNode_ID, edges: CFGEdge[] = []): CFGNode {
   };
 }
 
-export function createCFG(cards: ASTNode_Card[]): CFGNode[] {
-  const blockLeaders = getBlockLeaders(cards);
+export function createCFG(cards: ASTNode_Card[]): CFG {
+  const leaders = getBlockLeaders(cards);
 
-  const cfg: CFGNode[] = [];
-  let nodeToPush = createCFGNode(0);
+  const cfg: CFG = new Map();
+  let curNode = createCFGNode(0);
 
   for (let i = 0; i < cards.length; i++) {
     const card = cards[i];
 
-    if (blockLeaders.has(i)) {
-      nodeToPush.edges.push({
+    if (leaders.has(i)) {
+      const prevLeader = curNode.cards[0];
+
+      curNode.edges.push({
         to: i,
       });
 
-      cfg.push(nodeToPush);
-      nodeToPush = createCFGNode(i);
+      if (prevLeader && prevLeader.type === ASTNodeType.CombinatorialCard) {
+        const jumpedTo =
+          i + 1 + prevLeader.skips * (prevLeader.direction === "F" ? 1 : -1);
 
-      if (card.type === ASTNodeType.CombinatorialCard) {
-        nodeToPush.edges.push({
-          to: i + 1 + card.skips * (card.direction === "F" ? 1 : -1),
-          condition: "LEVER_SET",
-        });
+        if (jumpedTo >= 0 && jumpedTo < cards.length) {
+          if (prevLeader.condition === "?") {
+            curNode.edges.push({
+              to: jumpedTo,
+              condition: "LEVER_SET",
+            });
+          } else {
+            curNode.edges[0].to = jumpedTo;
+          }
+        }
       }
+
+      cfg.set(curNode.id, curNode);
+      curNode = createCFGNode(i);
     }
 
-    nodeToPush.cards.push(card);
+    curNode.cards.push(card);
   }
 
-  if (nodeToPush.cards.length > 0) cfg.push(nodeToPush);
+  if (curNode.cards.length > 0) cfg.set(curNode.id, curNode);
 
   return cfg;
 }
+
+export * from "./types";
