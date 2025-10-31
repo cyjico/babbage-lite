@@ -10,9 +10,12 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
   const lineElementToIdx = new Map<HTMLElement, number>();
   const lineElements = initLineElements(viewState.lines(), lineElementToIdx);
 
+  let linesRemovedListener: (newLength: number) => void = null!;
+
   const observer = new MutationObserver((mutations) => {
     // Batch changes to handle rapid addition & deletion of elements
     const newLines = viewState.lines().slice();
+    const oldLength = newLines.length;
 
     for (let i = 0; i < mutations.length; i++) {
       const mutation = mutations[i];
@@ -81,8 +84,8 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
                 const idx = lineElementToIdx.get(node as HTMLDivElement)!;
                 newLines.splice(idx, 1);
 
-                // Update indecies
                 if (mutation.nextSibling) {
+                  // Update indecies
                   let curElem = getElementOrParentElement(
                     mutation.nextSibling,
                   ) as HTMLElement;
@@ -107,6 +110,8 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
           newLines[lineElementToIdx.get(lineElem)!] = lineElem.textContent!;
       }
     }
+
+    if (oldLength > newLines.length) linesRemovedListener(newLines.length);
 
     viewState._setLines(newLines);
   });
@@ -142,6 +147,9 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
 
       content.removeEventListener("beforeinput", onBeforeInput);
       document.removeEventListener("selectionchange", onSelectionChange);
-    }
+    },
+    setLinesRemovedListener: (f: (newLength: number) => void) => {
+      linesRemovedListener = f;
+    },
   };
 }

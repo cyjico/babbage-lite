@@ -17,6 +17,15 @@ export default function Editor(props: { class?: string }) {
   onMount(model.onMount);
   onCleanup(model.onCleanup);
 
+  model.setLinesRemovedListener((newLength) => {
+    viewState._setBreakpts((prev) => {
+      const next = new Set(prev);
+      for (const breakpt of prev) if (breakpt > newLength) next.delete(breakpt);
+
+      return next;
+    });
+  });
+
   const { viewState } = useEditorContext();
 
   return (
@@ -24,7 +33,7 @@ export default function Editor(props: { class?: string }) {
       <div class="gutters">
         <div
           class="gutter breakpoints"
-          on:click={(ev) => {
+          on:pointerdown={(ev) => {
             // uses line-height: 1.5
             const line = Math.floor(
               (ev.clientY - ev.currentTarget.getBoundingClientRect().top) /
@@ -51,7 +60,7 @@ export default function Editor(props: { class?: string }) {
                 <div
                   class="breakpoint"
                   style={{
-                    top: `${(lineNumber - 1) * 1.5}rem`,
+                    transform: `translateY(${(lineNumber - 1) * 1.5}rem)`,
                   }}
                 >
                   💗
