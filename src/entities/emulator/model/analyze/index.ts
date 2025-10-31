@@ -5,6 +5,8 @@ import {
   noOperationSet,
   operationOverrides,
   unusedAddress,
+  unusedLoad,
+  unusedOperationResult,
 } from "@/shared/lib/problemTemplates";
 import { Problem } from "@/shared/model/types";
 import {
@@ -16,6 +18,12 @@ import {
 } from "../parse";
 import { createCFG } from "./createCFG";
 import analyzeCFG from "./analyzeCFG";
+
+const enum NextStep {
+  ToOperation,
+  ToE1,
+  ToE2,
+}
 
 /**
  * Conduct semantic analysis on the abstract-syntax tree.
@@ -29,10 +37,12 @@ export default function analyze(
 ) {
   const definedAddresses = new Set<number>();
   const unusedAddresses = new Map<number, ASTNode_NumberCard>();
-  let wasPreviousOperationPerformed = false;
-  const operationToPerform = {
+  const curOperation = {
+    wasRecentResultUsed: false,
     operationCard: null as ASTNode_OperationCard | null,
     variableCard_L1: null as ASTNode_VariableCard | null,
+    variableCard_L2: null as ASTNode_VariableCard | null,
+    nextStep: NextStep.ToOperation,
   };
 
   for (let i = 0; i < cards.length; i++) {
@@ -51,46 +61,61 @@ export default function analyze(
         unusedAddresses.set(card.address, card);
         break;
       case ASTNodeType.OperationCard:
-        if (
-          operationToPerform.operationCard &&
-          operationToPerform.variableCard_L1
-        ) {
-          out_problems.push(
-            operationOverrides(
-              operationToPerform.operationCard.ln,
-              card.ln,
-              card.col,
-              card.col + 1,
-            ),
-          );
-          break;
+        if (curOperation.operationCard !== null) {
+          switch (curOperation.nextStep) {
+            case NextStep.ToE1:
+            case NextStep.ToE2:
+              out_problems.push(
+                operationOverrides(
+                  curOperation.operationCard.ln,
+                  card.ln,
+                  card.col,
+                  card.col + 1,
+                ),
+              );
+              break;
+          }
         }
 
-        operationToPerform.operationCard = card;
+        curOperation.operationCard = card;
+        curOperation.nextStep = NextStep.ToE1;
         break;
       case ASTNodeType.ActionCard:
-        if (card.action === "P" && !wasPreviousOperationPerformed) {
-          out_problems.push(
-            noArithmeticOperationPerformedPrior(
-              card.ln,
-              card.col,
-              card.col + 1,
-            ),
-          );
-          break;
-        }
+        if (card.action === "P") {
+          if (
+            curOperation.operationCard === null &&
+            curOperation.variableCard_L2 === null
+          ) {
+            out_problems.push(
+              noArithmeticOperationPerformedPrior(
+                card.ln,
+                card.col,
+                card.col + 1,
+              ),
+            );
+            break;
+          }
 
+          curOperation.wasRecentResultUsed = true;
+        }
         break;
       case ASTNodeType.CombinatorialCard:
-        if (card.condition === "?" && !wasPreviousOperationPerformed) {
-          out_problems.push(
-            noArithmeticOperationPerformedPrior(
-              card.ln,
-              card.col,
-              card.col + 3 + card.skips.toString().length,
-            ),
-          );
-          break;
+        if (card.condition === "?") {
+          if (
+            curOperation.operationCard === null &&
+            curOperation.variableCard_L2 === null
+          ) {
+            out_problems.push(
+              noArithmeticOperationPerformedPrior(
+                card.ln,
+                card.col,
+                card.col + 3 + card.skips.toString().length,
+              ),
+            );
+            break;
+          }
+
+          curOperation.wasRecentResultUsed = true;
         }
 
         if (
@@ -104,7 +129,6 @@ export default function analyze(
               card.col + 3 + card.skips.toString().length,
             ),
           );
-          break;
         }
         break;
       case ASTNodeType.VariableCard:
@@ -112,28 +136,50 @@ export default function analyze(
 
         switch (card.action) {
           case "L":
-            if (operationToPerform.variableCard_L1 === null) {
-              operationToPerform.variableCard_L1 = card;
-            } else {
-              // variableCard_L2
-              if (
-                !wasPreviousOperationPerformed &&
-                !operationToPerform.operationCard
-              ) {
-                out_problems.push(
-                  noOperationSet(card.ln, card.col, card.col + 4),
-                );
-              } else {
-                wasPreviousOperationPerformed = true;
-              }
+            switch (curOperation.nextStep) {
+              // @ts-expect-error Fall through intended
+              case NextStep.ToOperation:
+                if (curOperation.operationCard === null)
+                  out_problems.push(
+                    noOperationSet(card.ln, card.col, card.col + 4),
+                  );
+              case NextStep.ToE1:
+                // Check previous operation before overwriting
+                if (
+                  !curOperation.wasRecentResultUsed &&
+                  curOperation.variableCard_L2 !== null
+                ) {
+                  out_problems.push(
+                    unusedOperationResult(
+                      curOperation.variableCard_L1!.ln,
+                      curOperation.variableCard_L1!.col,
+                      curOperation.variableCard_L1!.col + 1,
+                    ),
+                  );
+                  out_problems.push(
+                    unusedOperationResult(
+                      curOperation.variableCard_L2!.ln,
+                      curOperation.variableCard_L2!.col,
+                      curOperation.variableCard_L2!.col + 1,
+                    ),
+                  );
+                }
 
-              operationToPerform.operationCard = null;
-              operationToPerform.variableCard_L1 = null;
+                curOperation.variableCard_L1 = card;
+                curOperation.nextStep = NextStep.ToE2;
+                break;
+              case NextStep.ToE2:
+                curOperation.variableCard_L2 = card;
+                curOperation.nextStep = NextStep.ToOperation;
+                curOperation.wasRecentResultUsed = false;
+                break;
             }
-
             break;
           case "S":
-            if (!wasPreviousOperationPerformed) {
+            if (
+              curOperation.operationCard === null &&
+              curOperation.variableCard_L2 === null
+            ) {
               out_problems.push(
                 noArithmeticOperationPerformedPrior(
                   card.ln,
@@ -141,7 +187,24 @@ export default function analyze(
                   card.col + 1,
                 ),
               );
+              break;
             }
+
+            if (
+              curOperation.nextStep === NextStep.ToE2 &&
+              curOperation.variableCard_L1 !== null &&
+              curOperation.variableCard_L2 !== null
+            ) {
+              out_problems.push(
+                unusedLoad(
+                  curOperation.variableCard_L1.ln,
+                  curOperation.variableCard_L1.col,
+                  curOperation.variableCard_L1.col + 1,
+                ),
+              );
+            }
+
+            curOperation.wasRecentResultUsed = true;
             break;
         }
         break;
@@ -154,18 +217,34 @@ export default function analyze(
     );
   }
 
-  if (operationToPerform.variableCard_L1) {
+  if (
+    !curOperation.wasRecentResultUsed &&
+    curOperation.variableCard_L2 !== null &&
+    curOperation.operationCard !== null
+  ) {
     out_problems.push(
-      noOperationSet(
-        operationToPerform.variableCard_L1.ln,
-        operationToPerform.variableCard_L1.col,
-        operationToPerform.variableCard_L1.col + 4,
+      unusedOperationResult(
+        curOperation.variableCard_L1!.ln,
+        curOperation.variableCard_L1!.col,
+        curOperation.variableCard_L1!.col + 1,
+      ),
+    );
+    out_problems.push(
+      unusedOperationResult(
+        curOperation.variableCard_L2!.ln,
+        curOperation.variableCard_L2!.col,
+        curOperation.variableCard_L2!.col + 1,
       ),
     );
   }
 
+  // TODO: Error reporting for CFG analysis
   const cfg = createCFG(cards);
-  console.log("createCFG():", cfg);
   const [hasCycle, unreachableCFGNodes] = analyzeCFG(cfg);
-  console.log("analyzeCFG():", `hasCycle: ${hasCycle}`, unreachableCFGNodes);
+  console.log(
+    "analyzeCFG():",
+    `\n hasCycle: ${hasCycle}\n`,
+    "unreachableCFGNodes:",
+    unreachableCFGNodes,
+  );
 }

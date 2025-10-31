@@ -186,3 +186,33 @@ export function cardReaderMovementOutOfBounds(
     colend,
   };
 }
+
+export function unusedOperationResult(
+  ln: number,
+  col: number,
+  colend: number,
+): Problem {
+  return {
+    severity: ProblemSeverity.Warning,
+    code: 3008,
+    message: `Result of operation is never used.`,
+    ln,
+    col,
+    colend,
+  };
+}
+
+export function unusedLoad(
+  ln: number,
+  col: number,
+  colend: number
+): Problem {
+  return {
+    severity: ProblemSeverity.Warning,
+    code: 3009,
+    message: `Load into ingress axis is never used in any operation.`,
+    ln,
+    col,
+    colend,
+  };
+}
