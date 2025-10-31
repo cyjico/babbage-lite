@@ -4,7 +4,6 @@ import {
   noArithmeticOperationPerformedPrior,
   noOperationSet,
   operationOverrides,
-  undefinedAddress,
   unusedAddress,
 } from "@/shared/lib/problemTemplates";
 import { Problem } from "@/shared/model/types";
@@ -109,13 +108,6 @@ export default function analyze(
         }
         break;
       case ASTNodeType.VariableCard:
-        if (!definedAddresses.has(card.address)) {
-          out_problems.push(
-            undefinedAddress(card.address, card.ln, card.col, card.col + 4),
-          );
-          break;
-        }
-
         unusedAddresses.delete(card.address);
 
         switch (card.action) {

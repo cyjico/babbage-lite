@@ -78,12 +78,12 @@ export function undefinedAddress(
   return {
     severity: ProblemSeverity.Error,
     code: 3001,
-    ln,
-    col,
-    colend,
     message: `Undefined address '${"0".repeat(
       3 - address.toString().length,
     )}${address}'.`,
+    ln,
+    col,
+    colend,
   };
 }
 
