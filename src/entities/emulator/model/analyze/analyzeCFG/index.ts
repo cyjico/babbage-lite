@@ -19,7 +19,7 @@ export default function analyzeCFG(cfg: CFG) {
     for (let i = 0; i < edges.length; i++) {
       const edge = edges[i];
 
-      // Assume condition will NOT be constant during runtime
+      // Ignore conditional edges because they may not be taken
       if (edge.condition === undefined) stack.push(edge.to);
     }
   }

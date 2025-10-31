@@ -20,17 +20,17 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
     const card = cards[i];
 
     if (leaders.has(i)) {
-      // Connect edges just before completion
+      // Finalize the current node
       curNode.edges.push({
         to: i,
       });
 
       const firstCard = curNode.cards[0];
       if (firstCard.type === ASTNodeType.CombinatorialCard) {
-        // Implications:
-        // * curNode.cards.length === 1
-        // * i for firstCard is equal to i - 1
-        // * i - 1 + 1 can be simplified to 1
+        // firstCard being a combinatorial implies there's only one card:
+        // 1.) curNode.cards.length === 1
+        // 2.) i for firstCard is equal to i - 1
+        // 3.) i - 1 + 1 can be simplified to 1
         const jumpedTo =
           i + firstCard.skips * (firstCard.direction === "F" ? 1 : -1);
 
@@ -47,6 +47,7 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
       }
 
       cfg.set(curNode.id, curNode);
+      // Create a new node
       curNode = createCFGNode(i);
     }
 
