@@ -1,4 +1,4 @@
-import { Problem, ProblemSeverity } from "@/shared/model/types";
+import { Problem } from "@/shared/model/types";
 import analyze from "./analyze";
 import lex from "./lex";
 import parse, { ASTNode_Card } from "./parse";
@@ -21,19 +21,17 @@ export default class Emulator {
 
     // 1. lexical analysis
     const tokens = lex(lines, problems);
+    // TODO: Remove later! This is for testing the emulator.
     console.log("tokenize():", tokens);
 
     // 2. syntax analysis
     const cards = parse(tokens, problems);
+    // TODO: Remove later! This is for testing the emulator.
     console.log("parse():", cards);
 
     // 3. semantic analysis
     analyze(cards, problems);
 
-    // do not run if there are errors
-    this.cardChain = !problems.find((v) => v.severity === ProblemSeverity.Error)
-      ? cards
-      : [];
     return problems;
   }
 
