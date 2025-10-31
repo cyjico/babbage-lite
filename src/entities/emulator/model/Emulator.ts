@@ -21,13 +21,9 @@ export default class Emulator {
 
     // 1. lexical analysis
     const tokens = lex(lines, problems);
-    // TODO: Remove later! This is for testing the emulator.
-    console.log("tokenize():", tokens);
 
     // 2. syntax analysis
     const cards = parse(tokens, problems);
-    // TODO: Remove later! This is for testing the emulator.
-    console.log("parse():", cards);
 
     // 3. semantic analysis
     analyze(cards, problems);
