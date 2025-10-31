@@ -4,7 +4,7 @@ export default function analyzeCFG(cfg: CFG) {
   const visited = new Set<CFGNode_ID>();
   let hasCycle = false;
 
-  const stack: CFGNode_ID[] = [0];
+  const stack: CFGNode_ID[] = cfg.size > 0 ? [0] : [];
   while (stack.length > 0) {
     const id = stack.pop()!;
 
