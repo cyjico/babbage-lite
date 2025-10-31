@@ -1,48 +1,51 @@
-import styles from "./styles.module.css";
-import { For, JSX } from "solid-js";
+import { createSignal, For, JSX } from "solid-js";
 
 export default function TabbedPanel(props: {
-  labelClass?: string;
-  contentClass?: string;
+  class?: string;
+  classLabelContainer?: string;
+  classLabel?: string;
+  classContentContainer?: string;
+  classContent?: string;
   tabs: {
     label: JSX.Element;
     content: JSX.Element;
   }[];
 }) {
+  const [chosenTab, setChosenTab] = createSignal(0);
+
   return (
     <>
-      <div class={props.labelClass}>
+      <div class={props.classLabelContainer ?? ""}>
         <For each={props.tabs}>
           {(item, index) => {
             return (
-              <>
-                <label for={`${styles["input"]} ${index()}`}>
-                  {item.label}
-                </label>
-              </>
+              <div
+                on:pointerdown={() => setChosenTab(index())}
+                classList={{ "hover:cursor-pointer": index() !== chosenTab() }}
+                class={props.classLabel ?? ""}
+              >
+                {item.label}
+              </div>
             );
           }}
         </For>
       </div>
 
-      <form class={props.contentClass}>
+      <div class={props.classContentContainer ?? ""}>
         <For each={props.tabs}>
           {(item, index) => {
             return (
               <>
-                <input
-                  type="radio"
-                  name="tab"
-                  id={`${styles["input"]} ${index()}`}
-                  class={styles["input"]}
-                  checked={index() === 0}
-                />
-                <div class={styles["tab-content"]}>{item.content}</div>
+                <div
+                  class={`${props.classContent ?? ""} ${chosenTab() !== index() ? "hidden" : ""}`}
+                >
+                  {item.content}
+                </div>
               </>
             );
           }}
         </For>
-      </form>
+      </div>
     </>
   );
 }

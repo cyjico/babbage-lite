@@ -1,12 +1,11 @@
 import emulator from "@/entities/emulator";
-import createProblemOutput from "@/shared/lib/createProblemOutput";
-import { ProblemSeverity } from "@/shared/model/types";
+import { Problem } from "@/shared/model/types";
 import {
   Accessor,
   createContext,
-  createEffect,
+  createMemo,
   createSignal,
-  JSX,
+  ParentProps,
   Setter,
   useContext,
 } from "solid-js";
@@ -19,6 +18,7 @@ interface EditorContextProviderValue {
     lines: Accessor<string[]>;
     _setLines: Setter<string[]>;
   };
+  problems: Accessor<Problem[]>;
 }
 
 const EditorContext = createContext<EditorContextProviderValue>({
@@ -28,11 +28,10 @@ const EditorContext = createContext<EditorContextProviderValue>({
     lines: () => [],
     _setLines: () => [],
   },
+  problems: () => [],
 });
 
-export default function EditorContextProvider(props: {
-  children?: JSX.Element[];
-}) {
+export default function EditorContextProvider(props: ParentProps) {
   const [sel, _setSel] = createSignal<EditorSelection>();
   const [lines, _setLines] = createSignal<string[]>([
     "# This program will print from 1 to 10",
@@ -53,29 +52,11 @@ export default function EditorContextProvider(props: {
     "# It is 9 since the reader has to complete reading CB?9 before moving.",
     "# Therefore, we end up at line 14 before actually moving the reader.",
   ]);
-
-  createEffect(() => {
-    // TODO: Remove later! This is for testing the emulator.
-    const problems = emulator.prepare(lines());
-
-    for (const problem of problems) {
-      switch (problem.severity) {
-        case ProblemSeverity.Error:
-          console.error(createProblemOutput(lines(), problem));
-          break;
-        case ProblemSeverity.Warning:
-          console.warn(createProblemOutput(lines(), problem));
-          break;
-        case ProblemSeverity.Information:
-          console.log(createProblemOutput(lines(), problem));
-          break;
-      }
-    }
-  });
+  const problems = createMemo(() => emulator.prepare(lines()));
 
   return (
     <EditorContext.Provider
-      value={{ viewState: { sel, _setSel, lines, _setLines } }}
+      value={{ viewState: { sel, _setSel, lines, _setLines }, problems }}
     >
       {props.children}
     </EditorContext.Provider>
