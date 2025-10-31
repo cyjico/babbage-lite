@@ -118,7 +118,7 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
   );
 
   return {
-    imperativeEffect: () => {
+    onMount: () => {
       const contentValue = ref_content();
 
       contentValue.appendChild(lineElements);
@@ -135,14 +135,13 @@ export default function useEditorModel(ref_content: () => HTMLElement) {
       contentValue.addEventListener("beforeinput", onBeforeInput);
       document.addEventListener("selectionchange", onSelectionChange);
     },
-    imperativeCleanup: () => {
+    onCleanup: () => {
       const content = ref_content();
 
       observer.disconnect();
 
       content.removeEventListener("beforeinput", onBeforeInput);
       document.removeEventListener("selectionchange", onSelectionChange);
-    },
-    onBeforeInput: createOnBeforeInputListener(ref_content),
+    }
   };
 }

@@ -17,6 +17,8 @@ interface EditorContextProviderValue {
     _setSel: Setter<EditorSelection | undefined>;
     lines: Accessor<string[]>;
     _setLines: Setter<string[]>;
+    breakpts: Accessor<Set<number>>;
+    _setBreakpts: Setter<Set<number>>;
   };
   problems: Accessor<Problem[]>;
 }
@@ -27,6 +29,8 @@ const EditorContext = createContext<EditorContextProviderValue>({
     _setSel: () => undefined,
     lines: () => [],
     _setLines: () => [],
+    breakpts: () => undefined!,
+    _setBreakpts: () => undefined!,
   },
   problems: () => [],
 });
@@ -52,11 +56,15 @@ export default function EditorContextProvider(props: ParentProps) {
     "# It is 9 since the reader has to complete reading CB?9 before moving.",
     "# Therefore, we end up at line 14 before actually moving the reader.",
   ]);
+  const [breakpts, _setBreakpts] = createSignal<Set<number>>(new Set());
   const problems = createMemo(() => emulator.prepare(lines()));
 
   return (
     <EditorContext.Provider
-      value={{ viewState: { sel, _setSel, lines, _setLines }, problems }}
+      value={{
+        viewState: { sel, _setSel, lines, _setLines, breakpts, _setBreakpts },
+        problems,
+      }}
     >
       {props.children}
     </EditorContext.Provider>

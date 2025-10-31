@@ -3,16 +3,34 @@
   width: 100%;
   max-width: 100%;
   overflow: scroll;
+  height: 100%;
+  align-items: flex-start; /* magic fix */
 }
 
 .editor .gutters {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
   padding-right: 1rem;
+  background-color: #1e1e1ee7;
 
   .gutter {
   }
 
   .breakpoints {
+    position: relative;
+    width: 100%;
+
     .breakpoint {
+      position: absolute;
+    }
+
+    &:hover {
+      cursor: pointer;
     }
   }
 

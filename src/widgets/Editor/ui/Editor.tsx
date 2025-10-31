@@ -1,6 +1,6 @@
 import "./Editor.css";
 import useEditorModel from "../model/useEditorModel";
-import { createEffect, For, onCleanup } from "solid-js";
+import { For, onCleanup, onMount } from "solid-js";
 import { useEditorContext } from "../ContextProvider";
 
 /**
@@ -13,21 +13,50 @@ import { useEditorContext } from "../ContextProvider";
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
 
-  const { imperativeEffect, imperativeCleanup } = useEditorModel(() => content);
-
-  createEffect(imperativeEffect);
-  onCleanup(imperativeCleanup);
+  const model = useEditorModel(() => content);
+  onMount(model.onMount);
+  onCleanup(model.onCleanup);
 
   const { viewState } = useEditorContext();
 
   return (
     <div class={`editor ${props.class ?? ""}`}>
       <div class="gutters">
-        <div class="gutter breakpoints">
-          <For each={[]}>
+        <div
+          class="gutter breakpoints"
+          on:click={(ev) => {
+            // uses line-height: 1.5
+            const line = Math.floor(
+              (ev.clientY - ev.currentTarget.getBoundingClientRect().top) /
+                parseFloat(
+                  getComputedStyle(document.documentElement).fontSize,
+                ) /
+                1.5 +
+                1,
+            );
+
+            viewState._setBreakpts((prev) => {
+              const next = new Set(prev);
+              if (next.has(line)) next.delete(line);
+              else next.add(line);
+
+              return next;
+            });
+          }}
+        >
+          <For each={Array.from(viewState.breakpts().values())}>
             {(lineNumber) => {
-              const top = `top-[${lineNumber * 1.5}rem]`;
-              return <div class={`breakpoint ${top}`}>💗</div>;
+              // uses line-height: 1.5
+              return (
+                <div
+                  class="breakpoint"
+                  style={{
+                    top: `${(lineNumber - 1) * 1.5}rem`,
+                  }}
+                >
+                  💗
+                </div>
+              );
             }}
           </For>
         </div>
