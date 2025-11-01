@@ -1,11 +1,11 @@
 import { produce } from "solid-js/store";
-import { EditorContextProviderValue_State } from "../../ContextProvider";
-import updateSelection from "./updateSelection";
+import updateSelection from "../updateSelection";
+import { EditorState } from "../../model";
 
 export default function onInsertFrom(
   rawData: Readonly<string>,
   content: () => HTMLDivElement,
-  editorState: EditorContextProviderValue_State,
+  editorState: EditorState,
 ) {
   const data = rawData.split(/(?:\r\n|\r|\n)/g);
   if (data.length === 0) return;

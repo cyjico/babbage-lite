@@ -1,4 +1,4 @@
-import { EditorSelection } from ".";
+import { EditorSelection } from "../model";
 
 export default function updateSelection(
   content: HTMLDivElement,

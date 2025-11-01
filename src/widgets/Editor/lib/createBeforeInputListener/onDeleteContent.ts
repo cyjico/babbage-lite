@@ -1,11 +1,11 @@
 import { produce } from "solid-js/store";
-import { EditorContextProviderValue_State } from "../../ContextProvider";
-import updateSelection from "./updateSelection";
+import updateSelection from "../updateSelection";
+import { EditorState } from "../../model";
 
 export default function onDeleteContent(
   inputType: string,
   content: () => HTMLDivElement,
-  editorState: EditorContextProviderValue_State,
+  editorState: EditorState,
 ) {
   if (
     editorState.sel.lineIdxStart != editorState.sel.lineIdxEnd ||

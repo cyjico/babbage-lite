@@ -1,46 +1,22 @@
 import emulator from "@/entities/emulator";
-import { Direction, Problem } from "@/shared/model/types";
+import { Direction } from "@/shared/model/types";
 import {
-  Accessor,
+  Context,
   createContext,
   createMemo,
   createSignal,
   ParentProps,
-  Setter,
   useContext,
 } from "solid-js";
-import { createStore, SetStoreFunction } from "solid-js/store";
-import { EditorSelection } from "./lib/createBeforeInputListener";
+import { createStore } from "solid-js/store";
+import createEditorHistory from "./lib/createEditorHistory";
+import {
+  EditorContextProviderValue,
+  EditorSelection,
+} from "./model";
 
-export interface EditorContextProviderValue_State {
-  sel: EditorSelection;
-  _setSel: SetStoreFunction<EditorSelection>;
-  lines: string[];
-  _setLines: SetStoreFunction<string[]>;
-}
-
-export interface EditorContextProviderValue {
-  editorState: EditorContextProviderValue_State;
-  editorDebugger: {
-    problems: Accessor<Problem[]>;
-    breakpts: Accessor<Set<number>>;
-    _setBreakpts: Setter<Set<number>>;
-  };
-}
-
-const EditorContext = createContext<EditorContextProviderValue>({
-  editorState: {
-    sel: undefined!,
-    _setSel: () => undefined,
-    lines: [],
-    _setLines: () => [],
-  },
-  editorDebugger: {
-    problems: () => [],
-    breakpts: () => undefined!,
-    _setBreakpts: () => undefined!,
-  },
-});
+const EditorContext =
+  createContext<EditorContextProviderValue>() as Context<EditorContextProviderValue>;
 
 export default function EditorContextProvider(props: ParentProps) {
   const [sel, _setSel] = createStore<EditorSelection>({
@@ -73,9 +49,15 @@ export default function EditorContextProvider(props: ParentProps) {
   const [breakpts, _setBreakpts] = createSignal<Set<number>>(new Set());
   const problems = createMemo(() => emulator.prepare(lines));
 
+  const editorHistory = createEditorHistory((newState) => {
+    _setLines(newState.lines);
+    _setSel(newState.sel);
+  });
+
   return (
     <EditorContext.Provider
       value={{
+        editorHistory,
         editorState: { sel, _setSel, lines, _setLines },
         editorDebugger: {
           problems,

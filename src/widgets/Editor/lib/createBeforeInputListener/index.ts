@@ -1,28 +1,20 @@
-import { Direction } from "@/shared/model/types";
-import { EditorContextProviderValue_State } from "../../ContextProvider";
 import onDeleteContent from "./onDeleteContent";
-import updateSelection from "./updateSelection";
+import updateSelection from "../updateSelection";
 import { produce } from "solid-js/store";
 import onInsertFrom from "./onInsertFrom";
-import captureSelection from "./captureSelection";
-
-export { captureSelection };
-
-export interface EditorSelection {
-  lineIdxStart: number;
-  offsetStart: number;
-  lineIdxEnd: number;
-  offsetEnd: number;
-  direction: Direction;
-  toString: () => string;
-}
+import captureSelection from "../captureSelection";
+import { EditorHistory, EditorState } from "../../model";
 
 export default function createBeforeInputListener(
   content: () => HTMLDivElement,
-  editorState: EditorContextProviderValue_State,
+  editorHistory: EditorHistory,
+  editorState: EditorState,
 ) {
   return function (ev: InputEvent) {
     ev.preventDefault();
+
+    // TODO: Ccoalesce commits for less noise
+    editorHistory.commit(editorState);
 
     switch (ev.inputType) {
       case "insertText":
@@ -93,9 +85,9 @@ export default function createBeforeInputListener(
         captureSelection(editorState);
       case "insertFromPaste":
       case "insertFromPasteAsQuotation":
-        if (typeof ev.data !== "string") break;
-
-        onInsertFrom(ev.data, content, editorState);
+        if (typeof ev.data === "string") {
+          onInsertFrom(ev.data, content, editorState);
+        }
         break;
       case "deleteByDrag":
       case "deleteByCut":
@@ -105,7 +97,7 @@ export default function createBeforeInputListener(
         onDeleteContent(ev.inputType, content, editorState);
         break;
       default:
-        console.log("Unhandled Event: ", ev.inputType);
+        console.warn("Unhandled Event (please report): ", ev.inputType);
         break;
     }
   };

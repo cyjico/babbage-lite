@@ -1,17 +1,18 @@
 import "./Editor.css";
 import { For, onCleanup, onMount } from "solid-js";
 import { useEditorContext } from "../ContextProvider";
-import createBeforeInputListener, {
-  captureSelection,
-} from "../lib/createBeforeInputListener";
+import createBeforeInputListener from "../lib/createBeforeInputListener";
+import updateSelection from "../lib/updateSelection";
+import captureSelection from "../lib/captureSelection";
 
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
-  const { editorState, editorDebugger } = useEditorContext();
+  const { editorHistory, editorState, editorDebugger } = useEditorContext();
 
   const selectionChangeListener = (_: Event) => captureSelection(editorState);
   const beforeInputListener = createBeforeInputListener(
     () => content,
+    editorHistory,
     editorState,
   );
   onMount(() => {
@@ -73,7 +74,19 @@ export default function Editor(props: { class?: string }) {
         </div>
       </div>
 
-      <div ref={content} contentEditable="plaintext-only" class="content">
+      <div
+        ref={content}
+        contentEditable="plaintext-only"
+        class="content"
+        on:keydown={(ev) => {
+          if ((ev.ctrlKey || ev.metaKey) && ev.key === "z") {
+            ev.preventDefault();
+
+            editorHistory.undo(editorState);
+            updateSelection(content, editorState.sel);
+          }
+        }}
+      >
         <For each={editorState.lines}>
           {(v, i) => {
             return (
