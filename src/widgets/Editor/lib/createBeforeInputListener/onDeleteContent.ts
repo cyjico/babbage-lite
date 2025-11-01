@@ -1,6 +1,6 @@
 import { produce } from "solid-js/store";
 import { EditorContextProviderValue_State } from "../../ContextProvider";
-import setSelection from "./setSelection";
+import updateSelection from "./updateSelection";
 
 export default function onDeleteContent(
   inputType: string,
@@ -33,7 +33,7 @@ export default function onDeleteContent(
         sel.lineIdxEnd = sel.lineIdxStart;
         sel.offsetEnd = sel.offsetStart;
 
-        setSelection(content(), sel);
+        updateSelection(content(), sel);
       }),
     );
 
@@ -63,7 +63,7 @@ export default function onDeleteContent(
             sel.offsetStart = Math.max(sel.offsetStart - 1, 0);
             sel.offsetEnd = sel.offsetStart;
 
-            setSelection(content(), sel);
+            updateSelection(content(), sel);
           }),
         );
       } else if (editorState.sel.lineIdxStart !== 0) {
@@ -90,7 +90,7 @@ export default function onDeleteContent(
             sel.lineIdxEnd = sel.lineIdxStart;
             sel.offsetStart = sel.offsetEnd = prevLineLength;
 
-            setSelection(content(), sel);
+            updateSelection(content(), sel);
           }),
         );
       }
@@ -114,7 +114,7 @@ export default function onDeleteContent(
           }),
         );
 
-        setSelection(content(), editorState.sel);
+        updateSelection(content(), editorState.sel);
       } else if (
         editorState.sel.lineIdxStart !==
         editorState.lines.length - 1
@@ -129,7 +129,7 @@ export default function onDeleteContent(
           }),
         );
 
-        setSelection(content(), editorState.sel);
+        updateSelection(content(), editorState.sel);
       }
       break;
   }

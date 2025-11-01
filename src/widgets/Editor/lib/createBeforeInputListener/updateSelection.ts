@@ -1,6 +1,6 @@
 import { EditorSelection } from ".";
 
-export default function setSelection(
+export default function updateSelection(
   content: HTMLDivElement,
   sel: Readonly<EditorSelection>,
 ) {

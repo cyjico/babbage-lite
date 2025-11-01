@@ -1,6 +1,6 @@
 import { produce } from "solid-js/store";
 import { EditorContextProviderValue_State } from "../../ContextProvider";
-import setSelection from "./setSelection";
+import updateSelection from "./updateSelection";
 
 export default function onInsertFrom(
   rawData: Readonly<string>,
@@ -46,7 +46,8 @@ export default function onInsertFrom(
         data.length === 1
           ? sel.offsetStart + data[0].length
           : data[data.length - 1].length;
+
+      updateSelection(content(), editorState.sel);
     }),
   );
-  setSelection(content(), editorState.sel);
 }

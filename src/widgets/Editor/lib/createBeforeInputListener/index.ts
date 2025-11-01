@@ -1,7 +1,7 @@
 import { Direction } from "@/shared/model/types";
 import { EditorContextProviderValue_State } from "../../ContextProvider";
 import onDeleteContent from "./onDeleteContent";
-import setSelection from "./setSelection";
+import updateSelection from "./updateSelection";
 import { produce } from "solid-js/store";
 import onInsertFrom from "./onInsertFrom";
 import { captureSelection } from "../createSelectionChangeListener";
@@ -52,7 +52,7 @@ export default function createBeforeInputListener(
             sel.offsetStart += 1;
             sel.offsetEnd = sel.offsetStart;
 
-            setSelection(content(), sel);
+            updateSelection(content(), sel);
           }),
         );
         break;
@@ -81,7 +81,7 @@ export default function createBeforeInputListener(
             sel.lineIdxEnd = sel.lineIdxStart;
             sel.offsetStart = sel.offsetEnd = 0;
 
-            setSelection(content(), sel);
+            updateSelection(content(), sel);
           }),
         );
         break;
