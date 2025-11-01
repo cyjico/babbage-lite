@@ -1,14 +1,10 @@
+import { Direction } from "@/shared/model/types";
 import { produce } from "solid-js/store";
 import { EditorContextProviderValue_State } from "../../ContextProvider";
-import { Direction } from "@/shared/model/types";
 
-export default function createSelectionChangeListener(
+export default function captureSelection(
   editorState: EditorContextProviderValue_State,
 ) {
-  return (_: Event) => captureSelection(editorState);
-}
-
-export function captureSelection(editorState: EditorContextProviderValue_State) {
   const rawSel = document.getSelection();
 
   if (!rawSel || rawSel.rangeCount === 0) {

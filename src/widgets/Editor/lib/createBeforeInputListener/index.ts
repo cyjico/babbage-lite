@@ -4,7 +4,9 @@ import onDeleteContent from "./onDeleteContent";
 import updateSelection from "./updateSelection";
 import { produce } from "solid-js/store";
 import onInsertFrom from "./onInsertFrom";
-import { captureSelection } from "../createSelectionChangeListener";
+import captureSelection from "./captureSelection";
+
+export { captureSelection };
 
 export interface EditorSelection {
   lineIdxStart: number;

@@ -1,14 +1,15 @@
 import "./Editor.css";
 import { For, onCleanup, onMount } from "solid-js";
 import { useEditorContext } from "../ContextProvider";
-import createBeforeInputListener from "../lib/createBeforeInputListener";
-import createSelectionChangeListener from "../lib/createSelectionChangeListener";
+import createBeforeInputListener, {
+  captureSelection,
+} from "../lib/createBeforeInputListener";
 
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
   const { editorState, editorDebugger } = useEditorContext();
 
-  const selectionChangeListener = createSelectionChangeListener(editorState);
+  const selectionChangeListener = (_: Event) => captureSelection(editorState);
   const beforeInputListener = createBeforeInputListener(
     () => content,
     editorState,
