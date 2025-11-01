@@ -1,5 +1,5 @@
 import emulator from "@/entities/emulator";
-import { Problem } from "@/shared/model/types";
+import { Direction, Problem } from "@/shared/model/types";
 import {
   Accessor,
   createContext,
@@ -9,35 +9,49 @@ import {
   Setter,
   useContext,
 } from "solid-js";
-import EditorSelection from "./lib/EditorSelection";
+import { createStore, SetStoreFunction } from "solid-js/store";
+import { EditorSelection } from "./lib/createBeforeInputListener";
 
-interface EditorContextProviderValue {
-  viewState: {
-    sel: Accessor<EditorSelection | undefined>;
-    _setSel: Setter<EditorSelection | undefined>;
-    lines: Accessor<string[]>;
-    _setLines: Setter<string[]>;
+export interface EditorContextProviderValue_State {
+  sel: EditorSelection;
+  _setSel: SetStoreFunction<EditorSelection>;
+  lines: string[];
+  _setLines: SetStoreFunction<string[]>;
+}
+
+export interface EditorContextProviderValue {
+  editorState: EditorContextProviderValue_State;
+  editorDebugger: {
+    problems: Accessor<Problem[]>;
     breakpts: Accessor<Set<number>>;
     _setBreakpts: Setter<Set<number>>;
   };
-  problems: Accessor<Problem[]>;
 }
 
 const EditorContext = createContext<EditorContextProviderValue>({
-  viewState: {
-    sel: () => undefined,
+  editorState: {
+    sel: undefined!,
     _setSel: () => undefined,
-    lines: () => [],
+    lines: [],
     _setLines: () => [],
+  },
+  editorDebugger: {
+    problems: () => [],
     breakpts: () => undefined!,
     _setBreakpts: () => undefined!,
   },
-  problems: () => [],
 });
 
 export default function EditorContextProvider(props: ParentProps) {
-  const [sel, _setSel] = createSignal<EditorSelection>();
-  const [lines, _setLines] = createSignal<string[]>([
+  const [sel, _setSel] = createStore<EditorSelection>({
+    lineIdxStart: 0,
+    offsetStart: 0,
+    lineIdxEnd: 0,
+    offsetEnd: 0,
+    direction: Direction.None,
+    toString: () => "",
+  });
+  const [lines, _setLines] = createStore<string[]>([
     "# This program will print from 1 to 10",
     "N000 0       # cur_num",
     "N001 10      # end_num",
@@ -57,13 +71,17 @@ export default function EditorContextProvider(props: ParentProps) {
     "# Therefore, we end up at line 14 before actually moving the reader.",
   ]);
   const [breakpts, _setBreakpts] = createSignal<Set<number>>(new Set());
-  const problems = createMemo(() => emulator.prepare(lines()));
+  const problems = createMemo(() => emulator.prepare(lines));
 
   return (
     <EditorContext.Provider
       value={{
-        viewState: { sel, _setSel, lines, _setLines, breakpts, _setBreakpts },
-        problems,
+        editorState: { sel, _setSel, lines, _setLines },
+        editorDebugger: {
+          problems,
+          breakpts,
+          _setBreakpts,
+        },
       }}
     >
       {props.children}

@@ -2,19 +2,19 @@ import { createEffect, createSignal } from "solid-js";
 import { useEditorContext } from "../Editor/ContextProvider";
 
 export default function EditorStatusBar() {
-  const { viewState } = useEditorContext();
+  const { editorState } = useEditorContext();
 
   const [ln, setLn] = createSignal(1);
   const [col, setCol] = createSignal(1);
   const [selLength, setSelLength] = createSignal(0);
 
   createEffect(() => {
-    const sel = viewState.sel();
+    const sel = editorState.sel;
     if (!sel) return;
 
-    setLn(sel.focusLineIdx + 1);
-    setCol(sel.focusLineOffset + 1);
-    setSelLength(sel.endLineIdx - sel.startLineIdx + sel.asString.length);
+    setLn(sel.lineIdxEnd + 1);
+    setCol(sel.offsetEnd + 1);
+    setSelLength(sel.toString().length);
   });
 
   return (

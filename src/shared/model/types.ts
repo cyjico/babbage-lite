@@ -12,3 +12,9 @@ export interface Problem {
   col: number;
   colend: number;
 }
+
+export const enum Direction {
+  Forward,
+  Backward,
+  None,
+}

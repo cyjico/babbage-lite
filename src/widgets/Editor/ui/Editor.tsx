@@ -1,32 +1,27 @@
 import "./Editor.css";
-import useEditorModel from "../model/useEditorModel";
 import { For, onCleanup, onMount } from "solid-js";
 import { useEditorContext } from "../ContextProvider";
+import createBeforeInputListener from "../lib/createBeforeInputListener";
+import createSelectionChangeListener from "../lib/createSelectionChangeListener";
 
-/**
- * Implementation uses a mix of SolidJS reactivity and DOM manipulation.
- *
- * To keep it short, the user editing lines will mean a direct manipulation of
- * the DOM. But, to keep track of the changes (and to respond to the changes),
- * we will use SolidJS's `signals`.
- */
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
+  const { editorState, editorDebugger } = useEditorContext();
 
-  const model = useEditorModel(() => content);
-  onMount(model.onMount);
-  onCleanup(model.onCleanup);
-
-  model.setLinesRemovedListener((newLength) => {
-    viewState._setBreakpts((prev) => {
-      const next = new Set(prev);
-      for (const breakpt of prev) if (breakpt > newLength) next.delete(breakpt);
-
-      return next;
-    });
+  const selectionChangeListener = createSelectionChangeListener(editorState);
+  const beforeInputListener = createBeforeInputListener(
+    () => content,
+    editorState,
+  );
+  onMount(() => {
+    document.addEventListener("selectionchange", selectionChangeListener);
+    content.addEventListener("beforeinput", beforeInputListener);
   });
 
-  const { viewState } = useEditorContext();
+  onCleanup(() => {
+    document.removeEventListener("selectionchange", selectionChangeListener);
+    content.removeEventListener("beforeinput", beforeInputListener);
+  });
 
   return (
     <div class={`editor ${props.class ?? ""}`}>
@@ -44,7 +39,7 @@ export default function Editor(props: { class?: string }) {
                 1,
             );
 
-            viewState._setBreakpts((prev) => {
+            editorDebugger._setBreakpts((prev) => {
               const next = new Set(prev);
               if (next.has(line)) next.delete(line);
               else next.add(line);
@@ -53,7 +48,7 @@ export default function Editor(props: { class?: string }) {
             });
           }}
         >
-          <For each={Array.from(viewState.breakpts().values())}>
+          <For each={Array.from(editorDebugger.breakpts().values())}>
             {(lineNumber) => {
               // uses line-height: 1.5
               return (
@@ -71,13 +66,23 @@ export default function Editor(props: { class?: string }) {
         </div>
 
         <div class="gutter line-numbers">
-          <For each={viewState.lines()}>
+          <For each={editorState.lines}>
             {(_, index) => <div class="line-number">{index() + 1}</div>}
           </For>
         </div>
       </div>
 
-      <div ref={content} contentEditable="plaintext-only" class="content" />
+      <div ref={content} contentEditable="plaintext-only" class="content">
+        <For each={editorState.lines}>
+          {(v, i) => {
+            return (
+              <div class="line" id={`${i()}`}>
+                {v.length === 0 ? <br /> : v}
+              </div>
+            );
+          }}
+        </For>
+      </div>
     </div>
   );
 }
