@@ -85,12 +85,6 @@ export default function createBeforeInputListener(
           }),
         );
         break;
-      case "deleteByCut":
-      case "deleteContent":
-      case "deleteContentBackward":
-      case "deleteContentForward":
-        onDeleteContent(ev.inputType, content, editorState);
-        break;
       case "insertFromYank":
       // @ts-expect-error fallthrough intended
       case "insertFromDrop":
@@ -100,6 +94,13 @@ export default function createBeforeInputListener(
         if (typeof ev.data !== "string") break;
 
         onInsertFrom(ev.data, content, editorState);
+        break;
+      case "deleteByDrag":
+      case "deleteByCut":
+      case "deleteContent":
+      case "deleteContentBackward":
+      case "deleteContentForward":
+        onDeleteContent(ev.inputType, content, editorState);
         break;
       default:
         console.log("Unhandled Event: ", ev.inputType);
