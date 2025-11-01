@@ -85,6 +85,7 @@ export default function createBeforeInputListener(
           }),
         );
         break;
+      case "deleteByCut":
       case "deleteContent":
       case "deleteContentBackward":
       case "deleteContentForward":
