@@ -13,10 +13,10 @@ export default function createEditorHistory(
 
   return {
     undo: (curState) => {
-      console.log("just undid");
       const newState = undoStack.pop();
       if (newState === undefined) return curState;
 
+      redoStack.push(serializeEditorState(curState));
       setCanUndo(undoStack.length !== 0);
 
       onRequestEditorStateChange(newState);
@@ -26,7 +26,7 @@ export default function createEditorHistory(
       const newState = redoStack.pop();
       if (newState === undefined) return curState;
 
-      undoStack.push(curState);
+      undoStack.push(serializeEditorState(curState));
       setCanRedo(redoStack.length !== 0);
 
       onRequestEditorStateChange(newState);

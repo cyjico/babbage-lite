@@ -2,6 +2,18 @@ import { SetStoreFunction } from "solid-js/store";
 import { Accessor, Setter } from "solid-js";
 import { Direction, Problem } from "@/shared/model/types";
 
+/**
+ * Separate from ..._serialized to prevent accidentally saving one to the other
+ */
+export interface EditorSelection {
+  lineIdxStart: number;
+  offsetStart: number;
+  lineIdxEnd: number;
+  offsetEnd: number;
+  direction: Direction;
+  toString: () => string;
+}
+
 export interface EditorSelection_serialized {
   lineIdxStart: number;
   offsetStart: number;
@@ -9,9 +21,14 @@ export interface EditorSelection_serialized {
   offsetEnd: number;
 }
 
-export interface EditorSelection extends EditorSelection_serialized {
-  direction: Direction;
-  toString: () => string;
+/**
+ * Separate from ..._serialized to prevent accidentally saving one to the other
+ */
+export interface EditorState {
+  sel: EditorSelection;
+  lines: string[];
+  _setSel: SetStoreFunction<EditorSelection>;
+  _setLines: SetStoreFunction<string[]>;
 }
 
 export interface EditorState_serialized {
@@ -19,18 +36,12 @@ export interface EditorState_serialized {
   lines: string[];
 }
 
-export interface EditorState extends EditorState_serialized {
-  sel: EditorSelection
-  _setSel: SetStoreFunction<EditorSelection>;
-  _setLines: SetStoreFunction<string[]>;
-}
-
 export interface EditorHistory {
-  undo: (curState: EditorState_serialized) => EditorState_serialized;
-  redo: (curState: EditorState_serialized) => EditorState_serialized;
+  undo: (curState: EditorState) => EditorState_serialized;
+  redo: (curState: EditorState) => EditorState_serialized;
   canUndo: Accessor<boolean>;
   canRedo: Accessor<boolean>;
-  commit: (curState: EditorState_serialized) => void;
+  commit: (curState: EditorState) => void;
 }
 
 export interface EditorContextProviderValue {

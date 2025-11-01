@@ -79,11 +79,18 @@ export default function Editor(props: { class?: string }) {
         contentEditable="plaintext-only"
         class="content"
         on:keydown={(ev) => {
-          if ((ev.ctrlKey || ev.metaKey) && ev.key === "z") {
-            ev.preventDefault();
+          if (ev.ctrlKey || ev.metaKey) {
+            if (ev.key === "z") {
+              ev.preventDefault();
 
-            editorHistory.undo(editorState);
-            updateSelection(content, editorState.sel);
+              editorHistory.undo(editorState);
+              updateSelection(content, editorState.sel);
+            } else if (ev.key === "y") {
+              ev.preventDefault();
+
+              editorHistory.redo(editorState);
+              updateSelection(content, editorState.sel);
+            }
           }
         }}
       >
