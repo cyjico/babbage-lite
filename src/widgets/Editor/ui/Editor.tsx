@@ -70,7 +70,7 @@ export default function Editor(props: { class?: string }) {
         ref={content}
         contentEditable="plaintext-only"
         class="content"
-        onMouseDown={() => beforeInputHandler.reset()}
+        onMouseDown={() => beforeInputHandler.endGroup()}
         onBeforeInput={(ev) => {
           ev.preventDefault();
 
@@ -94,7 +94,7 @@ export default function Editor(props: { class?: string }) {
 
               queueMicrotask(() => {
                 editorHistory.undo();
-                beforeInputHandler.reset();
+                beforeInputHandler.endGroup();
               });
               scheduleUpdateSelectionDOM();
             } else if (ev.key === "y") {
@@ -102,7 +102,7 @@ export default function Editor(props: { class?: string }) {
 
               queueMicrotask(() => {
                 editorHistory.redo();
-                beforeInputHandler.reset();
+                beforeInputHandler.endGroup();
               });
               scheduleUpdateSelectionDOM();
             }
@@ -114,7 +114,7 @@ export default function Editor(props: { class?: string }) {
             ev.key === "End" ||
             ev.key.startsWith("Page")
           )
-            beforeInputHandler.reset();
+            beforeInputHandler.endGroup();
         }}
       >
         <For each={editorState.lines}>

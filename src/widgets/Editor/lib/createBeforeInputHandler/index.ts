@@ -57,7 +57,7 @@ export default function createBeforeInputHandler(
           break;
       }
     },
-    reset: () => {
+    endGroup: () => {
       prevKind = InputEventKind.None;
     },
   };
