@@ -1,7 +1,7 @@
 import "./Editor.css";
 import { For, onCleanup, onMount } from "solid-js";
 import { useEditorContext } from "../ContextProvider";
-import captureSelectionDOM from "../infra/captureSelection";
+import captureSelectionDOM from "../infra/captureSelectionDOM";
 import createBeforeInputHandler from "../lib/createBeforeInputHandler";
 import updateSelectionDOM from "../infra/updateSelectionDOM";
 
