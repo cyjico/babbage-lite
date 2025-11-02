@@ -27,7 +27,6 @@ export default function ResizableVerticalPanel(
           const maxHeight =
             (ev.currentTarget.parentElement?.clientHeight ??
               Number.MAX_SAFE_INTEGER) * 0.8;
-          console.log(maxHeight);
 
           setHeight((prev) =>
             Math.max(16, Math.min(maxHeight, prev - ev.movementY)),

@@ -1,9 +1,6 @@
 import "./styles.css";
-import Editor from "@/widgets/Editor";
+import Editor, { EditorContextProvider, useEditorContext } from "@/widgets/Editor";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
-import EditorContextProvider, {
-  useEditorContext,
-} from "@/widgets/Editor/ContextProvider";
 import EditorStatusBar from "@/widgets/EditorStatusBar";
 import { For } from "solid-js";
 import createProblemOutput from "@/shared/lib/createProblemOutput";
@@ -77,7 +74,7 @@ function RuntimePanel() {
 }
 
 function DiagnosticsPanel() {
-  const { viewState, problems } = useEditorContext();
+  const { editorState, editorDebugger } = useEditorContext();
 
   return (
     <ResizableVerticalPanel classInteractable="bg-mydarkgrey hover:bg-mygrey transition-colors">
@@ -86,14 +83,14 @@ function DiagnosticsPanel() {
         classContentContainer="overflow-y-auto"
         tabs={[
           {
-            label: `PROBLEMS ${problems().length > 0 ? ` (${problems().length})` : ""}`,
+            label: `PROBLEMS ${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
             content: (
               <ul class="list-disc">
-                <For each={problems()} fallback={<li />}>
+                <For each={editorDebugger.problems()} fallback={<li />}>
                   {(v) => (
                     <li class="whitespace-pre-wrap">
                       {v.severity == ProblemSeverity.Error ? "❌ " : "⚠️ "}
-                      {createProblemOutput(viewState.lines(), v)}
+                      {createProblemOutput(editorState.lines, v)}
                     </li>
                   )}
                 </For>

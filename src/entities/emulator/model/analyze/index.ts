@@ -241,10 +241,4 @@ export default function analyze(
   // TODO: Error reporting for CFG analysis
   const cfg = createCFG(cards);
   const [hasCycle, unreachableCFGNodes] = analyzeCFG(cfg);
-  console.log(
-    "analyzeCFG():",
-    `\n hasCycle: ${hasCycle}\n`,
-    "unreachableCFGNodes:",
-    unreachableCFGNodes,
-  );
 }
