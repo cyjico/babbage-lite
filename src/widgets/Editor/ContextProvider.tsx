@@ -9,11 +9,8 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import createEditorHistory from "./lib/createEditorHistory";
-import {
-  EditorContextProviderValue,
-  EditorSelection,
-} from "./model";
+import { EditorContextProviderValue, EditorSelection } from "./model";
+import EditorHistory from "./model/EditorHistory";
 
 const EditorContext =
   createContext<EditorContextProviderValue>() as Context<EditorContextProviderValue>;
@@ -46,24 +43,29 @@ export default function EditorContextProvider(props: ParentProps) {
     "# It is 9 since the reader has to complete reading CB?9 before moving.",
     "# Therefore, we end up at line 14 before actually moving the reader.",
   ]);
-  const [breakpts, _setBreakpts] = createSignal<Set<number>>(new Set());
+  const [breakpts, setBreakpts] = createSignal<Set<number>>(new Set());
   const problems = createMemo(() => emulator.prepare(lines));
 
-  const editorHistory = createEditorHistory((newState) => {
-    _setLines(newState.lines);
-    _setSel(newState.sel);
-  });
+  const editorState = { sel, _setSel, lines, _setLines };
 
   return (
     <EditorContext.Provider
       value={{
-        editorHistory,
-        editorState: { sel, _setSel, lines, _setLines },
+        editorState,
         editorDebugger: {
           problems,
           breakpts,
-          _setBreakpts,
+          toggleBreakpt(line) {
+            setBreakpts((prev) => {
+              const next = new Set(prev);
+              if (next.has(line)) next.delete(line);
+              else next.add(line);
+
+              return next;
+            });
+          },
         },
+        editorHistory: new EditorHistory(editorState),
       }}
     >
       {props.children}

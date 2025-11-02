@@ -1,29 +1,38 @@
 import "./Editor.css";
 import { For, onCleanup, onMount } from "solid-js";
 import { useEditorContext } from "../ContextProvider";
-import createBeforeInputListener from "../lib/createBeforeInputListener";
-import updateSelection from "../lib/updateSelection";
-import captureSelection from "../lib/captureSelection";
+import captureSelectionDOM from "../infra/captureSelection";
+import createBeforeInputHandler from "../lib/createBeforeInputHandler";
+import updateSelectionDOM from "../infra/updateSelectionDOM";
 
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
-  const { editorHistory, editorState, editorDebugger } = useEditorContext();
-
-  const selectionChangeListener = (_: Event) => captureSelection(editorState);
-  const beforeInputListener = createBeforeInputListener(
-    () => content,
-    editorHistory,
+  const { editorState, editorDebugger, editorHistory } = useEditorContext();
+  const beforeInputHandler = createBeforeInputHandler(
     editorState,
+    editorHistory,
   );
+
+  const selectionChangeListener = (_: Event) =>
+    captureSelectionDOM(editorState._setSel);
   onMount(() => {
     document.addEventListener("selectionchange", selectionChangeListener);
-    content.addEventListener("beforeinput", beforeInputListener);
   });
-
   onCleanup(() => {
     document.removeEventListener("selectionchange", selectionChangeListener);
-    content.removeEventListener("beforeinput", beforeInputListener);
   });
+
+  // To avoid queueing the same function multiple times
+  let scheduledUpdateSelectionDOM = false;
+  function scheduleUpdateSelectionDOM() {
+    if (scheduledUpdateSelectionDOM) return;
+
+    scheduledUpdateSelectionDOM = true;
+    queueMicrotask(() => {
+      updateSelectionDOM(content, editorState.sel);
+      scheduledUpdateSelectionDOM = false;
+    });
+  }
 
   return (
     <div class={`editor ${props.class ?? ""}`}>
@@ -31,33 +40,16 @@ export default function Editor(props: { class?: string }) {
         <div
           class="gutter breakpoints"
           on:pointerdown={(ev) => {
-            // uses line-height: 1.5
-            const line = Math.floor(
-              (ev.clientY - ev.currentTarget.getBoundingClientRect().top) /
-                parseFloat(
-                  getComputedStyle(document.documentElement).fontSize,
-                ) /
-                1.5 +
-                1,
-            );
-
-            editorDebugger._setBreakpts((prev) => {
-              const next = new Set(prev);
-              if (next.has(line)) next.delete(line);
-              else next.add(line);
-
-              return next;
-            });
+            editorDebugger.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
           }}
         >
           <For each={Array.from(editorDebugger.breakpts().values())}>
-            {(lineNumber) => {
-              // uses line-height: 1.5
+            {(line) => {
               return (
                 <div
                   class="breakpoint"
                   style={{
-                    transform: `translateY(${(lineNumber - 1) * 1.5}rem)`,
+                    transform: `translateY(${calculateRemFromLine(line, 1.5)}rem)`,
                   }}
                 >
                   💗
@@ -78,18 +70,38 @@ export default function Editor(props: { class?: string }) {
         ref={content}
         contentEditable="plaintext-only"
         class="content"
-        on:keydown={(ev) => {
+        onBeforeInput={(ev) => {
+          ev.preventDefault();
+
+          switch (ev.inputType) {
+            case "insertFromYank":
+            case "insertFromDrop":
+              // To know where the user tried to yank/drop the text
+              captureSelectionDOM(editorState._setSel);
+              break;
+          }
+
+          beforeInputHandler(ev);
+
+          scheduleUpdateSelectionDOM();
+        }}
+        onKeyDown={(ev) => {
+          // metaKey is for Apple
           if (ev.ctrlKey || ev.metaKey) {
             if (ev.key === "z") {
               ev.preventDefault();
 
-              editorHistory.undo(editorState);
-              updateSelection(content, editorState.sel);
+              queueMicrotask(() => {
+                editorHistory.undo();
+              });
+              scheduleUpdateSelectionDOM();
             } else if (ev.key === "y") {
               ev.preventDefault();
 
-              editorHistory.redo(editorState);
-              updateSelection(content, editorState.sel);
+              queueMicrotask(() => {
+                editorHistory.redo();
+              });
+              scheduleUpdateSelectionDOM();
             }
           }
         }}
@@ -97,7 +109,7 @@ export default function Editor(props: { class?: string }) {
         <For each={editorState.lines}>
           {(v, i) => {
             return (
-              <div class="line" id={`${i()}`}>
+              <div class="line" data-id={`${i()}`}>
                 {v.length === 0 ? <br /> : v}
               </div>
             );
@@ -106,4 +118,23 @@ export default function Editor(props: { class?: string }) {
       </div>
     </div>
   );
+}
+
+function calculateLineFromPointer(
+  ev: PointerEvent & {
+    currentTarget: HTMLDivElement;
+    target: Element;
+  },
+  lineHeight: number,
+) {
+  return Math.floor(
+    (ev.clientY - ev.currentTarget.getBoundingClientRect().top) /
+      parseFloat(getComputedStyle(document.documentElement).fontSize) /
+      lineHeight +
+      1,
+  );
+}
+
+function calculateRemFromLine(line: number, lineHeight: number) {
+  return (line - 1) * lineHeight;
 }
