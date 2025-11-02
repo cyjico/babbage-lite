@@ -70,6 +70,7 @@ export default function Editor(props: { class?: string }) {
         ref={content}
         contentEditable="plaintext-only"
         class="content"
+        onMouseDown={() => beforeInputHandler.reset()}
         onBeforeInput={(ev) => {
           ev.preventDefault();
 
@@ -106,6 +107,14 @@ export default function Editor(props: { class?: string }) {
               scheduleUpdateSelectionDOM();
             }
           }
+
+          if (
+            ev.key.startsWith("Arrow") ||
+            ev.key === "Home" ||
+            ev.key === "End" ||
+            ev.key.startsWith("Page")
+          )
+            beforeInputHandler.reset();
         }}
       >
         <For each={editorState.lines}>
