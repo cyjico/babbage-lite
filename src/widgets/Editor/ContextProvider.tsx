@@ -24,29 +24,13 @@ export default function EditorContextProvider(props: ParentProps) {
     direction: Direction.None,
     toString: () => "",
   });
-  const [lines, _setLines] = createStore<string[]>([
-    "# This program will print from 1 to 10",
-    "N000 0       # cur_num",
-    "N001 10      # end_num",
-    "N002 1       # increment",
-    "+",
-    "L000         # Load cur_num",
-    "L002         # Load increment => EGRESS = cur_num + increment",
-    "S000         # Set cur_num to EGRESS",
-    "P            # Print the result of the last arithmetic operation performed",
-    "-",
-    "L000         # Load cur_num",
-    "L001         # Load end_num => EGRESS = cur_num - end_num",
-    "CB?9         # If the result is negative, run-up lever (also known as lever) is set.",
-    "H            # Halt the program",
-    "# FAQ: Why is line 13 set to moving the reader 9 cards back? Should it not be 8?",
-    "# It is 9 since the reader has to complete reading CB?9 before moving.",
-    "# Therefore, we end up at line 14 before actually moving the reader.",
-  ]);
-  const [breakpts, setBreakpts] = createSignal<Set<number>>(new Set());
-  const problems = createMemo(() => emulator.prepare(lines));
-
+  const [lines, _setLines] = createStore<string[]>([""]);
   const editorState = { sel, _setSel, lines, _setLines };
+
+  const problems = createMemo(() => emulator.prepare(lines));
+  const [breakpts, setBreakpts] = createSignal<Set<number>>(new Set());
+
+  const editorHistory = new EditorHistory(editorState);
 
   return (
     <EditorContext.Provider
@@ -65,7 +49,7 @@ export default function EditorContextProvider(props: ParentProps) {
             });
           },
         },
-        editorHistory: new EditorHistory(editorState),
+        editorHistory,
       }}
     >
       {props.children}

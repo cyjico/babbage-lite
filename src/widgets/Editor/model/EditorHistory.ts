@@ -3,7 +3,8 @@ import { EditorState, EditorState_serialized } from ".";
 import serializeEditorState from "../lib/serializeEditorState";
 
 export default class EditorHistory {
-  #undoStack: EditorState_serialized[] = [];
+  // TODO: Replace with #undoStack
+  undoStack: EditorState_serialized[] = [];
   #redoStack: EditorState_serialized[] = [];
 
   canUndo: Accessor<boolean>;
@@ -21,11 +22,11 @@ export default class EditorHistory {
   }
 
   undo() {
-    const newState = this.#undoStack.pop();
+    const newState = this.undoStack.pop();
     if (newState === undefined) return;
 
     this.#redoStack.push(serializeEditorState(this.#editorState));
-    this.#setCanUndo(this.#undoStack.length !== 0);
+    this.#setCanUndo(this.undoStack.length !== 0);
 
     this.#editorState._setSel(newState.sel);
     this.#editorState._setLines(newState.lines);
@@ -35,18 +36,18 @@ export default class EditorHistory {
     const newState = this.#redoStack.pop();
     if (newState === undefined) return;
 
-    this.#undoStack.push(serializeEditorState(this.#editorState));
+    this.undoStack.push(serializeEditorState(this.#editorState));
     this.#setCanRedo(this.#redoStack.length !== 0);
 
     this.#editorState._setSel(newState.sel);
     this.#editorState._setLines(newState.lines);
   }
 
-  commit() {
-    if (this.#undoStack.length > 24)
-      this.#undoStack.splice(this.#undoStack.length - 1, 1);
+  _commit() {
+    if (this.undoStack.length > 24)
+      this.undoStack.splice(this.undoStack.length - 1, 1);
 
-    this.#undoStack.push(serializeEditorState(this.#editorState));
+    this.undoStack.push(serializeEditorState(this.#editorState));
     this.#redoStack.length = 0;
     this.#setCanUndo(true);
     this.#setCanRedo(false);

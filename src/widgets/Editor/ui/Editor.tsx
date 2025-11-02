@@ -81,7 +81,7 @@ export default function Editor(props: { class?: string }) {
               break;
           }
 
-          beforeInputHandler(ev);
+          beforeInputHandler.handle(ev);
 
           scheduleUpdateSelectionDOM();
         }}
@@ -93,6 +93,7 @@ export default function Editor(props: { class?: string }) {
 
               queueMicrotask(() => {
                 editorHistory.undo();
+                beforeInputHandler.reset();
               });
               scheduleUpdateSelectionDOM();
             } else if (ev.key === "y") {
@@ -100,6 +101,7 @@ export default function Editor(props: { class?: string }) {
 
               queueMicrotask(() => {
                 editorHistory.redo();
+                beforeInputHandler.reset();
               });
               scheduleUpdateSelectionDOM();
             }
