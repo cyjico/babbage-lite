@@ -1,6 +1,5 @@
 import { Accessor, createSignal, Setter } from "solid-js";
-import { EditorState, EditorState_serialized } from ".";
-import serializeEditorState from "../lib/serializeEditorState";
+import { EditorState, EditorState_serialized } from "./types";
 
 export default class EditorHistory {
   #undoStack: EditorState_serialized[] = [];
@@ -51,4 +50,18 @@ export default class EditorHistory {
     this.#setCanUndo(true);
     this.#setCanRedo(false);
   }
+}
+
+function serializeEditorState(
+  state: EditorState_serialized | EditorState,
+): EditorState_serialized {
+  return {
+    lines: state.lines.slice(),
+    sel: {
+      lineIdxStart: state.sel.lineIdxStart,
+      offsetStart: state.sel.offsetStart,
+      lineIdxEnd: state.sel.lineIdxEnd,
+      offsetEnd: state.sel.offsetEnd,
+    },
+  };
 }

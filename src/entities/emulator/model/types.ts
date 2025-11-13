@@ -1,12 +1,7 @@
-export const enum MillOperation {
-  Add,
-  Subtract,
-  Multiply,
-  Divide,
-}
+import { ASTNode_OperationCard } from "../lib/parse";
 
 export interface Mill {
-  operation: MillOperation | null;
+  operation: ASTNode_OperationCard["operation"];
   runUpLever: boolean;
   ingressAxis1: number;
   ingressAxis2: number;

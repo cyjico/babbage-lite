@@ -1,5 +1,5 @@
 import { produce } from "solid-js/store";
-import { EditorState } from "../../model";
+import { EditorState } from "../../model/types";
 
 export default function createDeleteContentHandler(editorState: EditorState) {
   return (inputType: string) => {

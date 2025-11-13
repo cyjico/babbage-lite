@@ -1,6 +1,6 @@
 import { Direction } from "@/shared/model/types";
 import { produce } from "solid-js/store";
-import { EditorState } from "../model";
+import { EditorState } from "../model/types";
 
 export default function captureSelectionDOM(_setSel: EditorState["_setSel"]) {
   const selDOM = document.getSelection();

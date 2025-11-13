@@ -1,4 +1,4 @@
-import { EditorState } from "../../model";
+import { EditorState } from "../../model/types";
 import EditorHistory from "../../model/EditorHistory";
 import createDeleteContentHandler from "./createDeleteContentHandler";
 import createInsertFromHandler from "./createInsertFromHandler";

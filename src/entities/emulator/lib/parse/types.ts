@@ -57,8 +57,3 @@ export type ASTNode_Card =
   | ASTNode_ActionCard
   | ASTNode_CombinatorialCard
   | ASTNode_VariableCard;
-
-/**
- * Discriminated union of all abstract-syntax tree nodes.
- */
-export type ASTNode = ASTNode_Card | ASTNode_NumericLiteral;

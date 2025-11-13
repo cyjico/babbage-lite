@@ -1,14 +1,14 @@
 import { Problem } from "@/shared/model/types";
-import analyze from "./analyze";
-import lex from "./lex";
-import parse, { ASTNode_Card } from "./parse";
+import analyze from "../lib/analyze";
+import lex from "../lib/lex";
+import parse, { ASTNode_Card } from "../lib/parse";
 import { Mill } from "./types";
 
 export default class Emulator {
   cardChain: ASTNode_Card[] = [];
 
   mill: Mill = {
-    operation: null,
+    operation: "+",
     runUpLever: false,
     ingressAxis1: 0,
     ingressAxis2: 0,
