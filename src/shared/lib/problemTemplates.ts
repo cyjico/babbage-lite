@@ -202,15 +202,41 @@ export function unusedOperationResult(
   };
 }
 
-export function unusedLoad(
-  ln: number,
-  col: number,
-  colend: number
-): Problem {
+export function unusedLoad(ln: number, col: number, colend: number): Problem {
   return {
     severity: ProblemSeverity.Warning,
     code: 3009,
     message: `Load into ingress axis is never used in any operation.`,
+    ln,
+    col,
+    colend,
+  };
+}
+
+export function cycleDetected(
+  ln: number,
+  col: number,
+  colend: number,
+): Problem {
+  return {
+    severity: ProblemSeverity.Error,
+    code: 3010,
+    message: `Cycle detected.`,
+    ln,
+    col,
+    colend,
+  };
+}
+
+export function unreachableCard(
+  ln: number,
+  col: number,
+  colend: number,
+): Problem {
+  return {
+    severity: ProblemSeverity.Warning,
+    code: 3011,
+    message: `Card is unreachable.`,
     ln,
     col,
     colend,

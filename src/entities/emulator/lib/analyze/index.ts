@@ -1,9 +1,11 @@
 import {
   cardReaderMovementOutOfBounds,
+  cycleDetected,
   multipleDefinitions,
   noArithmeticOperationPerformedPrior,
   noOperationSet,
   operationOverrides,
+  unreachableCard,
   unusedAddress,
   unusedLoad,
   unusedOperationResult,
@@ -238,7 +240,14 @@ export default function analyze(
     );
   }
 
-  // TODO: Error reporting for CFG analysis
   const cfg = createCFG(cards);
-  const [hasCycle, unreachableCFGNodes] = analyzeCFG(cfg);
+  const cfgAnalysisReport = analyzeCFG(cfg);
+
+  for (const id of cfgAnalysisReport.cycle)
+    for (const card of cfg.get(id)!.cards)
+      out_problems.push(cycleDetected(card.ln, card.col, card.col + 1));
+
+  for (const id of cfgAnalysisReport.unreachable)
+    for (const card of cfg.get(id)!.cards)
+      out_problems.push(unreachableCard(card.ln, card.col, card.col + 1));
 }

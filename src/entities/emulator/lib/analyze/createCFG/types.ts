@@ -1,22 +1,22 @@
 import { ASTNode_Card } from "../../parse";
 
-export type CFGNode_ID = number;
+export type CFGBlock_ID = number;
 
-export interface CFGNode {
-  id: CFGNode_ID;
+export interface CFGBlock {
+  id: CFGBlock_ID;
   cards: ASTNode_Card[];
   edges: CFGEdge[];
 }
 
 /**
- * Connects two CFG nodes with a condition (if any) when it jumps to that node
+ * Connects two CFG blocks with a condition (if any) when it jumps to that node
  */
 export interface CFGEdge {
-  to: CFGNode_ID;
+  to: CFGBlock_ID;
   condition?: "LEVER_SET";
 }
 
 /**
- * Control flow graph mapping node IDs (in-sequence) to nodes
+ * Control flow graph mapping IDs to corresponding blocks
  */
-export type CFG = Map<CFGNode_ID, CFGNode>;
+export type CFG = Map<CFGBlock_ID, CFGBlock>;

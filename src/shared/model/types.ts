@@ -10,7 +10,7 @@ export interface Problem {
   message: string;
   ln: number;
   col: number;
-  colend: number;
+  colend?: number;
 }
 
 export const enum Direction {
