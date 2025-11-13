@@ -242,3 +242,13 @@ export function unreachableCard(
     colend,
   };
 }
+
+export function noHaltCard(ln: number, col: number): Problem {
+  return {
+    severity: ProblemSeverity.Error,
+    code: 3012,
+    message: `No halt card.`,
+    ln,
+    col,
+  };
+}

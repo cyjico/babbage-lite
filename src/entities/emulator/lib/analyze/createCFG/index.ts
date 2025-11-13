@@ -21,11 +21,17 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
 
     if (leaders.has(i)) {
       // Finalize the current block
-      curBlock.edges.push({
-        to: i,
-      });
-
       const firstCard = curBlock.cards[0];
+
+      if (
+        firstCard.type !== ASTNodeType.ActionCard ||
+        firstCard.action !== "H"
+      ) {
+        curBlock.edges.push({
+          to: i,
+        });
+      }
+
       if (firstCard.type === ASTNodeType.CombinatorialCard) {
         // firstCard being a combinatorial implies there's only one card:
         // 1.) curNode.cards.length === 1

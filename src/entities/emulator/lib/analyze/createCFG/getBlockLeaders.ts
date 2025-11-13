@@ -23,7 +23,12 @@ export default function getBlockLeaders(cards: ASTNode_Card[]) {
 
       // And the card after it
       leaders.add(i + 1);
-      continue;
+    } else if (card.type === ASTNodeType.ActionCard && card.action === "H") {
+      // A block starts at a halt action card...
+      leaders.add(i);
+
+      // And the card after it
+      leaders.add(i + 1);
     }
   }
 

@@ -3,6 +3,7 @@ import {
   cycleDetected,
   multipleDefinitions,
   noArithmeticOperationPerformedPrior,
+  noHaltCard,
   noOperationSet,
   operationOverrides,
   unreachableCard,
@@ -37,6 +38,7 @@ export default function analyze(
   cards: ASTNode_Card[],
   out_problems: Problem[],
 ) {
+  let hasActionCardHalt = false;
   const definedAddresses = new Set<number>();
   const unusedAddresses = new Map<number, ASTNode_NumberCard>();
   const curOperation = {
@@ -99,7 +101,8 @@ export default function analyze(
           }
 
           curOperation.wasRecentResultUsed = true;
-        }
+        } else if (card.action === "H") hasActionCardHalt = true;
+
         break;
       case ASTNodeType.CombinatorialCard:
         if (card.condition === "?") {
@@ -238,6 +241,11 @@ export default function analyze(
         curOperation.variableCard_L2!.col + 1,
       ),
     );
+  }
+
+  if (!hasActionCardHalt) {
+    const last = cards[cards.length - 1];
+    out_problems.push(noHaltCard(last.ln, last.col));
   }
 
   const cfg = createCFG(cards);
