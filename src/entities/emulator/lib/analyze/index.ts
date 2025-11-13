@@ -3,7 +3,7 @@ import {
   cycleDetected,
   multipleDefinitions,
   noArithmeticOperationPerformedPrior,
-  noHaltCard,
+  neverHalt,
   noOperationSet,
   operationOverrides,
   unreachableCard,
@@ -38,7 +38,7 @@ export default function analyze(
   cards: ASTNode_Card[],
   out_problems: Problem[],
 ) {
-  let hasActionCardHalt = false;
+  let totalHaltCards = 0;
   const definedAddresses = new Set<number>();
   const unusedAddresses = new Map<number, ASTNode_NumberCard>();
   const curOperation = {
@@ -101,7 +101,9 @@ export default function analyze(
           }
 
           curOperation.wasRecentResultUsed = true;
-        } else if (card.action === "H") hasActionCardHalt = true;
+        } else if (card.action === "H") {
+          totalHaltCards++;
+        }
 
         break;
       case ASTNodeType.CombinatorialCard:
@@ -243,11 +245,6 @@ export default function analyze(
     );
   }
 
-  if (!hasActionCardHalt) {
-    const last = cards[cards.length - 1];
-    out_problems.push(noHaltCard(last.ln, last.col));
-  }
-
   const cfg = createCFG(cards);
   const cfgAnalysisReport = analyzeCFG(cfg);
 
@@ -255,7 +252,16 @@ export default function analyze(
     for (const card of cfg.get(id)!.cards)
       out_problems.push(cycleDetected(card.ln, card.col, card.col + 1));
 
-  for (const id of cfgAnalysisReport.unreachable)
-    for (const card of cfg.get(id)!.cards)
+  let unreachableHaltCards = 0;
+  for (const id of cfgAnalysisReport.unreachable) {
+    for (const card of cfg.get(id)!.cards) {
       out_problems.push(unreachableCard(card.ln, card.col, card.col + 1));
+
+      if (card.type === ASTNodeType.ActionCard && card.action === "H")
+        unreachableHaltCards++;
+    }
+  }
+
+  if (totalHaltCards === unreachableHaltCards)
+    out_problems.push(neverHalt(cards[cards.length - 1].ln, 0, 1));
 }

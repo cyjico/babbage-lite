@@ -19,16 +19,16 @@ export default function getBlockLeaders(cards: ASTNode_Card[]) {
 
       // And where it jumps to...
       const jumpedTo = i + 1 + card.skips * (card.direction === "F" ? 1 : -1);
-      if (jumpedTo !== 0) leaders.add(jumpedTo);
+      if (jumpedTo !== 0) leaders.add(jumpedTo % cards.length);
 
       // And the card after it
-      leaders.add(i + 1);
+      leaders.add((i + 1) % cards.length);
     } else if (card.type === ASTNodeType.ActionCard && card.action === "H") {
       // A block starts at a halt action card...
       leaders.add(i);
 
       // And the card after it
-      leaders.add(i + 1);
+      leaders.add((i + 1) % cards.length);
     }
   }
 

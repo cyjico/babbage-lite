@@ -243,12 +243,13 @@ export function unreachableCard(
   };
 }
 
-export function noHaltCard(ln: number, col: number): Problem {
+export function neverHalt(ln: number, col: number, colend: number): Problem {
   return {
     severity: ProblemSeverity.Error,
     code: 3012,
-    message: `No halt card.`,
+    message: `Engine will never halt.`,
     ln,
     col,
+    colend,
   };
 }
