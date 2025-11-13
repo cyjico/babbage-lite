@@ -22,9 +22,8 @@ export default function analyzeCFG(cfg: CFG) {
 
       for (let i = 0; i < edges.length; i++) {
         const edge = edges[i];
-        if (edge.condition !== undefined) continue;
 
-        if (path.has(edge.to)) {
+        if (path.has(edge.to) && edge.condition === undefined) {
           // Cycle found! Reconstruct it
           cycle = [edge.to];
           let cur = id;
