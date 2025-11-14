@@ -1,21 +1,21 @@
 import { createSignal, ParentProps } from "solid-js";
 
-export default function ResizableVerticalPanel(
+export default function ResizableHorizontalPanel(
   props: {
     class?: string;
     classInteractable?: string;
-    initialHeight?: number;
+    initialWidth?: number;
   } & ParentProps,
 ) {
-  const initialHeight = props.initialHeight ?? 200;
+  const initialWidth = props.initialWidth ?? 200;
 
-  const [height, setHeight] = createSignal(initialHeight);
+  const [width, setWidth] = createSignal(initialWidth);
   let isDragging = false;
 
   return (
-    <div>
+    <div class="flex flex-row">
       <div
-        class={`h-4 w-full transition-all hover:cursor-n-resize ${props.classInteractable ?? ""}`}
+        class={`w-4 h-full transition-all hover:cursor-e-resize ${props.classInteractable ?? ""}`}
         on:pointerdown={(ev) => {
           isDragging = true;
 
@@ -24,14 +24,12 @@ export default function ResizableVerticalPanel(
         on:pointermove={(ev) => {
           if (!isDragging) return;
 
-          const maxHeight =
-            (ev.currentTarget.parentElement?.parentElement?.clientHeight ??
+          const maxWidth =
+            (ev.currentTarget.parentElement?.parentElement?.clientWidth ??
               Number.MAX_SAFE_INTEGER) * 0.8;
 
-          console.log(maxHeight);
-
-          setHeight((prev) =>
-            Math.max(16, Math.min(maxHeight, prev - ev.movementY)),
+          setWidth((prev) =>
+            Math.max(16, Math.min(maxWidth, prev - ev.movementX)),
           );
         }}
         on:pointerup={(ev) => {
@@ -42,7 +40,7 @@ export default function ResizableVerticalPanel(
       />
       <div
         style={{
-          height: `${height()}px`,
+          width: `${width()}px`,
         }}
         class={`flex flex-col overflow-hidden ${props.class ?? ""}`}
       >

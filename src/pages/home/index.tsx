@@ -1,11 +1,15 @@
 import "./styles.css";
-import Editor, { EditorContextProvider, useEditorContext } from "@/widgets/Editor";
+import Editor, {
+  EditorContextProvider,
+  useEditorContext,
+} from "@/widgets/Editor";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
 import EditorStatusBar from "@/widgets/EditorStatusBar";
 import { For } from "solid-js";
 import createProblemOutput from "@/shared/lib/createProblemOutput";
 import ResizableVerticalPanel from "@/shared/ui/ResizableVerticalPanel";
 import { ProblemSeverity } from "@/shared/model/types";
+import ResizableHorizontalPanel from "@/shared/ui/ResizableHorizontalPanel";
 
 export default function HomePage() {
   return (
@@ -23,15 +27,18 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main>
+      <main class="flex flex-col bg-myblack">
         <Editor class="flex-1" />
 
         <DiagnosticsPanel />
       </main>
 
-      <aside>
+      <ResizableHorizontalPanel
+        class="bg-mydarkgrey"
+        classInteractable="bg-mydarkgrey hover:bg-mygrey transition-colors"
+      >
         <RuntimePanel />
-      </aside>
+      </ResizableHorizontalPanel>
 
       <footer>
         <EditorStatusBar />
@@ -41,6 +48,9 @@ export default function HomePage() {
 }
 
 function RuntimePanel() {
+  const { emulator } = useEditorContext();
+  // TODO: Read stuff from emulator
+
   return (
     <>
       <section>
