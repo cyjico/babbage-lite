@@ -48,8 +48,8 @@ export default function HomePage() {
 }
 
 function RuntimePanel() {
-  const { emulator } = useEditorContext();
-  // TODO: Read stuff from emulator
+  const { interpreter } = useEditorContext();
+  // TODO: Read stuff from interpreter
 
   return (
     <>

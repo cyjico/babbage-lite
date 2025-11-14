@@ -6,7 +6,7 @@ import { Mill } from "./types";
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { Accessor, createSignal, Setter } from "solid-js";
 
-export default class Emulator {
+export default class Interpreter {
   mill: Mill;
   #setMill: SetStoreFunction<Mill>;
   store: Array<number>;

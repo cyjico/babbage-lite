@@ -2,7 +2,7 @@ import { SetStoreFunction } from "solid-js/store";
 import { Accessor } from "solid-js";
 import { Direction, Problem } from "@/shared/model/types";
 import type EditorHistory from "./EditorHistory";
-import Emulator from "@/entities/emulator";
+import Interpreter from "@/entities/Interpreter";
 
 /**
  * Separate from ..._serialized to prevent accidentally saving one to the other
@@ -39,7 +39,7 @@ export interface EditorState_serialized {
 }
 
 export interface EditorContextProviderValue {
-  emulator: Emulator;
+  interpreter: Interpreter;
   editorState: EditorState;
   editorDebugger: {
     problems: Accessor<Problem[]>;

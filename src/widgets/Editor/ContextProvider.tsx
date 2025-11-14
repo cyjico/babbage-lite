@@ -10,13 +10,13 @@ import {
 import { createStore } from "solid-js/store";
 import { EditorContextProviderValue, EditorSelection } from "./model/types";
 import EditorHistory from "./model/EditorHistory";
-import Emulator from "@/entities/emulator";
+import Interpreter from "@/entities/Interpreter";
 
 const EditorContext =
   createContext<EditorContextProviderValue>() as Context<EditorContextProviderValue>;
 
 export default function EditorContextProvider(props: ParentProps) {
-  const emulator = new Emulator();
+  const interpreter = new Interpreter();
 
   const [sel, _setSel] = createStore<EditorSelection>({
     lineIdxStart: 0,
@@ -47,7 +47,7 @@ export default function EditorContextProvider(props: ParentProps) {
   ]);
   const editorState = { sel, _setSel, lines, _setLines };
 
-  const problems = createMemo(() => emulator.prepare(lines));
+  const problems = createMemo(() => interpreter.prepare(lines));
   const [breakpts, setBreakpts] = createSignal<Set<number>>(new Set());
 
   const editorHistory = new EditorHistory(editorState);
@@ -55,7 +55,7 @@ export default function EditorContextProvider(props: ParentProps) {
   return (
     <EditorContext.Provider
       value={{
-        emulator,
+        interpreter,
         editorState,
         editorDebugger: {
           problems,
