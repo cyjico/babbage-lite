@@ -8,10 +8,11 @@ This interpreter aims to provide a simplified yet functional approach to underst
 
 Below are some key differences between the original machine and the _certain professor's_ simplified model:
 
-|                           | **Original Analytical Engine**                                                         | **Simplified Analytical Engine**                            |
-| :------------------------ | :------------------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| **Number Representation** | Has a decimal-based gear system where each gear represented a digit (0-9).             | Will handle real numbers of any size.                       |
-| **Registers & Memory**    | Includes 2 primed ingress axes and 1 primed egress axis for complex data manipulation. | Does not require primed ingress axes or primed egress axes. |
+|                           | **Original Analytical Engine**                                                         | **Simplified Analytical Engine**                                                                            |
+| :------------------------ | :------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| **Number Representation** | Has a decimal-based gear system where each gear represented a digit (0-9).             | Will handle real numbers of any size.                                                                       |
+| **Registers & Memory**    | Includes 2 primed ingress axes and 1 primed egress axis for complex data manipulation. | Does not require primed ingress axes or primed egress axes.                                                 |
+| **Run-Up Lever**          | Set when subtraction, addition differ in signs as well as division's divisor is 0.     | Set when subtraction, addition differ in signs (counting 0 as positive) as well as division's divisor is 0. |
 
 ## Contributing
 
