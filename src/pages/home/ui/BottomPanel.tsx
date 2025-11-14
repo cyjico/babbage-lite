@@ -22,7 +22,7 @@ export default function BottomPanel() {
     <>
       <TabbedPanel
         class_labelContainer="grid grid-cols-2"
-        class_labelInactive="opacity-50"
+        class_labelInactive="opacity-50 bg-myblack"
         class_labelActive=""
         tabs={[
           {
@@ -44,23 +44,22 @@ export default function BottomPanel() {
             class: "overflow-y-auto grow",
             content: (
               <>
-                <button on:click={() => interpreter.clearPrintingApparatus()}>
-                  Erase
-                </button>
-                <button
-                  on:click={() =>
-                    navigator.clipboard.writeText(
-                      interpreter.printingApparatus(),
-                    )
-                  }
-                >
-                  Copy to Clipboard
-                </button>
+                <div class="sticky shadow-lg top-0 bg-mydarkgrey">
+                  <button on:click={() => interpreter.clearPrintingApparatus()}>
+                    Erase
+                  </button>
+                  <button
+                    on:click={() =>
+                      navigator.clipboard.writeText(
+                        interpreter.printingApparatus(),
+                      )
+                    }
+                  >
+                    Copy to Clipboard
+                  </button>
+                </div>
 
-                <p
-                  ref={printerRef}
-                  class="bg-[#0f0f0f] whitespace-pre-wrap min-h-full"
-                >
+                <p ref={printerRef} class="whitespace-pre-wrap">
                   {interpreter.printingApparatus()}
                 </p>
               </>

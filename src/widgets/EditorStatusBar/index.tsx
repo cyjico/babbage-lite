@@ -1,7 +1,7 @@
 import { createEffect, createSignal } from "solid-js";
 import { useEditorContext } from "../Editor/ContextProvider";
 
-export default function EditorStatusBar() {
+export default function EditorStatusBar(props: { class?: string }) {
   const { editorState } = useEditorContext();
 
   const [ln, setLn] = createSignal(1);
@@ -18,7 +18,7 @@ export default function EditorStatusBar() {
   });
 
   return (
-    <span>
+    <span class={props.class}>
       Ln {ln()}, Col {col()}
       {selLength() > 0 ? <> ({selLength()} selected)</> : ""}
     </span>

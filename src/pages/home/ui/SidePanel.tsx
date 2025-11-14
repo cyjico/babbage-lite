@@ -20,15 +20,19 @@ export default function SidePanel() {
         <table>
           <thead>
             <tr>
-              <th scope="col">Address</th>
-              <th scope="col">Value</th>
+              <th scope="col" class="font-normal p-2">
+                Address
+              </th>
+              <th scope="col" class="font-normal p-2">
+                Value
+              </th>
             </tr>
           </thead>
           <tbody>
             <For each={interpreter.store}>
               {(value, idx) => (
                 <tr>
-                  <td>{idx()}</td>
+                  <td>{idx().toString().padStart(3, "0")}</td>
                   <td>{value}</td>
                 </tr>
               )}

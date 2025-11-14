@@ -6,8 +6,6 @@
   #root {
     background-color: #323233;
     height: 100%;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: min-content minmax(0, 1fr) min-content;

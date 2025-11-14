@@ -10,26 +10,29 @@ import BottomPanel from "./ui/BottomPanel";
 export default function HomePage() {
   return (
     <EditorContextProvider>
-      <header>
+      <header class="pt-3">
         <ToolBar />
       </header>
 
       <main class="flex flex-col bg-myblack">
         <Editor class="flex-1" />
 
-        <ResizableVerticalPanel class_interactable="bg-mygrey opacity-0 hover:opacity-50 transition-opacity">
+        <ResizableVerticalPanel
+          class="bg-mydarkgrey"
+          class_interactable="bg-mygrey opacity-0 hover:opacity-50 transition-opacity"
+        >
           <BottomPanel />
         </ResizableVerticalPanel>
       </main>
 
       <ResizableHorizontalPanel
-        class="bg-myblack px-2 py-1"
+        class="bg-mydarkgrey px-2 py-1"
         classInteractable="bg-mygrey opacity-0 hover:opacity-50 transition-opacity"
       >
         <SidePanel />
       </ResizableHorizontalPanel>
 
-      <footer>
+      <footer class="pb-3 bg-rebeccapurple">
         <EditorStatusBar />
       </footer>
     </EditorContextProvider>

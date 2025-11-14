@@ -26,7 +26,7 @@ export default function ToolBar() {
         <div>
           <button
             class={
-              interpreter.isMounted() && !interpreter.isAnimated()
+              !interpreter.isAnimated() && interpreter.isMounted()
                 ? "visible"
                 : "hidden"
             }
@@ -36,7 +36,11 @@ export default function ToolBar() {
             Animate
           </button>
           <button
-            class={interpreter.isAnimated() ? "visible" : "hidden"}
+            class={
+              interpreter.isAnimated() && interpreter.isMounted()
+                ? "visible"
+                : "hidden"
+            }
             disabled={!interpreter.isAnimated()}
             on:click={() => interpreter.pause()}
           >
