@@ -30,14 +30,14 @@ export default function HomePage() {
       <main class="flex flex-col bg-myblack">
         <Editor class="flex-1" />
 
-        <DiagnosticsPanel />
+        <BottomPanel />
       </main>
 
       <ResizableHorizontalPanel
         class="bg-mydarkgrey"
         classInteractable="bg-mydarkgrey hover:bg-mygrey transition-colors"
       >
-        <RuntimePanel />
+        <SidePanel />
       </ResizableHorizontalPanel>
 
       <footer>
@@ -47,7 +47,7 @@ export default function HomePage() {
   );
 }
 
-function RuntimePanel() {
+function SidePanel() {
   const { interpreter } = useEditorContext();
   // TODO: Read stuff from interpreter
 
@@ -83,8 +83,9 @@ function RuntimePanel() {
   );
 }
 
-function DiagnosticsPanel() {
-  const { editorState, editorDebugger } = useEditorContext();
+function BottomPanel() {
+  const { interpreter, editorState, editorDebugger } = useEditorContext();
+  // TODO: Read stuff from interpreter
 
   return (
     <ResizableVerticalPanel classInteractable="bg-mydarkgrey hover:bg-mygrey transition-colors">
@@ -93,7 +94,7 @@ function DiagnosticsPanel() {
         classContentContainer="overflow-y-auto"
         tabs={[
           {
-            label: `PROBLEMS ${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
+            label: `ATTENDANT'S EXAMINATION ${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
             content: (
               <ul class="list-disc">
                 <For each={editorDebugger.problems()} fallback={<li />}>
@@ -108,7 +109,7 @@ function DiagnosticsPanel() {
             ),
           },
           {
-            label: "OUTPUT",
+            label: "PRINTER",
             content: (
               <div>
                 Incredible! However, if your energy in your pseudo-mind is not
