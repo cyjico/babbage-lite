@@ -29,8 +29,8 @@ export interface EditorSelection_serialized {
 export interface EditorState {
   sel: EditorSelection;
   lines: string[];
-  _setSel: SetStoreFunction<EditorSelection>;
-  _setLines: SetStoreFunction<string[]>;
+  setSel: SetStoreFunction<EditorSelection>;
+  setLines: SetStoreFunction<string[]>;
 }
 
 export interface EditorState_serialized {

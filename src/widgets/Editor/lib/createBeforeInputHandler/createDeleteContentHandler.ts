@@ -7,7 +7,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
       editorState.sel.lineIdxStart != editorState.sel.lineIdxEnd ||
       editorState.sel.offsetStart != editorState.sel.offsetEnd
     ) {
-      editorState._setLines(
+      editorState.setLines(
         produce((lines) => {
           // Set end line content
           lines[editorState.sel.lineIdxEnd] = lines[
@@ -28,7 +28,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
         }),
       );
 
-      editorState._setSel(
+      editorState.setSel(
         produce((sel) => {
           sel.lineIdxEnd = sel.lineIdxStart;
           sel.offsetEnd = sel.offsetStart;
@@ -42,7 +42,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
       case "deleteContent":
       case "deleteContentBackward":
         if (editorState.sel.offsetStart !== 0) {
-          editorState._setLines(
+          editorState.setLines(
             produce((lines) => {
               lines[editorState.sel.lineIdxStart] = lines[
                 editorState.sel.lineIdxStart
@@ -56,7 +56,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
             }),
           );
 
-          editorState._setSel(
+          editorState.setSel(
             produce((sel) => {
               sel.offsetStart = Math.max(sel.offsetStart - 1, 0);
               sel.offsetEnd = sel.offsetStart;
@@ -66,7 +66,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
           const prevLineLength =
             editorState.lines[editorState.sel.lineIdxStart - 1].length;
 
-          editorState._setLines(
+          editorState.setLines(
             produce((lines) => {
               lines[editorState.sel.lineIdxStart - 1] = lines[
                 editorState.sel.lineIdxStart - 1
@@ -80,7 +80,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
             }),
           );
 
-          editorState._setSel(
+          editorState.setSel(
             produce((sel) => {
               sel.lineIdxStart -= 1;
               sel.lineIdxEnd = sel.lineIdxStart;
@@ -94,7 +94,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
           editorState.sel.offsetStart !==
           editorState.lines[editorState.sel.lineIdxStart].length
         ) {
-          editorState._setLines(
+          editorState.setLines(
             produce((lines) => {
               lines[editorState.sel.lineIdxStart] = lines[
                 editorState.sel.lineIdxStart
@@ -111,7 +111,7 @@ export default function createDeleteContentHandler(editorState: EditorState) {
           editorState.sel.lineIdxStart !==
           editorState.lines.length - 1
         ) {
-          editorState._setLines(
+          editorState.setLines(
             produce((lines) => {
               lines[editorState.sel.lineIdxStart] = lines[
                 editorState.sel.lineIdxStart

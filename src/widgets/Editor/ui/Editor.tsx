@@ -15,7 +15,7 @@ export default function Editor(props: { class?: string }) {
   );
 
   const selectionChangeListener = (_: Event) =>
-    captureSelectionDOM(editorState._setSel);
+    captureSelectionDOM(editorState.setSel);
   onMount(() => {
     document.addEventListener("selectionchange", selectionChangeListener);
   });
@@ -81,7 +81,7 @@ export default function Editor(props: { class?: string }) {
             case "insertFromYank":
             case "insertFromDrop":
               // To know where the user tried to yank/drop the text
-              captureSelectionDOM(editorState._setSel);
+              captureSelectionDOM(editorState.setSel);
               break;
           }
 

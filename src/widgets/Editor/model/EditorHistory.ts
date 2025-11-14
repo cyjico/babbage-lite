@@ -26,8 +26,8 @@ export default class EditorHistory {
     this.#redoStack.push(serializeEditorState(this.#editorState));
     this.#setCanUndo(this.#undoStack.length !== 0);
 
-    this.#editorState._setSel(newState.sel);
-    this.#editorState._setLines(newState.lines);
+    this.#editorState.setSel(newState.sel);
+    this.#editorState.setLines(newState.lines);
   }
 
   redo() {
@@ -37,8 +37,8 @@ export default class EditorHistory {
     this.#undoStack.push(serializeEditorState(this.#editorState));
     this.#setCanRedo(this.#redoStack.length !== 0);
 
-    this.#editorState._setSel(newState.sel);
-    this.#editorState._setLines(newState.lines);
+    this.#editorState.setSel(newState.sel);
+    this.#editorState.setLines(newState.lines);
   }
 
   _commit() {

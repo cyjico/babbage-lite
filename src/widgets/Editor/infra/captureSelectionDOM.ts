@@ -2,11 +2,11 @@ import { Direction } from "@/shared/model/types";
 import { produce } from "solid-js/store";
 import { EditorState } from "../model/types";
 
-export default function captureSelectionDOM(_setSel: EditorState["_setSel"]) {
+export default function captureSelectionDOM(setSel: EditorState["setSel"]) {
   const selDOM = document.getSelection();
 
   if (!selDOM || selDOM.rangeCount === 0) {
-    _setSel("direction", Direction.None);
+    setSel("direction", Direction.None);
     return;
   }
 
@@ -44,7 +44,7 @@ export default function captureSelectionDOM(_setSel: EditorState["_setSel"]) {
   );
   const offsetEnd = range.endOffset;
 
-  _setSel(
+  setSel(
     produce((state) => {
       state.direction = direction;
       state.lineIdxStart = lineIdxStart;

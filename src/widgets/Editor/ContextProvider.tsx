@@ -18,7 +18,7 @@ const EditorContext =
 export default function EditorContextProvider(props: ParentProps) {
   const interpreter = new Interpreter();
 
-  const [sel, _setSel] = createStore<EditorSelection>({
+  const [sel, setSel] = createStore<EditorSelection>({
     lineIdxStart: 0,
     offsetStart: 0,
     lineIdxEnd: 0,
@@ -26,7 +26,7 @@ export default function EditorContextProvider(props: ParentProps) {
     direction: Direction.None,
     toString: () => "",
   });
-  const [lines, _setLines] = createStore<string[]>([
+  const [lines, setLines] = createStore<string[]>([
     "# This program will print from 1 to 10",
     "N000 0       # cur_num",
     "N001 10      # end_num",
@@ -45,7 +45,7 @@ export default function EditorContextProvider(props: ParentProps) {
     "# It is 9 since the reader has to complete reading CB?9 before moving.",
     "# Therefore, we end up at H before actually moving the reader (we won't read H)",
   ]);
-  const editorState = { sel, _setSel, lines, _setLines };
+  const editorState = { sel, setSel, lines, setLines };
 
   const problems = createMemo(() => interpreter.prepare(lines));
   const [breakpts, setBreakpts] = createSignal<Set<number>>(new Set());

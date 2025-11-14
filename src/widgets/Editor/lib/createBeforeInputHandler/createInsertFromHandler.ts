@@ -11,7 +11,7 @@ export default function createInsertFromHandler(editorState: EditorState) {
     );
     const newLineIdxEnd = editorState.sel.lineIdxStart + pdata.length - 1;
 
-    editorState._setLines(
+    editorState.setLines(
       produce((lines) => {
         // Insert first datum
         lines[editorState.sel.lineIdxStart] = lines[
@@ -40,7 +40,7 @@ export default function createInsertFromHandler(editorState: EditorState) {
       }),
     );
 
-    editorState._setSel(
+    editorState.setSel(
       produce((sel) => {
         sel.lineIdxEnd = sel.lineIdxStart = newLineIdxEnd;
         sel.offsetStart = sel.offsetEnd =

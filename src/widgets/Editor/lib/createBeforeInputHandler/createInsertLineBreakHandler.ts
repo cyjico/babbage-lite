@@ -3,7 +3,7 @@ import { EditorState } from "../../model/types";
 
 export default function createInsertLineBreakHandler(editorState: EditorState) {
   return () => {
-    editorState._setLines(
+    editorState.setLines(
       produce((lines) => {
         // Insert new line and delete lines
         lines.splice(
@@ -19,7 +19,7 @@ export default function createInsertLineBreakHandler(editorState: EditorState) {
       }),
     );
 
-    editorState._setSel(
+    editorState.setSel(
       produce((sel) => {
         sel.lineIdxStart += 1;
         sel.lineIdxEnd = sel.lineIdxStart;

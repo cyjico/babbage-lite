@@ -3,7 +3,7 @@ import { EditorState } from "../../model/types";
 
 export default function createInsertTextHandler(editorState: EditorState) {
   return (data: string) => {
-    editorState._setLines(
+    editorState.setLines(
       produce((lines) => {
         // Set end line content
         lines[editorState.sel.lineIdxEnd] = lines[editorState.sel.lineIdxStart]
@@ -21,7 +21,7 @@ export default function createInsertTextHandler(editorState: EditorState) {
       }),
     );
 
-    editorState._setSel(
+    editorState.setSel(
       produce((sel) => {
         sel.lineIdxEnd = sel.lineIdxStart;
         sel.offsetStart += 1;
