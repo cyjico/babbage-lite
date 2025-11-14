@@ -1,3 +1,4 @@
+import wrap from "@/shared/lib/wrap";
 import { ASTNode_Card, ASTNodeType } from "../../parse";
 
 /**
@@ -18,7 +19,10 @@ export default function getBlockLeaders(cards: ASTNode_Card[]) {
       if (i !== 0) leaders.add(i);
 
       // And where it jumps to...
-      const jumpedTo = i + 1 + card.skips * (card.direction === "F" ? 1 : -1);
+      const jumpedTo = wrap(
+        i + 1 + card.skips * (card.direction === "F" ? 1 : -1),
+        cards.length,
+      );
       if (jumpedTo !== 0) leaders.add(jumpedTo % cards.length);
 
       // And the card after it

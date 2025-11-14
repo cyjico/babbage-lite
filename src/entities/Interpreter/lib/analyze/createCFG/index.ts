@@ -1,3 +1,4 @@
+import wrap from "@/shared/lib/wrap";
 import { ASTNode_Card, ASTNodeType } from "../../parse";
 import getBlockLeaders from "./getBlockLeaders";
 import { CFG, CFGEdge, CFGBlock, CFGBlock_ID } from "./types";
@@ -21,7 +22,7 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
     curBlock.cards.push(cards[i]);
 
     if (leaders.has(nextIdx)) {
-      finalizeBlock(curBlock, nextIdx);
+      finalizeBlock(curBlock, nextIdx, cards);
 
       cfg.set(curBlock.id, curBlock);
 
@@ -30,12 +31,16 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
     }
   }
 
-  if (curBlock.cards.length !== 0) finalizeBlock(curBlock, 0);
+  if (curBlock.cards.length !== 0) finalizeBlock(curBlock, 0, cards);
 
   return cfg;
 }
 
-function finalizeBlock(block: CFGBlock, nextIdx: number) {
+function finalizeBlock(
+  block: CFGBlock,
+  nextIdx: number,
+  cards: readonly ASTNode_Card[],
+) {
   const firstCard = block.cards[0];
 
   if (firstCard.type !== ASTNodeType.ActionCard || firstCard.action !== "H") {
@@ -48,8 +53,10 @@ function finalizeBlock(block: CFGBlock, nextIdx: number) {
       // 1.) curNode.cards.length === 1
       // 2.) i for firstCard is equal to i - 1
       // 3.) i - 1 + 1 can be simplified to 1
-      const jumpedTo =
-        nextIdx + firstCard.skips * (firstCard.direction === "F" ? 1 : -1);
+      const jumpedTo = wrap(
+        nextIdx + firstCard.skips * (firstCard.direction === "F" ? 1 : -1),
+        cards.length,
+      );
 
       if (firstCard.condition === "?") {
         block.edges.push({

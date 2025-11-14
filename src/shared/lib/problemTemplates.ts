@@ -177,10 +177,10 @@ export function cardReaderMovementOutOfBounds(
   colend: number,
 ): Problem {
   return {
-    severity: ProblemSeverity.Error,
+    severity: ProblemSeverity.Warning,
     code: 3007,
     message:
-      "Card reader movement is out of bounds. The chain does not contain enough cards to support the specified value.",
+      "Card reader movement is out of bounds. The reader will loop through.",
     ln,
     col,
     colend,

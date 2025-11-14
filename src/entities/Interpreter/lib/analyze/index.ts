@@ -263,5 +263,5 @@ export default function analyze(
   }
 
   if (totalHaltCards === unreachableHaltCards)
-    out_problems.push(neverHalt(cards[cards.length - 1].ln, 0, 1));
+    out_problems.push(neverHalt(cards[cards.length - 1]?.ln ?? 0, 0, 1));
 }
