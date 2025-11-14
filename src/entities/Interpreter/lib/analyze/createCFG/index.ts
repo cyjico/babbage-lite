@@ -23,7 +23,6 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
 
     if (leaders.has(nextIdx)) {
       finalizeBlock(curBlock, nextIdx, cards);
-
       cfg.set(curBlock.id, curBlock);
 
       // Ready the next block
@@ -31,7 +30,10 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
     }
   }
 
-  if (curBlock.cards.length !== 0) finalizeBlock(curBlock, 0, cards);
+  if (curBlock.cards.length !== 0)  {
+    finalizeBlock(curBlock, 0, cards);
+    cfg.set(curBlock.id, curBlock);
+  }
 
   return cfg;
 }
