@@ -2,7 +2,7 @@ import { SetStoreFunction } from "solid-js/store";
 import { Accessor } from "solid-js";
 import { Direction, Problem } from "@/shared/model/types";
 import type EditorHistory from "./EditorHistory";
-import type Emulator from "@/entities/emulator";
+import Emulator from "@/entities/emulator";
 
 /**
  * Separate from ..._serialized to prevent accidentally saving one to the other

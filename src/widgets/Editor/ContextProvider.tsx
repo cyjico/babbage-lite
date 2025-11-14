@@ -1,4 +1,3 @@
-import Emulator from "@/entities/emulator";
 import { Direction } from "@/shared/model/types";
 import {
   Context,
@@ -11,6 +10,7 @@ import {
 import { createStore } from "solid-js/store";
 import { EditorContextProviderValue, EditorSelection } from "./model/types";
 import EditorHistory from "./model/EditorHistory";
+import Emulator from "@/entities/emulator";
 
 const EditorContext =
   createContext<EditorContextProviderValue>() as Context<EditorContextProviderValue>;
