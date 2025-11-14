@@ -1,17 +1,41 @@
 import { useEditorContext } from "@/widgets/Editor";
+import openTextFile from "../infra/openTextFile";
+import saveTextFile from "../infra/saveTextFile";
 
 export default function ToolBar() {
-  const { interpreter } = useEditorContext();
+  const { interpreter, editorState } = useEditorContext();
+
+  let filePicker!: HTMLInputElement;
 
   return (
     <>
       <div class="grid grid-flow-col grid-cols-5 place-items-center">
-        <details class="relative">
-          <summary>File</summary>
-          <div class="absolute bg-mygrey z-10 p-2 whitespace-nowrap flex flex-col">
-            <button>New File</button>
-            <button>Open File</button>
-            <button>Save File</button>
+        <details
+          class={`relative outline-none${!interpreter.isMounted() ? " visible" : " invisible"}`}
+          on:click={(ev) => {
+            if (interpreter.isMounted()) ev.preventDefault();
+          }}
+        >
+          <summary class="list-none">File</summary>
+          <div
+            class="absolute bg-mygrey z-10 p-2 whitespace-nowrap flex flex-col"
+            on:pointerleave={(ev) =>
+              ev.currentTarget.parentElement!.removeAttribute("open")
+            }
+          >
+            <button on:click={() => editorState.setLines([""])}>
+              New File
+            </button>
+            <input
+              ref={filePicker}
+              on:change={(ev) => openTextFile(ev, editorState.setLines)}
+              type="file"
+              style="display:none"
+            />
+            <button on:click={() => filePicker.click()}>Open File</button>
+            <button on:click={() => saveTextFile(editorState.lines)}>
+              Save File
+            </button>
           </div>
         </details>
 
