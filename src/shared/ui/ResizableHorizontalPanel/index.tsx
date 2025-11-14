@@ -13,9 +13,9 @@ export default function ResizableHorizontalPanel(
   let isDragging = false;
 
   return (
-    <div class="flex flex-row">
+    <div class="flex flex-row relative">
       <div
-        class={`w-4 h-full transition-all hover:cursor-e-resize ${props.classInteractable ?? ""}`}
+        class={`w-2 h-full absolute left-0 transition-all hover:cursor-e-resize ${props.classInteractable ?? ""}`}
         on:pointerdown={(ev) => {
           isDragging = true;
 

@@ -3,7 +3,7 @@ import { createSignal, ParentProps } from "solid-js";
 export default function ResizableVerticalPanel(
   props: {
     class?: string;
-    classInteractable?: string;
+    class_interactable?: string;
     initialHeight?: number;
   } & ParentProps,
 ) {
@@ -13,9 +13,9 @@ export default function ResizableVerticalPanel(
   let isDragging = false;
 
   return (
-    <div>
+    <div class="relative">
       <div
-        class={`h-4 w-full transition-all hover:cursor-n-resize ${props.classInteractable ?? ""}`}
+        class={`h-2 w-full top-0 absolute transition-all hover:cursor-n-resize ${props.class_interactable ?? ""}`}
         on:pointerdown={(ev) => {
           isDragging = true;
 

@@ -5,7 +5,7 @@ import Editor, {
 } from "@/widgets/Editor";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
 import EditorStatusBar from "@/widgets/EditorStatusBar";
-import { For } from "solid-js";
+import { createEffect, For } from "solid-js";
 import createProblemOutput from "@/shared/lib/createProblemOutput";
 import ResizableVerticalPanel from "@/shared/ui/ResizableVerticalPanel";
 import { ProblemSeverity } from "@/shared/model/types";
@@ -15,27 +15,20 @@ export default function HomePage() {
   return (
     <EditorContextProvider>
       <header>
-        <div id="menubar">
-          <button>File</button>
-        </div>
-
-        <div id="toolbar">
-          <button>Run</button>
-          <button>Continue/Pause</button>
-          <button>Step</button>
-          <button>Stop</button>
-        </div>
+        <ToolBar />
       </header>
 
       <main class="flex flex-col bg-myblack">
         <Editor class="flex-1" />
 
-        <BottomPanel />
+        <ResizableVerticalPanel class_interactable="bg-mygrey opacity-0 hover:opacity-50 transition-opacity">
+          <BottomPanel />
+        </ResizableVerticalPanel>
       </main>
 
       <ResizableHorizontalPanel
-        class="bg-mydarkgrey"
-        classInteractable="bg-mydarkgrey hover:bg-mygrey transition-colors"
+        class="bg-myblack px-2 py-1"
+        classInteractable="bg-mygrey opacity-0 hover:opacity-50 transition-opacity"
       >
         <SidePanel />
       </ResizableHorizontalPanel>
@@ -47,19 +40,90 @@ export default function HomePage() {
   );
 }
 
-function SidePanel() {
+function ToolBar() {
   const { interpreter } = useEditorContext();
-  // TODO: Read stuff from interpreter
 
   return (
     <>
-      <section>
-        <span>Operation: *</span>
-        <span>Run-up Lever: Unset</span>
-      </section>
-      <section>
-        <h1>Store</h1>
+      <div class="grid grid-flow-col grid-cols-5 place-items-center">
+        <details class="relative">
+          <summary>File</summary>
+          <div class="absolute bg-mygrey z-10 p-2 whitespace-nowrap flex flex-col">
+            <button>New File</button>
+            <button>Open File</button>
+            <button>Save File</button>
+          </div>
+        </details>
 
+        <button
+          class={!interpreter.isMounted() ? "visible" : "invisible"}
+          disabled={interpreter.isMounted()}
+          on:click={() => interpreter.mount()}
+        >
+          Mount
+        </button>
+
+        <div>
+          <button
+            class={
+              interpreter.isMounted() && !interpreter.isAnimated()
+                ? "visible"
+                : "hidden"
+            }
+            disabled={interpreter.isAnimated()}
+            on:click={() => interpreter.animate()}
+          >
+            Animate
+          </button>
+          <button
+            class={interpreter.isAnimated() ? "visible" : "hidden"}
+            disabled={!interpreter.isAnimated()}
+            on:click={() => interpreter.pause()}
+          >
+            Pause
+          </button>
+        </div>
+
+        <button
+          class={
+            !interpreter.isAnimated() && interpreter.isMounted()
+              ? "visible"
+              : "invisible"
+          }
+          disabled={interpreter.isAnimated() && interpreter.isMounted()}
+          on:click={() => interpreter.step()}
+        >
+          Step
+        </button>
+
+        <button
+          class={interpreter.isMounted() ? "visible" : "invisible"}
+          disabled={!interpreter.isMounted()}
+          on:click={() => interpreter.halt()}
+        >
+          Halt
+        </button>
+      </div>
+    </>
+  );
+}
+
+function SidePanel() {
+  const { interpreter } = useEditorContext();
+
+  return (
+    <div class="flex flex-col h-full">
+      <span>Operation: {interpreter.mill.operation}</span>
+      <span>Run-up Lever: {interpreter.mill.runUpLever ? "Set" : "Unset"}</span>
+      <span>Ingress Axis 1: {interpreter.mill.ingressAxis1}</span>
+      <span>Ingress Axis 2: {interpreter.mill.ingressAxis2}</span>
+      <span>Egress Axis: {interpreter.mill.egressAxis}</span>
+
+      <hr />
+
+      <h1>Store</h1>
+
+      <div class="overflow-y-auto flex-1 h-fit">
         <table>
           <thead>
             <tr>
@@ -68,63 +132,85 @@ function SidePanel() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>000</td>
-              <td>10</td>
-            </tr>
-            <tr>
-              <td>001</td>
-              <td>5</td>
-            </tr>
+            <For each={interpreter.store}>
+              {(value, idx) => (
+                <tr>
+                  <td>{idx()}</td>
+                  <td>{value}</td>
+                </tr>
+              )}
+            </For>
           </tbody>
         </table>
-      </section>
-    </>
+      </div>
+    </div>
   );
 }
 
 function BottomPanel() {
   const { interpreter, editorState, editorDebugger } = useEditorContext();
-  // TODO: Read stuff from interpreter
+
+  let printerRef!: HTMLParagraphElement;
+
+  createEffect(() => {
+    // re-run when content changes
+    interpreter.printingApparatus();
+
+    queueMicrotask(() => {
+      printerRef.scrollTop = printerRef.scrollHeight;
+    });
+  });
 
   return (
-    <ResizableVerticalPanel classInteractable="bg-mydarkgrey hover:bg-mygrey transition-colors">
+    <>
       <TabbedPanel
-        classLabelContainer="grid grid-cols-2"
-        classContentContainer="overflow-y-auto"
+        class_labelContainer="grid grid-cols-2"
+        class_labelInactive="opacity-50"
+        class_labelActive=""
         tabs={[
           {
             label: `ATTENDANT'S EXAMINATION ${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
+            class: "overflow-y-auto grow list-disc",
             content: (
-              <ul class="list-disc">
-                <For each={editorDebugger.problems()} fallback={<li />}>
-                  {(v) => (
-                    <li class="whitespace-pre-wrap">
-                      {v.severity == ProblemSeverity.Error ? "❌ " : "⚠️ "}
-                      {createProblemOutput(editorState.lines, v)}
-                    </li>
-                  )}
-                </For>
-              </ul>
+              <For each={editorDebugger.problems()} fallback={<li />}>
+                {(v) => (
+                  <li class="whitespace-pre-wrap">
+                    {v.severity == ProblemSeverity.Error ? "❌ " : "⚠️ "}
+                    {createProblemOutput(editorState.lines, v)}
+                  </li>
+                )}
+              </For>
             ),
           },
           {
             label: "PRINTER",
+            class: "overflow-y-auto grow",
             content: (
-              <div>
-                Incredible! However, if your energy in your pseudo-mind is not
-                conducive - or yeah, I like the word conducive - to what I'm
-                saying or what I'm feeling, then there's incompatibility. So how
-                do you know that? How do you fix that? Well, first you have to
-                understand. You have to look at yourself and say, what kind of
-                energy or what kind of pseudo power do I have to set my
-                atmosphere? Woooooah, That's good. What kind of pseudo-energy do
-                I have that I can create?
-              </div>
+              <>
+                <button on:click={() => interpreter.clearPrintingApparatus()}>
+                  Erase
+                </button>
+                <button
+                  on:click={() =>
+                    navigator.clipboard.writeText(
+                      interpreter.printingApparatus(),
+                    )
+                  }
+                >
+                  Copy to Clipboard
+                </button>
+
+                <p
+                  ref={printerRef}
+                  class="bg-[#0f0f0f] whitespace-pre-wrap min-h-full"
+                >
+                  {interpreter.printingApparatus()}
+                </p>
+              </>
             ),
           },
         ]}
       />
-    </ResizableVerticalPanel>
+    </>
   );
 }

@@ -7,7 +7,8 @@ import updateSelectionDOM from "../infra/updateSelectionDOM";
 
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
-  const { editorState, editorDebugger, editorHistory } = useEditorContext();
+  const { interpreter, editorState, editorDebugger, editorHistory } =
+    useEditorContext();
   const beforeInputHandler = createBeforeInputHandler(
     editorState,
     editorHistory,
@@ -74,6 +75,8 @@ export default function Editor(props: { class?: string }) {
         onBeforeInput={(ev) => {
           ev.preventDefault();
 
+          if (interpreter.isMounted()) return;
+
           switch (ev.inputType) {
             case "insertFromYank":
             case "insertFromDrop":
@@ -118,10 +121,13 @@ export default function Editor(props: { class?: string }) {
         }}
       >
         <For each={editorState.lines}>
-          {(v, i) => {
+          {(value, idx) => {
             return (
-              <div class="line" data-id={`${i()}`}>
-                {v.length === 0 ? <br /> : v}
+              <div
+                class={`line ${interpreter.isMounted() && interpreter.chain[interpreter.readerPosition()].ln === idx() ? "--active" : ""}`}
+                data-id={`${idx()}`}
+              >
+                {value.length === 0 ? <br /> : value}
               </div>
             );
           }}

@@ -1,28 +1,33 @@
 import { createSignal, For, JSX } from "solid-js";
 
 export default function TabbedPanel(props: {
-  class?: string;
-  classLabelContainer?: string;
-  classLabel?: string;
-  classContentContainer?: string;
-  classContent?: string;
+  class_labelContainer?: string;
+  class_labelInactive?: string;
+  class_labelActive?: string;
   tabs: {
-    label: JSX.Element;
+    label: string;
+    class: string;
     content: JSX.Element;
   }[];
 }) {
-  const [chosenTab, setChosenTab] = createSignal(0);
+  const [activeTab, setActiveTab] = createSignal(0);
 
   return (
     <>
-      <div class={props.classLabelContainer ?? ""}>
+      <div class={props.class_labelContainer ?? ""}>
         <For each={props.tabs}>
           {(item, index) => {
             return (
               <div
-                on:pointerdown={() => setChosenTab(index())}
-                classList={{ "hover:cursor-pointer": index() !== chosenTab() }}
-                class={props.classLabel ?? ""}
+                on:pointerdown={() => setActiveTab(index())}
+                class={
+                  index() === activeTab()
+                    ? (props.class_labelActive ??
+                      props.class_labelInactive ??
+                      "")
+                    : (props.class_labelInactive ?? "") +
+                      " hover:cursor-pointer"
+                }
               >
                 {item.label}
               </div>
@@ -31,21 +36,19 @@ export default function TabbedPanel(props: {
         </For>
       </div>
 
-      <div class={props.classContentContainer ?? ""}>
-        <For each={props.tabs}>
-          {(item, index) => {
-            return (
-              <>
-                <div
-                  class={`${props.classContent ?? ""} ${chosenTab() !== index() ? "hidden" : ""}`}
-                >
-                  {item.content}
-                </div>
-              </>
-            );
-          }}
-        </For>
-      </div>
+      <For each={props.tabs}>
+        {(item, index) => {
+          return (
+            <>
+              <div
+                class={`${item.class ?? ""} ${activeTab() !== index() ? "hidden" : ""}`}
+              >
+                {item.content}
+              </div>
+            </>
+          );
+        }}
+      </For>
     </>
   );
 }
