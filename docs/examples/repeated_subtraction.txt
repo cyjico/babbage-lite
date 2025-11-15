@@ -1,0 +1,16 @@
+N000 29   # dividened/remainder
+N001 5    # divisor
+N999 0    # constant zero
+-
+L000
+L001
+CF?2    # Jump to 11 if divisor > remainder
+S000
+CB+6    # Jump to 5 if divisor <= remainder
+-
+L000
+L999
+P       # Print remainder
+B
+H
+# --- PROGRAM PRINTS REMAINDER OF A DIVISION --- #

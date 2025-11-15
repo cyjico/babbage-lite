@@ -14,6 +14,15 @@ Below are some key differences between the original machine and the _certain pro
 | **Registers & Memory**    | Includes 2 primed ingress axes and 1 primed egress axis for complex data manipulation. | Does not require primed ingress axes or primed egress axes.                                                 |
 | **Run-Up Lever**          | Set when subtraction, addition differ in signs as well as division's divisor is 0.     | Set when subtraction, addition differ in signs (counting 0 as positive) as well as division's divisor is 0. |
 
+## Examples
+
+Sample programs demonstrating the interpreter's capabilities can be found in the [examples](./docs/examples) directory:
+
+- **[prime_number.txt](./docs/examples/prime_number.txt)**
+- **[repeated_subtraction.txt](./docs/examples/repeated_subtraction.txt)**
+
+Feel free to use these as a starting point for writing your own Analytical Engine programs!
+
 ## Contributing
 
 Contributions are welcome! Here's how you can contribute:

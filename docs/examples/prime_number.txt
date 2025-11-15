@@ -1,0 +1,67 @@
+N000 3    # candidate
+N002 2    # divisor
+N003 30   # upper bound of prime candidates
+N004 0    # temp; quotient, remainder, etc.
+N005 1    # increment
+N999 0    # constant zero
++
+L005
+L005
+P
+B       # --- PRINT SPECIAL CASE (2) --- #
+-
+L000
+L999
+S004    # --- START REPEATED SUBTRACTION --- #
+-
+L004
+L002
+CF?1
+CB+6
+-       # --- END REPEATED SUBTRACTION --- #
+L004
+L005
+CF?1    # Jump to 21 if remainder is zero
+CF+15
++       # --- NOT PRIME --- #
+L000
+L005
+S000    # Move to next candidate
+-
+L003
+L000
+CF+1    # Jump to 31 (if candidate < upper limit)
+H
+CB?2    # Jump to 29 if candidate >= upper limit
++
+L005
+L005
+S002    # Reset divisor
+CB+29   # Jump to 7 to try the new candidate
++       # --- POSSIBLE PRIME --- #
+L002
+L005
+S002    # Increment divisior
+-
+L002
+L000
+CB?37   # Jump to 7 to try the new divisor
++       # --- PRIME --- #
+L000
+L999
+P       # Print prime number
+B
+L000
+L005
+S000    # Move to next candidate
++
+L005
+L005
+S002    # Reset divisor
+-
+L000
+L003
+CB?53   # Jump to 7 if candidate < upper bound
+B
+H
+# --- PROGRAM PRINTS PRIMES LESS THAN UPPER BOUND ---  #
