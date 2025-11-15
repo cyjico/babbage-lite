@@ -3,7 +3,7 @@ import openTextFile from "../infra/openTextFile";
 import saveTextFile from "../infra/saveTextFile";
 
 export default function ToolBar() {
-  const { interpreter, editorState } = useEditorContext();
+  const { interpreter, editorState, editorDebugger } = useEditorContext();
 
   let filePicker!: HTMLInputElement;
 
@@ -55,7 +55,7 @@ export default function ToolBar() {
         <button
           class={!interpreter.isMounted() ? "visible" : "invisible"}
           disabled={interpreter.isMounted()}
-          on:click={() => interpreter.mount()}
+          on:click={() => interpreter.mount(editorDebugger.breakpts())}
         >
           Mount
         </button>

@@ -32,6 +32,8 @@ export default class Interpreter {
   #animateTimeoutId?: number = undefined;
   #executeIdleCallbackId?: number = undefined;
 
+  #breakpts: Set<number> = new Set();
+
   constructor() {
     [this.mill, this.#setMill] = createStore<Mill>({
       operation: "",
@@ -52,7 +54,6 @@ export default class Interpreter {
     [this.isRunning, this.#setIsRunning] = createSignal<boolean>(false);
   }
 
-  // TODO: feed breakpoints
   prepare(lines: string[]) {
     if (this.isMounted()) return [];
 
@@ -75,8 +76,10 @@ export default class Interpreter {
     return problems;
   }
 
-  mount() {
+  mount(breakpts: Set<number>) {
     this.#setIsMounted(this.chain.length !== 0);
+
+    this.#breakpts = breakpts;
   }
 
   execute() {
@@ -85,6 +88,7 @@ export default class Interpreter {
     const callback = () => {
       // Break into smaller chunks for "smoothness"
       for (let i = 0; i <= 128 && !hasHalted; i++) hasHalted = this.step();
+
       if (hasHalted) {
         this.#setIsRunning(false);
         return;
@@ -222,6 +226,11 @@ export default class Interpreter {
           this.#setStore(card.address, this.mill.egressAxis);
         }
         break;
+    }
+
+    if (this.#breakpts.has(this.chain[this.readerPosition()].ln)) {
+      this.pause();
+      return true;
     }
 
     return false;

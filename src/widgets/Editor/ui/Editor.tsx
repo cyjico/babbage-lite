@@ -41,7 +41,8 @@ export default function Editor(props: { class?: string }) {
         <div
           class="gutter breakpoints"
           on:pointerdown={(ev) => {
-            editorDebugger.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
+            if (!interpreter.isMounted())
+              editorDebugger.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
           }}
         >
           <For each={Array.from(editorDebugger.breakpts().values())}>
@@ -53,7 +54,7 @@ export default function Editor(props: { class?: string }) {
                     transform: `translateY(${calculateRemFromLine(line, 1.5)}rem)`,
                   }}
                 >
-                  💗
+                  🔴
                 </div>
               );
             }}
@@ -147,11 +148,10 @@ function calculateLineFromPointer(
   return Math.floor(
     (ev.clientY - ev.currentTarget.getBoundingClientRect().top) /
       parseFloat(getComputedStyle(document.documentElement).fontSize) /
-      lineHeight +
-      1,
+      lineHeight,
   );
 }
 
 function calculateRemFromLine(line: number, lineHeight: number) {
-  return (line - 1) * lineHeight;
+  return line * lineHeight;
 }
