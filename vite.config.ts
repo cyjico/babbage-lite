@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [tsconfigPaths(), solid()],
-});
+  base: mode === "development" ? "/" : "/babbage-lite/",
+}));
