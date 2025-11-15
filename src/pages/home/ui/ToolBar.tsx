@@ -1,6 +1,6 @@
 import { useEditorContext } from "@/widgets/Editor";
 import openTextFile from "../infra/openTextFile";
-import saveTextFile from "../infra/saveTextFile";
+import exportTextFile from "../infra/exportTextFile";
 
 export default function ToolBar() {
   const { interpreter, editorState, editorDebugger } = useEditorContext();
@@ -24,18 +24,16 @@ export default function ToolBar() {
                 ev.currentTarget.parentElement!.removeAttribute("open")
               }
             >
-              <button on:click={() => editorState.setLines([""])}>
-                New File
-              </button>
+              <button on:click={() => editorState.setLines([""])}>New</button>
               <input
                 ref={filePicker}
                 on:change={(ev) => openTextFile(ev, editorState.setLines)}
                 type="file"
                 style="display:none"
               />
-              <button on:click={() => filePicker.click()}>Open File</button>
-              <button on:click={() => saveTextFile(editorState.lines)}>
-                Save File
+              <button on:click={() => filePicker.click()}>Open</button>
+              <button on:click={() => exportTextFile(editorState.lines)}>
+                Export
               </button>
             </div>
           </details>

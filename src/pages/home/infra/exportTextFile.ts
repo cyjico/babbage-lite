@@ -1,4 +1,4 @@
-export default function saveTextFile(lines: string[]) {
+export default function exportTextFile(lines: string[]) {
   const url = URL.createObjectURL(
     new Blob(
       lines.map((line) => line + "\n"),
