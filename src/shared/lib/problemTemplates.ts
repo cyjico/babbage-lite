@@ -213,6 +213,7 @@ export function unusedLoad(ln: number, col: number, colend: number): Problem {
   };
 }
 
+// UNUSED
 export function cycleDetected(
   ln: number,
   col: number,
@@ -243,11 +244,11 @@ export function unreachableCard(
   };
 }
 
-export function neverHalt(ln: number, col: number, colend: number): Problem {
+export function neverHalts(ln: number, col: number, colend: number): Problem {
   return {
     severity: ProblemSeverity.Error,
     code: 3012,
-    message: `Engine will never halt.`,
+    message: `Program never halts.`,
     ln,
     col,
     colend,
