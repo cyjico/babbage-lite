@@ -26,9 +26,11 @@ export default class Interpreter {
 
   #toLoadIngressAxis1: boolean = true;
 
-  isAnimated: Accessor<boolean>;
-  #setIsAnimated: Setter<boolean>;
+  isRunning: Accessor<boolean>;
+  #setIsRunning: Setter<boolean>;
+
   #animateTimeoutId?: number = undefined;
+  #executeIdleCallbackId?: number = undefined;
 
   constructor() {
     [this.mill, this.#setMill] = createStore<Mill>({
@@ -47,9 +49,10 @@ export default class Interpreter {
 
     [this.isMounted, this.#setIsMounted] = createSignal<boolean>(false);
 
-    [this.isAnimated, this.#setIsAnimated] = createSignal<boolean>(false);
+    [this.isRunning, this.#setIsRunning] = createSignal<boolean>(false);
   }
 
+  // TODO: feed breakpoints
   prepare(lines: string[]) {
     if (this.isMounted()) return [];
 
@@ -76,14 +79,32 @@ export default class Interpreter {
     this.#setIsMounted(this.chain.length !== 0);
   }
 
-  run() {
-    while (!this.step());
+  execute() {
+    let hasHalted = false;
+
+    const callback = () => {
+      // Break into smaller chunks for "smoothness"
+      for (let i = 0; i <= 128 && !hasHalted; i++) hasHalted = this.step();
+      if (hasHalted) {
+        this.#setIsRunning(false);
+        return;
+      }
+
+      this.#executeIdleCallbackId = requestIdleCallback(callback, {
+        timeout: 1023,
+      });
+    };
+
+    this.#setIsRunning(true);
+    this.#executeIdleCallbackId = requestIdleCallback(callback, {
+      timeout: 1023,
+    });
   }
 
   animate(timeout = 250) {
     const stepDelay = () => {
       if (this.step()) {
-        this.#setIsAnimated(false);
+        this.#setIsRunning(false);
         return;
       }
 
@@ -91,12 +112,14 @@ export default class Interpreter {
     };
 
     stepDelay();
-    this.#setIsAnimated(true);
+    this.#setIsRunning(true);
   }
 
   pause() {
     clearTimeout(this.#animateTimeoutId);
-    this.#setIsAnimated(false);
+    if (this.#executeIdleCallbackId)
+      cancelIdleCallback(this.#executeIdleCallbackId);
+    this.#setIsRunning(false);
   }
 
   /**
