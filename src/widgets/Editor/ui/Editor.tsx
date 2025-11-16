@@ -4,6 +4,7 @@ import { useEditorContext } from "../ContextProvider";
 import captureSelectionDOM from "../infra/captureSelectionDOM";
 import createBeforeInputHandler from "../lib/createBeforeInputHandler";
 import updateSelectionDOM from "../infra/updateSelectionDOM";
+import { InterpreterStatus } from "@/entities/Interpreter";
 
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
@@ -41,7 +42,9 @@ export default function Editor(props: { class?: string }) {
         <div
           class="gutter breakpoints"
           on:pointerdown={(ev) => {
-            if (!interpreter.isMounted())
+            ev.preventDefault();
+
+            if (interpreter.status() === InterpreterStatus.Halted)
               editorDebugger.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
           }}
         >
@@ -49,7 +52,7 @@ export default function Editor(props: { class?: string }) {
             {(line) => {
               return (
                 <div
-                  class={`breakpoint${!interpreter.isMounted() ? " hover:opacity-50" : ""}`}
+                  class={`breakpoint${interpreter.status() === InterpreterStatus.Halted ? " hover:opacity-50" : ""}`}
                   style={{
                     transform: `translateY(${calculateRemFromLine(line, 1.5)}rem)`,
                   }}
@@ -76,8 +79,6 @@ export default function Editor(props: { class?: string }) {
         onBeforeInput={(ev) => {
           ev.preventDefault();
 
-          if (interpreter.isMounted()) return;
-
           switch (ev.inputType) {
             case "insertFromYank":
             case "insertFromDrop":
@@ -85,6 +86,8 @@ export default function Editor(props: { class?: string }) {
               captureSelectionDOM(editorState.setSel);
               break;
           }
+
+          if (interpreter.status() !== InterpreterStatus.Halted) return;
 
           beforeInputHandler.handle(ev);
 
@@ -125,7 +128,7 @@ export default function Editor(props: { class?: string }) {
           {(value, idx) => {
             return (
               <div
-                class={`line${interpreter.isMounted() && interpreter.chain[interpreter.readerPosition()].ln === idx() ? " --active" : ""}`}
+                class={`line${interpreter.status() !== InterpreterStatus.Halted && interpreter.chain[interpreter.readerPosition()].ln === idx() ? " --active" : ""}`}
                 data-id={`${idx()}`}
               >
                 {value.length === 0 ? <br /> : value}

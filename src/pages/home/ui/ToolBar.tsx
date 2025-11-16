@@ -1,6 +1,7 @@
 import { useEditorContext } from "@/widgets/Editor";
 import openTextFile from "../infra/openTextFile";
 import exportTextFile from "../infra/exportTextFile";
+import { InterpreterStatus } from "@/entities/Interpreter";
 
 export default function ToolBar() {
   const { interpreter, editorState, editorDebugger } = useEditorContext();
@@ -11,9 +12,10 @@ export default function ToolBar() {
     <>
       <div class="grid grid-flow-col grid-cols-4 items-center">
         <details
-          class={`text-center relative outline-none${!interpreter.isMounted() ? " visible hover:cursor-pointer hover:bg-rebeccapurple" : " hidden"}`}
+          class={`text-center relative outline-none${interpreter.status() === InterpreterStatus.Halted ? " visible hover:cursor-pointer hover:bg-rebeccapurple" : " hidden"}`}
           on:click={(ev) => {
-            if (interpreter.isMounted()) ev.preventDefault();
+            if (interpreter.status() === InterpreterStatus.Halted)
+              ev.preventDefault();
           }}
         >
           <summary class="list-none">File</summary>
@@ -52,11 +54,11 @@ export default function ToolBar() {
 
         <button
           class={
-            !interpreter.isRunning() && interpreter.isMounted()
+            interpreter.status() === InterpreterStatus.Paused
               ? "visible hover:bg-rebeccapurple"
               : "hidden"
           }
-          disabled={interpreter.isRunning() && !interpreter.isMounted()}
+          disabled={interpreter.status() !== InterpreterStatus.Paused}
           on:click={() => interpreter.execute()}
         >
           Execute
@@ -64,11 +66,11 @@ export default function ToolBar() {
 
         <button
           class={
-            interpreter.isRunning() && interpreter.isMounted()
+            interpreter.status() === InterpreterStatus.Running
               ? "visible hover:bg-rebeccapurple"
               : "hidden"
           }
-          disabled={!interpreter.isRunning()}
+          disabled={interpreter.status() === InterpreterStatus.Paused}
           on:click={() => interpreter.pause()}
         >
           Pause
@@ -76,11 +78,11 @@ export default function ToolBar() {
 
         <button
           class={
-            !interpreter.isMounted()
+            interpreter.status() === InterpreterStatus.Halted
               ? "visible hover:bg-rebeccapurple"
               : "hidden"
           }
-          disabled={interpreter.isMounted()}
+          disabled={interpreter.status() !== InterpreterStatus.Halted}
           on:click={() => interpreter.mount(editorDebugger.breakpts())}
         >
           Mount
@@ -88,11 +90,11 @@ export default function ToolBar() {
 
         <button
           class={
-            interpreter.isMounted()
+            interpreter.status() !== InterpreterStatus.Halted
               ? "visible hover:bg-rebeccapurple"
               : "invisible"
           }
-          disabled={!interpreter.isMounted()}
+          disabled={interpreter.status() === InterpreterStatus.Halted}
           on:click={() => interpreter.halt()}
         >
           Halt
@@ -100,11 +102,11 @@ export default function ToolBar() {
 
         <button
           class={
-            !interpreter.isRunning() && interpreter.isMounted()
+            interpreter.status() === InterpreterStatus.Paused
               ? "visible hover:bg-rebeccapurple"
               : "invisible"
           }
-          disabled={interpreter.isRunning() && interpreter.isMounted()}
+          disabled={interpreter.status() !== InterpreterStatus.Paused}
           on:click={() => interpreter.step()}
         >
           Step
@@ -112,11 +114,11 @@ export default function ToolBar() {
 
         <button
           class={
-            !interpreter.isRunning() && interpreter.isMounted()
+            interpreter.status() === InterpreterStatus.Paused
               ? "visible hover:bg-rebeccapurple"
               : "hidden"
           }
-          disabled={interpreter.isRunning()}
+          disabled={interpreter.status() !== InterpreterStatus.Paused}
           on:click={() => interpreter.animate()}
         >
           Animate

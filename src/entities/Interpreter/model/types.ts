@@ -7,3 +7,10 @@ export interface Mill {
   ingressAxis2: number;
   egressAxis: number;
 }
+
+export const enum InterpreterStatus {
+  Halted,
+  Paused,
+  Running,
+}
+

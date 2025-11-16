@@ -2,7 +2,7 @@ import { Problem, ProblemSeverity } from "@/shared/model/types";
 import analyze from "../lib/analyze";
 import lex from "../lib/lex";
 import parse, { ASTNode_Card, ASTNodeType } from "../lib/parse";
-import { Mill } from "./types";
+import { InterpreterStatus, Mill } from "./types";
 import { createStore, produce, SetStoreFunction } from "solid-js/store";
 import { Accessor, createSignal, Setter } from "solid-js";
 import playBell from "@/shared/lib/playBell";
@@ -21,16 +21,13 @@ export default class Interpreter {
   printingApparatus: Accessor<string>;
   #setPrintingApparatus: Setter<string>;
 
-  isMounted: Accessor<boolean>;
-  #setIsMounted: Setter<boolean>;
-
-  #toLoadIngressAxis1: boolean = true;
-
-  isRunning: Accessor<boolean>;
-  #setIsRunning: Setter<boolean>;
+  status: Accessor<InterpreterStatus>;
+  #setStatus: Setter<InterpreterStatus>;
 
   #animateTimeoutId?: number = undefined;
   #executeIdleCallbackId?: number = undefined;
+
+  #toLoadIngressAxis1: boolean = true;
 
   #breakpts: Set<number> = new Set();
 
@@ -49,87 +46,76 @@ export default class Interpreter {
     [this.printingApparatus, this.#setPrintingApparatus] =
       createSignal<string>("");
 
-    [this.isMounted, this.#setIsMounted] = createSignal<boolean>(false);
-
-    [this.isRunning, this.#setIsRunning] = createSignal<boolean>(false);
+    [this.status, this.#setStatus] = createSignal<InterpreterStatus>(
+      InterpreterStatus.Halted,
+    );
   }
 
   prepare(lines: string[]) {
-    if (this.isMounted()) return [];
+    if (this.status() !== InterpreterStatus.Halted) return [];
 
     const problems: Problem[] = [];
 
-    // 1. lexical analysis
-    const tokens = lex(lines, problems);
-
-    // 2. syntax analysis
-    const cards = parse(tokens, problems);
-
-    // 3. semantic analysis
+    // 1. lexical analysis -> syntax analysis -> semantic analysis
+    const cards = parse(lex(lines, problems), problems);
     analyze(cards, problems);
 
     this.chain =
       problems.find((v) => v.severity === ProblemSeverity.Error) === undefined
         ? cards
         : [];
-
     return problems;
   }
 
   mount(breakpts: Set<number>) {
-    this.#setIsMounted(this.chain.length !== 0);
+    if (this.status() !== InterpreterStatus.Halted) return;
 
     this.#breakpts = breakpts;
+    this.#setStatus(InterpreterStatus.Paused);
   }
 
   execute() {
-    let hasHalted = false;
+    if (this.status() !== InterpreterStatus.Paused) return;
 
     const callback = () => {
       // Break into smaller chunks for "smoothness"
-      for (let i = 0; i <= 128 && !hasHalted; i++) hasHalted = this.step();
+      for (
+        let i = 0;
+        i <= 128 && this.status() !== InterpreterStatus.Halted;
+        i++
+      )
+        this.step();
 
-      if (hasHalted) {
-        this.#setIsRunning(false);
-      } else {
+      if (this.status() !== InterpreterStatus.Halted)
         this.#executeIdleCallbackId = requestIdleCallback(callback, {
           timeout: 1023,
         });
-      }
     };
 
-    this.#setIsRunning(true);
+    this.#setStatus(InterpreterStatus.Running);
     this.#executeIdleCallbackId = requestIdleCallback(callback, {
       timeout: 1023,
     });
   }
 
   animate(timeout = 250) {
-    const stepDelay = () => {
-      if (this.step()) {
-        this.#setIsRunning(false);
-      } else {
-        this.#setIsRunning(true);
-        this.#animateTimeoutId = setTimeout(stepDelay, timeout);
-      }
+    if (this.status() !== InterpreterStatus.Paused) return;
+
+    const callback = () => {
+      this.step();
+
+      if (this.status() !== InterpreterStatus.Halted)
+        this.#animateTimeoutId = setTimeout(callback, timeout);
     };
 
-    stepDelay();
-  }
-
-  pause() {
-    clearTimeout(this.#animateTimeoutId);
-    if (this.#executeIdleCallbackId)
-      cancelIdleCallback(this.#executeIdleCallbackId);
-    this.#setIsRunning(false);
+    this.#setStatus(InterpreterStatus.Running);
+    callback();
   }
 
   /**
-   * @returns True if the program halted, false if not.
+   * @returns True if, on that step, the interpreter paused or halted.
    */
   step() {
-    if (!this.isMounted()) return true;
-
     const card = this.chain[this.readerPosition()];
 
     // For the machine to read, it would have to move reader
@@ -152,7 +138,7 @@ export default class Interpreter {
             break;
           case "H":
             this.halt();
-            return true;
+            return;
           case "B":
             playBell();
             break;
@@ -226,15 +212,29 @@ export default class Interpreter {
         break;
     }
 
-    if (this.#breakpts.has(this.chain[this.readerPosition()].ln)) {
-      this.pause();
-      return true;
-    }
-
-    return false;
+    if (this.#breakpts.has(this.chain[this.readerPosition()].ln)) this.pause();
   }
 
+  pause() {
+    if (this.status() !== InterpreterStatus.Running) return;
+
+    clearTimeout(this.#animateTimeoutId);
+    if (this.#executeIdleCallbackId)
+      cancelIdleCallback(this.#executeIdleCallbackId);
+
+    this.#setStatus(InterpreterStatus.Paused);
+  }
+
+  /**
+   * Halts the interpreter if it isn't already halted.
+   */
   halt() {
+    if (this.status() === InterpreterStatus.Halted) return;
+
+    clearTimeout(this.#animateTimeoutId);
+    if (this.#executeIdleCallbackId)
+      cancelIdleCallback(this.#executeIdleCallbackId);
+
     this.#setMill(
       produce((state) => {
         state.operation = "";
@@ -244,12 +244,9 @@ export default class Interpreter {
         state.egressAxis = 0;
       }),
     );
-
     this.#setStore(produce((state) => state.fill(0)));
-
     this.#setReaderPosition(0);
-
-    this.#setIsMounted(false);
+    this.#setStatus(InterpreterStatus.Halted);
 
     this.#toLoadIngressAxis1 = true;
   }
