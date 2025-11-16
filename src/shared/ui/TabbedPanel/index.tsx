@@ -18,7 +18,7 @@ export default function TabbedPanel(props: {
         <For each={props.tabs}>
           {(item, index) => {
             return (
-              <div
+              <p
                 on:pointerdown={() => setActiveTab(index())}
                 class={
                   index() === activeTab()
@@ -30,7 +30,7 @@ export default function TabbedPanel(props: {
                 }
               >
                 {item.label}
-              </div>
+              </p>
             );
           }}
         </For>

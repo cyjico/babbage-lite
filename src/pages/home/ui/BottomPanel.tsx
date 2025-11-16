@@ -21,12 +21,12 @@ export default function BottomPanel() {
   return (
     <>
       <TabbedPanel
-        class_labelContainer="grid grid-cols-2"
-        class_labelInactive="opacity-50 bg-myblack"
-        class_labelActive=""
+        class_labelContainer="grid grid-cols-2 justify-center"
+        class_labelInactive="pl-2 opacity-50 bg-myblack hover:bg-mygrey hover:opacity-100"
+        class_labelActive="pl-2"
         tabs={[
           {
-            label: `ATTENDANT'S EXAMINATION ${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
+            label: `ATTENDANT'S EXAMINATION${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
             class: "overflow-y-auto grow list-disc",
             content: (
               <For each={editorDebugger.problems()} fallback={<li />}>
@@ -44,11 +44,15 @@ export default function BottomPanel() {
             class: "overflow-y-auto grow",
             content: (
               <>
-                <div class="sticky shadow-lg top-0 bg-mydarkgrey">
-                  <button on:click={() => interpreter.clearPrintingApparatus()}>
+                <div class="sticky shadow-lg top-0 bg-mydarkgrey grid grid-cols-2">
+                  <button
+                    class="hover:bg-mygrey"
+                    on:click={() => interpreter.clearPrintingApparatus()}
+                  >
                     Erase
                   </button>
                   <button
+                    class="hover:bg-mygrey"
                     on:click={() =>
                       navigator.clipboard.writeText(
                         interpreter.printingApparatus(),

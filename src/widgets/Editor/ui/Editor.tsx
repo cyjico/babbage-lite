@@ -49,7 +49,7 @@ export default function Editor(props: { class?: string }) {
             {(line) => {
               return (
                 <div
-                  class="breakpoint"
+                  class={`breakpoint${!interpreter.isMounted() ? " hover:opacity-50" : ""}`}
                   style={{
                     transform: `translateY(${calculateRemFromLine(line, 1.5)}rem)`,
                   }}
@@ -125,7 +125,7 @@ export default function Editor(props: { class?: string }) {
           {(value, idx) => {
             return (
               <div
-                class={`line ${interpreter.isMounted() && interpreter.chain[interpreter.readerPosition()].ln === idx() ? "--active" : ""}`}
+                class={`line${interpreter.isMounted() && interpreter.chain[interpreter.readerPosition()].ln === idx() ? " --active" : ""}`}
                 data-id={`${idx()}`}
               >
                 {value.length === 0 ? <br /> : value}

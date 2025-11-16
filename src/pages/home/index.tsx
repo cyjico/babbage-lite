@@ -32,7 +32,7 @@ export default function HomePage() {
         <SidePanel />
       </ResizableHorizontalPanel>
 
-      <footer class="pb-3 bg-rebeccapurple">
+      <footer class="pb-3 px-2 bg-rebeccapurple">
         <EditorStatusBar />
       </footer>
     </EditorContextProvider>
