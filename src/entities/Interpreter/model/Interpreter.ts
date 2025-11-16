@@ -91,12 +91,11 @@ export default class Interpreter {
 
       if (hasHalted) {
         this.#setIsRunning(false);
-        return;
+      } else {
+        this.#executeIdleCallbackId = requestIdleCallback(callback, {
+          timeout: 1023,
+        });
       }
-
-      this.#executeIdleCallbackId = requestIdleCallback(callback, {
-        timeout: 1023,
-      });
     };
 
     this.#setIsRunning(true);
@@ -109,14 +108,13 @@ export default class Interpreter {
     const stepDelay = () => {
       if (this.step()) {
         this.#setIsRunning(false);
-        return;
+      } else {
+        this.#setIsRunning(true);
+        this.#animateTimeoutId = setTimeout(stepDelay, timeout);
       }
-
-      this.#animateTimeoutId = setTimeout(stepDelay, timeout);
     };
 
     stepDelay();
-    this.#setIsRunning(true);
   }
 
   pause() {
