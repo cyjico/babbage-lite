@@ -10,6 +10,7 @@ export default function nodifyNumericLiteral(
     type: ASTNodeType.NumericLiteral,
     ln: token.ln,
     col: token.col,
+    colend: token.col + token.lexeme.length,
     value: parseFloat(token.lexeme),
   };
 }

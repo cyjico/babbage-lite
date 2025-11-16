@@ -54,7 +54,7 @@ export default function analyze(
       case ASTNodeType.NumberCard:
         if (definedAddresses.has(card.address)) {
           out_problems.push(
-            multipleDefinitions(card.address, card.ln, card.col, card.col + 4),
+            multipleDefinitions(card.address, card.ln, card.col, card.colend),
           );
           break;
         }
@@ -72,7 +72,7 @@ export default function analyze(
                   curOperation.operationCard.ln,
                   card.ln,
                   card.col,
-                  card.col + 1,
+                  card.colend,
                 ),
               );
               break;
@@ -92,7 +92,7 @@ export default function analyze(
               noArithmeticOperationPerformedPrior(
                 card.ln,
                 card.col,
-                card.col + 1,
+                card.colend,
               ),
             );
             break;
@@ -112,7 +112,7 @@ export default function analyze(
               noArithmeticOperationPerformedPrior(
                 card.ln,
                 card.col,
-                card.col + 3 + card.skips.toString().length,
+                card.colend,
               ),
             );
             break;
@@ -126,11 +126,7 @@ export default function analyze(
           (card.direction === "B" && i + 1 - card.skips < 0)
         ) {
           out_problems.push(
-            cardReaderMovementOutOfBounds(
-              card.ln,
-              card.col,
-              card.col + 3 + card.skips.toString().length,
-            ),
+            cardReaderMovementOutOfBounds(card.ln, card.col, card.colend),
           );
         }
         break;
@@ -144,7 +140,7 @@ export default function analyze(
               case NextStep.ToOperation:
                 if (curOperation.operationCard === null)
                   out_problems.push(
-                    noOperationSet(card.ln, card.col, card.col + 4),
+                    noOperationSet(card.ln, card.col, card.colend),
                   );
               case NextStep.ToE1:
                 // Check previous operation before overwriting
@@ -156,14 +152,14 @@ export default function analyze(
                     unusedOperationResult(
                       curOperation.variableCard_L1!.ln,
                       curOperation.variableCard_L1!.col,
-                      curOperation.variableCard_L1!.col + 1,
+                      curOperation.variableCard_L1!.colend,
                     ),
                   );
                   out_problems.push(
                     unusedOperationResult(
                       curOperation.variableCard_L2!.ln,
                       curOperation.variableCard_L2!.col,
-                      curOperation.variableCard_L2!.col + 1,
+                      curOperation.variableCard_L2!.colend,
                     ),
                   );
                 }
@@ -187,7 +183,7 @@ export default function analyze(
                 noArithmeticOperationPerformedPrior(
                   card.ln,
                   card.col,
-                  card.col + 1,
+                  card.colend,
                 ),
               );
               break;
@@ -202,7 +198,7 @@ export default function analyze(
                 unusedLoad(
                   curOperation.variableCard_L1.ln,
                   curOperation.variableCard_L1.col,
-                  curOperation.variableCard_L1.col + 1,
+                  curOperation.variableCard_L1.colend,
                 ),
               );
             }
@@ -216,7 +212,7 @@ export default function analyze(
 
   for (const [address, ref_node] of unusedAddresses) {
     out_problems.push(
-      unusedAddress(address, ref_node.ln, ref_node.col, ref_node.col + 4),
+      unusedAddress(address, ref_node.ln, ref_node.col, ref_node.colend),
     );
   }
 
@@ -229,14 +225,14 @@ export default function analyze(
       unusedOperationResult(
         curOperation.variableCard_L1!.ln,
         curOperation.variableCard_L1!.col,
-        curOperation.variableCard_L1!.col + 1,
+        curOperation.variableCard_L1!.colend,
       ),
     );
     out_problems.push(
       unusedOperationResult(
         curOperation.variableCard_L2!.ln,
         curOperation.variableCard_L2!.col,
-        curOperation.variableCard_L2!.col + 1,
+        curOperation.variableCard_L2!.colend,
       ),
     );
   }
@@ -244,17 +240,17 @@ export default function analyze(
   const cfg = createCFG(cards);
   const cfgAnalysisReport = analyzeCFG(cfg);
 
-  if (!cfgAnalysisReport.hasHalt) {
-    const last = cards[cards.length - 1];
+  if (!cfgAnalysisReport.halts) {
+    const lastCard = cards[cards.length - 1];
 
     out_problems.push(
-      neverHalts(last?.ln ?? 0, last?.col ?? 0, (last?.col ?? 0) + 1),
+      neverHalts(lastCard?.ln ?? 0, lastCard?.col ?? 0, lastCard?.colend ?? 1),
     );
   }
 
   for (const id of cfgAnalysisReport.unreachable) {
     for (const card of cfg.get(id)!.cards) {
-      out_problems.push(unreachableCard(card.ln, card.col, card.col + 1));
+      out_problems.push(unreachableCard(card.ln, card.col, card.colend));
     }
   }
 }

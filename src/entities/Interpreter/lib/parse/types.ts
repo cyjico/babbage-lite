@@ -14,6 +14,7 @@ interface ASTNode_<T extends ASTNodeType> {
   type: T;
   ln: number;
   col: number;
+  colend: number;
 }
 
 export interface ASTNode_NumberCard extends ASTNode_<ASTNodeType.NumberCard> {

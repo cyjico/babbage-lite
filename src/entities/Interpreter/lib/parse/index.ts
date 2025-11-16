@@ -38,6 +38,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
           type: ASTNodeType.NumberCard,
           ln: token.ln,
           col: token.col,
+          colend: token.col + token.lexeme.length,
           address: parseInt(token.lexeme.slice(1)),
           number: node,
         });
@@ -49,6 +50,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
           operation: token.lexeme,
           ln: token.ln,
           col: token.col,
+          colend: token.col + token.lexeme.length,
         });
         break;
       case TokenType.ActionCard:
@@ -57,6 +59,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
           action: token.lexeme,
           ln: token.ln,
           col: token.col,
+          colend: token.col + token.lexeme.length,
         });
         break;
       case TokenType.CombinatorialCard:
@@ -67,6 +70,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
           skips: parseInt(token.lexeme.slice(3), 10),
           ln: token.ln,
           col: token.col,
+          colend: token.col + token.lexeme.length,
         });
         break;
       case TokenType.VariableCard:
@@ -76,6 +80,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
           address: parseInt(token.lexeme.slice(1)),
           ln: token.ln,
           col: token.col,
+          colend: token.col + token.lexeme.length,
         });
         break;
       default:

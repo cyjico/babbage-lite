@@ -4,7 +4,7 @@ export default function analyzeCFG(cfg: CFG) {
   const visited = new Set<CFGBlock_ID>();
   const parent = new Map<CFGBlock_ID, CFGBlock_ID>();
 
-  let hasHalt = false;
+  let halts = false;
   const unreachable = new Set(cfg.keys());
 
   const stack: CFGBlock_ID[] = cfg.size > 0 ? [0] : [];
@@ -17,7 +17,7 @@ export default function analyzeCFG(cfg: CFG) {
 
       const edges = cfg.get(id)!.edges;
 
-      if (edges.length === 0) hasHalt = true;
+      if (edges.length === 0) halts = true;
 
       let hasUnvisitedChild = false;
       for (let i = 0; i < edges.length; i++) {
@@ -37,7 +37,7 @@ export default function analyzeCFG(cfg: CFG) {
   }
 
   return {
-    hasHalt,
+    halts,
     unreachable,
   };
 }
