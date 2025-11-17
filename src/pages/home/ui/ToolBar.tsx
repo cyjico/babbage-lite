@@ -15,7 +15,7 @@ export default function ToolBar() {
           class={`${
             interpreter.status() === InterpreterStatus.Halted ? "" : "hidden "
           }text-center relative outline-none hover:bg-rebeccapurple hover:cursor-pointer`}
-          on:click={(ev) => {
+          on:pointerdown={(ev) => {
             if (interpreter.status() !== InterpreterStatus.Halted)
               ev.preventDefault();
           }}
@@ -26,10 +26,13 @@ export default function ToolBar() {
             on:pointerleave={(ev) =>
               ev.currentTarget.parentElement!.removeAttribute("open")
             }
+            on:pointerdown={(ev) =>
+              ev.currentTarget.parentElement!.removeAttribute("open")
+            }
           >
             <button
               class="p-1 hover:bg-rebeccapurple"
-              on:click={() => editorState.setLines([""])}
+              on:pointerdown={() => editorState.setLines([""])}
             >
               New
             </button>
@@ -41,13 +44,13 @@ export default function ToolBar() {
             />
             <button
               class="p-1 hover:bg-rebeccapurple"
-              on:click={() => filePicker.click()}
+              on:pointerdown={() => filePicker.click()}
             >
               Open
             </button>
             <button
               class="p-1 hover:bg-rebeccapurple"
-              on:click={() => exportTextFile(editorState.lines)}
+              on:pointerdown={() => exportTextFile(editorState.lines)}
             >
               Export
             </button>
@@ -59,7 +62,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:click={() => interpreter.execute(editorDebugger.breakpts)}
+          on:pointerdown={() => interpreter.execute(editorDebugger.breakpts)}
         >
           Execute
         </button>
@@ -69,7 +72,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Running ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() === InterpreterStatus.Paused}
-          on:click={() => interpreter.pause()}
+          on:pointerdown={() => interpreter.pause()}
         >
           Pause
         </button>
@@ -79,7 +82,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Halted ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Halted}
-          on:click={() => interpreter.mount()}
+          on:pointerdown={() => interpreter.mount()}
         >
           Mount
         </button>
@@ -89,7 +92,7 @@ export default function ToolBar() {
             interpreter.status() !== InterpreterStatus.Halted ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() === InterpreterStatus.Halted}
-          on:click={() => interpreter.halt()}
+          on:pointerdown={() => interpreter.halt()}
         >
           Halt
         </button>
@@ -99,7 +102,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:click={() => interpreter.step(editorDebugger.breakpts())}
+          on:pointerdown={() => interpreter.step(editorDebugger.breakpts())}
         >
           Step
         </button>
@@ -109,7 +112,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:click={() => interpreter.animate(editorDebugger.breakpts)}
+          on:pointerdown={() => interpreter.animate(editorDebugger.breakpts)}
         >
           Animate
         </button>

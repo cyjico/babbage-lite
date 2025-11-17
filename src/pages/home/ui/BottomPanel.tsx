@@ -47,13 +47,13 @@ export default function BottomPanel() {
                 <div class="sticky shadow-lg top-0 bg-mydarkgrey grid grid-cols-2 select-none">
                   <button
                     class="hover:bg-mygrey"
-                    on:click={() => interpreter.clearPrintingApparatus()}
+                    on:pointerdown={() => interpreter.clearPrintingApparatus()}
                   >
                     Erase
                   </button>
                   <button
                     class="hover:bg-mygrey"
-                    on:click={() =>
+                    on:pointerdown={() =>
                       navigator.clipboard.writeText(
                         interpreter.printingApparatus(),
                       )
