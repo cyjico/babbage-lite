@@ -7,6 +7,7 @@ import { createStore, produce, SetStoreFunction } from "solid-js/store";
 import { Accessor, createSignal, Setter } from "solid-js";
 import playBell from "@/shared/lib/playBell";
 import wrap from "@/shared/lib/wrap";
+import handleVariableCard from "../lib/handleVariableCard";
 
 export default class Interpreter {
   mill: Mill;
@@ -149,59 +150,14 @@ export default class Interpreter {
         }
         break;
       case ASTNodeType.VariableCard:
-        if (card.action == "L") {
-          if (this.#toLoadIngressAxis1) {
-            this.#setMill("ingressAxis1", this.store[card.address]);
-          } else {
-            this.#setMill("ingressAxis2", this.store[card.address]);
-
-            switch (this.mill.operation) {
-              case "+":
-                this.#setMill(
-                  "egressAxis",
-                  this.mill.ingressAxis1 + this.mill.ingressAxis2,
-                );
-                this.#setMill(
-                  "runUpLever",
-                  sign(this.mill.egressAxis) !== sign(this.mill.ingressAxis1),
-                );
-                break;
-              case "-":
-                this.#setMill(
-                  "egressAxis",
-                  this.mill.ingressAxis1 - this.mill.ingressAxis2,
-                );
-                this.#setMill(
-                  "runUpLever",
-                  sign(this.mill.egressAxis) !== sign(this.mill.ingressAxis1),
-                );
-                break;
-              case "*":
-                this.#setMill(
-                  "egressAxis",
-                  this.mill.ingressAxis1 * this.mill.ingressAxis2,
-                );
-                this.#setMill("runUpLever", false);
-                break;
-              case "/":
-                if (this.mill.ingressAxis2 === 0) {
-                  this.#setMill("runUpLever", true);
-                  break;
-                }
-
-                this.#setMill(
-                  "egressAxis",
-                  this.mill.ingressAxis1 / this.mill.ingressAxis2,
-                );
-                this.#setMill("runUpLever", false);
-                break;
-            }
-          }
-
-          this.#toLoadIngressAxis1 = !this.#toLoadIngressAxis1;
-        } else if (card.action === "S") {
-          this.#setStore(card.address, this.mill.egressAxis);
-        }
+        this.#toLoadIngressAxis1 = handleVariableCard(
+          card,
+          this.mill,
+          this.#setMill,
+          this.store,
+          this.#setStore,
+          this.#toLoadIngressAxis1,
+        );
         break;
     }
 
@@ -247,8 +203,4 @@ export default class Interpreter {
   clearPrintingApparatus() {
     this.#setPrintingApparatus("");
   }
-}
-
-function sign(num: number) {
-  return num === 0 ? 1 : Math.sign(num);
 }
