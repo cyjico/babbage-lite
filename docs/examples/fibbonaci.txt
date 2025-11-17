@@ -1,0 +1,41 @@
+N000 0  # constant zero
+N111 1  # constant one
+N1 0    # fib(n-2)
+N2 1    # fib(n-1)
+N3 0    # fib(n)
+N5 8    # counter
++
+L000
+L000
+P       # print first fib (0)
+B
++
+L2
+L000
+P       # print second fib (1)
+B
++       # -- DO
+L1
+L2
+S3      # fib(n) = fib(n-2) + fib(n-1)
+P       # print fib(n)
+B
++
+L2
+L000
+S1      # fib(n-2) = fib(n-1)
++
+L3
+L000
+S2      # fib(n-1) = fib(n)
+-
+L5
+L111
+S5      # counter = counter - 1
+-
+L000
+L5
+CB?22   # -- WHILE 0 < counter (only because 0 is non-negative)
+B
+H
+# --- PRINTS FIRST 10 FIBONACCI NUMBERS --- #
