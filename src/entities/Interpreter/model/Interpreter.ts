@@ -79,7 +79,7 @@ export default class Interpreter {
       // Break into smaller chunks for "smoothness"
       for (
         let i = 0;
-        i <= 128 && this.status() !== InterpreterStatus.Halted;
+        i <= 128 && this.status() === InterpreterStatus.Running;
         i++
       )
         this.step(breakpts());
