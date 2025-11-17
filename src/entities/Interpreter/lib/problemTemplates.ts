@@ -164,9 +164,9 @@ export function cardReaderMovementOutOfBounds(
   colend: number,
 ): Problem {
   return {
-    severity: ProblemSeverity.Warning,
+    severity: ProblemSeverity.Error,
     code: 3007,
-    message: "Card reader movement is out of bounds; will loop through.",
+    message: "Card reader movement is out of bounds.",
     ln,
     col,
     colend,
@@ -210,17 +210,6 @@ export function unreachableCard(
     severity: ProblemSeverity.Warning,
     code: 3011,
     message: `Card is unreachable.`,
-    ln,
-    col,
-    colend,
-  };
-}
-
-export function neverHalts(ln: number, col: number, colend: number): Problem {
-  return {
-    severity: ProblemSeverity.Error,
-    code: 3012,
-    message: `Program never halts.`,
     ln,
     col,
     colend,

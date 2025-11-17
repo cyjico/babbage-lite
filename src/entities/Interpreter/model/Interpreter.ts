@@ -6,7 +6,6 @@ import { InterpreterStatus, Mill } from "./types";
 import { createStore, produce, SetStoreFunction } from "solid-js/store";
 import { Accessor, batch, createSignal, Setter } from "solid-js";
 import playBell from "@/shared/lib/playBell";
-import wrap from "@/shared/lib/wrap";
 import handleVariableCard from "../lib/handleVariableCard";
 
 export default class Interpreter {
@@ -136,10 +135,12 @@ export default class Interpreter {
   }
 
   step(breakpts: Set<number>) {
+    if (this.status() === InterpreterStatus.Halted) return;
+
     const card = this.#chain[this.readerPosition()];
 
     // For the machine to read, it would have to move reader
-    this.#setReaderPosition((prev) => (prev + 1) % this.#chain.length);
+    this.#setReaderPosition((prev) => prev + 1);
 
     switch (card.type) {
       case ASTNodeType.NumberCard:
@@ -166,11 +167,8 @@ export default class Interpreter {
         break;
       case ASTNodeType.CombinatorialCard:
         if (card.condition === "+" || this.mill.runUpLever) {
-          this.#setReaderPosition((prev) =>
-            wrap(
-              prev + card.skips * (card.direction === "F" ? 1 : -1),
-              this.#chain.length,
-            ),
+          this.#setReaderPosition(
+            (prev) => prev + card.skips * (card.direction === "F" ? 1 : -1),
           );
         }
         break;
@@ -186,7 +184,8 @@ export default class Interpreter {
         break;
     }
 
-    if (breakpts.has(this.#chain[this.readerPosition()].ln)) this.pause();
+    if (this.readerPosition() >= this.#chain.length) this.halt();
+    else if (breakpts.has(this.#chain[this.readerPosition()].ln)) this.pause();
   }
 
   pause() {

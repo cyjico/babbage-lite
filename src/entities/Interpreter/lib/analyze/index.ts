@@ -2,7 +2,6 @@ import {
   cardReaderMovementOutOfBounds,
   multipleDefinitions,
   noArithmeticOperationPerformedPrior,
-  neverHalts,
   noOperationSet,
   operationOverrides,
   unreachableCard,
@@ -57,7 +56,12 @@ export default function analyze(
         if (definedAddresses.has(card.address)) {
           insertSorted(
             problems,
-            multipleDefinitions(card.address, card.ln, card.col, card.number.colend),
+            multipleDefinitions(
+              card.address,
+              card.ln,
+              card.col,
+              card.number.colend,
+            ),
             problemSeverityComparator,
           );
           break;
@@ -267,16 +271,6 @@ export default function analyze(
 
   const cfg = createCFG(cards);
   const cfgAnalysisReport = analyzeCFG(cfg);
-
-  if (!cfgAnalysisReport.halts) {
-    const lastCard = cards[cards.length - 1];
-
-    insertSorted(
-      problems,
-      neverHalts(lastCard?.ln ?? 0, lastCard?.col ?? 0, lastCard?.colend ?? 1),
-      problemSeverityComparator,
-    );
-  }
 
   for (const id of cfgAnalysisReport.unreachable) {
     for (const card of cfg.get(id)!.cards) {

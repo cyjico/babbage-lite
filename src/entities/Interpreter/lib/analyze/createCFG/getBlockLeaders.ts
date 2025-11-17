@@ -1,4 +1,3 @@
-import wrap from "@/shared/lib/wrap";
 import { ASTNode_Card, ASTNodeType } from "../../parse";
 
 /**
@@ -19,20 +18,17 @@ export default function getBlockLeaders(cards: readonly ASTNode_Card[]) {
       if (i !== 0) leaders.add(i);
 
       // And where it jumps to...
-      const jumpedTo = wrap(
-        i + 1 + card.skips * (card.direction === "F" ? 1 : -1),
-        cards.length,
-      );
-      if (jumpedTo !== 0) leaders.add(jumpedTo % cards.length);
+      const jumpedTo = i + 1 + card.skips * (card.direction === "F" ? 1 : -1);
+      leaders.add(jumpedTo);
 
       // And the card after it
-      leaders.add((i + 1) % cards.length);
+      leaders.add(i + 1);
     } else if (card.type === ASTNodeType.ActionCard && card.action === "H") {
       // A block starts at a halt action card...
       leaders.add(i);
 
       // And the card after it
-      leaders.add((i + 1) % cards.length);
+      leaders.add(i + 1);
     }
   }
 
