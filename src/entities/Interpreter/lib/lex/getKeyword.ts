@@ -10,6 +10,7 @@ const keywordToTokenType = new Map([
   ["-", TokenType.OperationCard],
   ["*", TokenType.OperationCard],
   ["/", TokenType.OperationCard],
+  ["%", TokenType.OperationCard],
 ] as const);
 
 const keywords = Array.from(keywordToTokenType.keys());

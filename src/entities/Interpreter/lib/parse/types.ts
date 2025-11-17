@@ -24,7 +24,7 @@ export interface ASTNode_NumberCard extends ASTNode_<ASTNodeType.NumberCard> {
 
 export interface ASTNode_OperationCard
   extends ASTNode_<ASTNodeType.OperationCard> {
-  operation: "+" | "-" | "*" | "/";
+  operation: "+" | "-" | "*" | "/" | "%";
 }
 
 export interface ASTNode_ActionCard extends ASTNode_<ASTNodeType.ActionCard> {

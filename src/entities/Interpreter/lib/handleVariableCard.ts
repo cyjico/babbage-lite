@@ -44,6 +44,16 @@ export default function handleVariableCard(
           setMill("egressAxis", mill.ingressAxis1 / mill.ingressAxis2);
           setMill("runUpLever", false);
           break;
+        case "%":
+          if (mill.ingressAxis2 === 0) {
+            setMill("runUpLever", true);
+            setMill("egressAxis", 0);
+            break;
+          }
+
+          setMill("egressAxis", mill.ingressAxis1 % mill.ingressAxis2);
+          setMill("runUpLever", false);
+          break;
       }
     }
 
