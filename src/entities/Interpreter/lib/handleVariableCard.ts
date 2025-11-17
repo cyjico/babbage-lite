@@ -37,6 +37,7 @@ export default function handleVariableCard(
         case "/":
           if (mill.ingressAxis2 === 0) {
             setMill("runUpLever", true);
+            setMill("egressAxis", 0);
             break;
           }
 
