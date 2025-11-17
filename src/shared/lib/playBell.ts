@@ -1,4 +1,4 @@
-const BELL = new Audio("/bell.mp3");
+const BELL = new Audio("./bell.mp3");
 
 export default function playBell() {
   BELL.currentTime = 0.15;
