@@ -17,6 +17,8 @@ export function unrecognizedCharacters(
   };
 }
 
+// #endregion
+
 // #region (2xxx) syntactic
 
 export function unexpectedToken(
@@ -66,6 +68,8 @@ export function multipleCardsOnTheSameLine(
     message: `Multiple cards on the same line.`,
   };
 }
+
+// #endregion
 
 // #region (3xxx) semantic
 
@@ -254,3 +258,5 @@ export function neverHalts(ln: number, col: number, colend: number): Problem {
     colend,
   };
 }
+
+// #endregion
