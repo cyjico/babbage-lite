@@ -10,15 +10,17 @@ export default function ToolBar() {
 
   return (
     <>
-      <div class="grid grid-flow-col grid-cols-4 items-center">
+      <div class="grid grid-flow-col grid-cols-4 items-center select-none">
         <details
-          class={`text-center relative outline-none${interpreter.status() === InterpreterStatus.Halted ? " visible hover:cursor-pointer hover:bg-rebeccapurple" : " hidden"}`}
+          class={`${
+            interpreter.status() === InterpreterStatus.Halted ? "" : "hidden "
+          }text-center relative outline-none hover:bg-rebeccapurple hover:cursor-pointer`}
           on:click={(ev) => {
             if (interpreter.status() !== InterpreterStatus.Halted)
               ev.preventDefault();
           }}
         >
-          <summary class="list-none">File</summary>
+          <summary>File</summary>
           <div
             class="absolute left-0 right-0 bg-mygrey z-10 whitespace-nowrap flex flex-col shadow-2xl"
             on:pointerleave={(ev) =>
@@ -53,11 +55,9 @@ export default function ToolBar() {
         </details>
 
         <button
-          class={
-            interpreter.status() === InterpreterStatus.Paused
-              ? "visible hover:bg-rebeccapurple"
-              : "hidden"
-          }
+          class={`${
+            interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
+          }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
           on:click={() => interpreter.execute(editorDebugger.breakpts)}
         >
@@ -65,11 +65,9 @@ export default function ToolBar() {
         </button>
 
         <button
-          class={
-            interpreter.status() === InterpreterStatus.Running
-              ? "visible hover:bg-rebeccapurple"
-              : "hidden"
-          }
+          class={`${
+            interpreter.status() === InterpreterStatus.Running ? "" : "hidden "
+          }hover:bg-rebeccapurple`}
           disabled={interpreter.status() === InterpreterStatus.Paused}
           on:click={() => interpreter.pause()}
         >
@@ -77,11 +75,9 @@ export default function ToolBar() {
         </button>
 
         <button
-          class={
-            interpreter.status() === InterpreterStatus.Halted
-              ? "visible hover:bg-rebeccapurple"
-              : "hidden"
-          }
+          class={`${
+            interpreter.status() === InterpreterStatus.Halted ? "" : "hidden "
+          }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Halted}
           on:click={() => interpreter.mount()}
         >
@@ -89,11 +85,9 @@ export default function ToolBar() {
         </button>
 
         <button
-          class={
-            interpreter.status() !== InterpreterStatus.Halted
-              ? "visible hover:bg-rebeccapurple"
-              : "invisible"
-          }
+          class={`${
+            interpreter.status() !== InterpreterStatus.Halted ? "" : "hidden "
+          }hover:bg-rebeccapurple`}
           disabled={interpreter.status() === InterpreterStatus.Halted}
           on:click={() => interpreter.halt()}
         >
@@ -101,11 +95,9 @@ export default function ToolBar() {
         </button>
 
         <button
-          class={
-            interpreter.status() === InterpreterStatus.Paused
-              ? "visible hover:bg-rebeccapurple"
-              : "invisible"
-          }
+          class={`${
+            interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
+          }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
           on:click={() => interpreter.step(editorDebugger.breakpts())}
         >
@@ -113,11 +105,9 @@ export default function ToolBar() {
         </button>
 
         <button
-          class={
-            interpreter.status() === InterpreterStatus.Paused
-              ? "visible hover:bg-rebeccapurple"
-              : "hidden"
-          }
+          class={`${
+            interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
+          }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
           on:click={() => interpreter.animate(editorDebugger.breakpts)}
         >
