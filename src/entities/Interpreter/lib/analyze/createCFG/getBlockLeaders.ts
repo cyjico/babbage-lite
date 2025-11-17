@@ -7,7 +7,7 @@ import { ASTNode_Card, ASTNodeType } from "../../parse";
  * @param cards
  * @returns Indices of the cards who are block leaders
  */
-export default function getBlockLeaders(cards: ASTNode_Card[]) {
+export default function getBlockLeaders(cards: readonly ASTNode_Card[]) {
   // We do not need to add starting cards as leaders because they're implied
   const leaders = new Set<number>();
 

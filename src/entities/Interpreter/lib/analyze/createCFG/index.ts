@@ -11,7 +11,7 @@ function createCFGBlock(id: CFGBlock_ID, edges: CFGEdge[] = []): CFGBlock {
   };
 }
 
-export function createCFG(cards: ASTNode_Card[]): CFG {
+export function createCFG(cards: readonly ASTNode_Card[]): CFG {
   const leaders = getBlockLeaders(cards);
 
   const cfg: CFG = new Map();
@@ -30,7 +30,7 @@ export function createCFG(cards: ASTNode_Card[]): CFG {
     }
   }
 
-  if (curBlock.cards.length !== 0)  {
+  if (curBlock.cards.length !== 0) {
     finalizeBlock(curBlock, 0, cards);
     cfg.set(curBlock.id, curBlock);
   }

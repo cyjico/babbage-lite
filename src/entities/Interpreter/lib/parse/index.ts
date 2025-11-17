@@ -7,8 +7,10 @@ import { Problem } from "@/shared/model/types";
 import { Token, TokenType } from "../lex";
 import nodifyNumericLiteral from "./nodifyNumericLiteral";
 import { ASTNode_Card, ASTNodeType } from "./types";
+import problemSeverityComparator from "../problemSeverityComparator";
+import insertSorted from "@/shared/lib/insertSorted";
 
-export default function parse(tokens: Token[], out_problems: Problem[]) {
+export default function parse(tokens: readonly Token[], problems: Problem[]) {
   const cards: ASTNode_Card[] = [];
 
   let i = 0;
@@ -19,7 +21,8 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
       case TokenType.NumberCard: {
         const node = nodifyNumericLiteral(tokens[i]);
         if (!node) {
-          out_problems.push(
+          insertSorted(
+            problems,
             expectedTokenAfterToken(
               "Numeric Literal",
               "Number Card",
@@ -27,6 +30,7 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
               token.col,
               token.col + token.lexeme.length,
             ),
+            problemSeverityComparator,
           );
           break;
         }
@@ -84,8 +88,10 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
         });
         break;
       default:
-        out_problems.push(
+        insertSorted(
+          problems,
           unexpectedToken(token.ln, token.col, token.col + token.lexeme.length),
+          problemSeverityComparator,
         );
         break;
     }
@@ -95,12 +101,14 @@ export default function parse(tokens: Token[], out_problems: Problem[]) {
       cards.length >= 2 &&
       cards[cards.length - 1].ln === cards[cards.length - 2].ln
     ) {
-      out_problems.push(
+      insertSorted(
+        problems,
         multipleCardsOnTheSameLine(
           token.ln,
           token.col,
           token.col + token.lexeme.length,
         ),
+        problemSeverityComparator,
       );
 
       cards.pop();

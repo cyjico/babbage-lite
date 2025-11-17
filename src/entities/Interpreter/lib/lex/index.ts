@@ -5,8 +5,10 @@ import findEndOfDecimals from "./findEndOfDecimals";
 import getKeyword from "./getKeyword";
 import getKeywordWithDigits from "./getKeywordWithDigits";
 import { Token, TokenType } from "./types";
+import insertSorted from "@/shared/lib/insertSorted";
+import problemSeverityComparator from "../problemSeverityComparator";
 
-export default function lex(lines: string[], out_problems: Problem[]) {
+export default function lex(lines: readonly string[], problems: Problem[]) {
   const tokens: Token[] = [];
 
   for (let ln = 0; ln < lines.length; ln++) {
@@ -71,7 +73,11 @@ export default function lex(lines: string[], out_problems: Problem[]) {
         let colend = col;
         while (!isWhitespace(lines[ln][colend] || " ")) colend++;
 
-        out_problems.push(unrecognizedCharacters(ln, col, colend));
+        insertSorted(
+          problems,
+          unrecognizedCharacters(ln, col, colend),
+          problemSeverityComparator,
+        );
 
         col = colend;
         continue;

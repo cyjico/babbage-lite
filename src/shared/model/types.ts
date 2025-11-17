@@ -1,7 +1,7 @@
 export const enum ProblemSeverity {
-  Information,
-  Warning,
   Error,
+  Warning,
+  Information,
 }
 
 export interface Problem {

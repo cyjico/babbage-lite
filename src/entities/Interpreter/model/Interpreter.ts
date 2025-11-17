@@ -60,14 +60,27 @@ export default class Interpreter {
     analyze(cards, problems);
 
     this.chain =
-      problems.find((v) => v.severity === ProblemSeverity.Error) === undefined
+      problems.length === 0 || problems[0].severity !== ProblemSeverity.Error
         ? cards
         : [];
     return problems;
   }
 
   mount() {
-    if (this.status() !== InterpreterStatus.Halted) return;
+    if (this.status() !== InterpreterStatus.Halted || this.chain.length === 0)
+      return;
+
+    this.#setMill(
+      produce((state) => {
+        state.operation = "";
+        state.runUpLever = false;
+        state.ingressAxis1 = 0;
+        state.ingressAxis2 = 0;
+        state.egressAxis = 0;
+      }),
+    );
+    this.#setStore(produce((state) => state.fill(0)));
+    this.#setReaderPosition(0);
 
     this.#setStatus(InterpreterStatus.Paused);
   }
@@ -184,17 +197,6 @@ export default class Interpreter {
     if (this.#executeIdleCallbackId)
       cancelIdleCallback(this.#executeIdleCallbackId);
 
-    this.#setMill(
-      produce((state) => {
-        state.operation = "";
-        state.runUpLever = false;
-        state.ingressAxis1 = 0;
-        state.ingressAxis2 = 0;
-        state.egressAxis = 0;
-      }),
-    );
-    this.#setStore(produce((state) => state.fill(0)));
-    this.#setReaderPosition(0);
     this.#setStatus(InterpreterStatus.Halted);
 
     this.#toLoadIngressAxis1 = true;

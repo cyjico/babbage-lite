@@ -20,6 +20,8 @@ import {
 } from "../parse";
 import { createCFG } from "./createCFG";
 import analyzeCFG from "./analyzeCFG";
+import insertSorted from "@/shared/lib/insertSorted";
+import problemSeverityComparator from "../problemSeverityComparator";
 
 const enum NextStep {
   ToOperation,
@@ -31,11 +33,11 @@ const enum NextStep {
  * Conduct semantic analysis on the abstract-syntax tree.
  *
  * @param cards Abstract-syntax tree.
- * @param out_problems Output array for problems detected.
+ * @param problems Output array for problems detected.
  */
 export default function analyze(
-  cards: ASTNode_Card[],
-  out_problems: Problem[],
+  cards: readonly ASTNode_Card[],
+  problems: Problem[],
 ) {
   const definedAddresses = new Set<number>();
   const unusedAddresses = new Map<number, ASTNode_NumberCard>();
@@ -53,8 +55,10 @@ export default function analyze(
     switch (card.type) {
       case ASTNodeType.NumberCard:
         if (definedAddresses.has(card.address)) {
-          out_problems.push(
+          insertSorted(
+            problems,
             multipleDefinitions(card.address, card.ln, card.col, card.colend),
+            problemSeverityComparator,
           );
           break;
         }
@@ -67,13 +71,15 @@ export default function analyze(
           switch (curOperation.nextStep) {
             case NextStep.ToE1:
             case NextStep.ToE2:
-              out_problems.push(
+              insertSorted(
+                problems,
                 operationOverrides(
                   curOperation.operationCard.ln,
                   card.ln,
                   card.col,
                   card.colend,
                 ),
+                problemSeverityComparator,
               );
               break;
           }
@@ -88,12 +94,14 @@ export default function analyze(
             curOperation.operationCard === null &&
             curOperation.variableCard_L2 === null
           ) {
-            out_problems.push(
+            insertSorted(
+              problems,
               noArithmeticOperationPerformedPrior(
                 card.ln,
                 card.col,
                 card.colend,
               ),
+              problemSeverityComparator,
             );
             break;
           }
@@ -108,12 +116,14 @@ export default function analyze(
             curOperation.operationCard === null &&
             curOperation.variableCard_L2 === null
           ) {
-            out_problems.push(
+            insertSorted(
+              problems,
               noArithmeticOperationPerformedPrior(
                 card.ln,
                 card.col,
                 card.colend,
               ),
+              problemSeverityComparator,
             );
             break;
           }
@@ -125,8 +135,10 @@ export default function analyze(
           (card.direction === "F" && i + 1 + card.skips >= cards.length) ||
           (card.direction === "B" && i + 1 - card.skips < 0)
         ) {
-          out_problems.push(
+          insertSorted(
+            problems,
             cardReaderMovementOutOfBounds(card.ln, card.col, card.colend),
+            problemSeverityComparator,
           );
         }
         break;
@@ -139,8 +151,10 @@ export default function analyze(
               // @ts-expect-error Fall through intended
               case NextStep.ToOperation:
                 if (curOperation.operationCard === null)
-                  out_problems.push(
+                  insertSorted(
+                    problems,
                     noOperationSet(card.ln, card.col, card.colend),
+                    problemSeverityComparator,
                   );
               case NextStep.ToE1:
                 // Check previous operation before overwriting
@@ -148,19 +162,23 @@ export default function analyze(
                   !curOperation.wasRecentResultUsed &&
                   curOperation.variableCard_L2 !== null
                 ) {
-                  out_problems.push(
+                  insertSorted(
+                    problems,
                     unusedOperationResult(
                       curOperation.variableCard_L1!.ln,
                       curOperation.variableCard_L1!.col,
                       curOperation.variableCard_L1!.colend,
                     ),
+                    problemSeverityComparator,
                   );
-                  out_problems.push(
+                  insertSorted(
+                    problems,
                     unusedOperationResult(
                       curOperation.variableCard_L2!.ln,
                       curOperation.variableCard_L2!.col,
                       curOperation.variableCard_L2!.colend,
                     ),
+                    problemSeverityComparator,
                   );
                 }
 
@@ -179,12 +197,14 @@ export default function analyze(
               curOperation.operationCard === null &&
               curOperation.variableCard_L2 === null
             ) {
-              out_problems.push(
+              insertSorted(
+                problems,
                 noArithmeticOperationPerformedPrior(
                   card.ln,
                   card.col,
                   card.colend,
                 ),
+                problemSeverityComparator,
               );
               break;
             }
@@ -194,12 +214,14 @@ export default function analyze(
               curOperation.variableCard_L1 !== null &&
               curOperation.variableCard_L2 !== null
             ) {
-              out_problems.push(
+              insertSorted(
+                problems,
                 unusedLoad(
                   curOperation.variableCard_L1.ln,
                   curOperation.variableCard_L1.col,
                   curOperation.variableCard_L1.colend,
                 ),
+                problemSeverityComparator,
               );
             }
 
@@ -211,8 +233,10 @@ export default function analyze(
   }
 
   for (const [address, ref_node] of unusedAddresses) {
-    out_problems.push(
+    insertSorted(
+      problems,
       unusedAddress(address, ref_node.ln, ref_node.col, ref_node.colend),
+      problemSeverityComparator,
     );
   }
 
@@ -221,19 +245,23 @@ export default function analyze(
     curOperation.variableCard_L2 !== null &&
     curOperation.operationCard !== null
   ) {
-    out_problems.push(
+    insertSorted(
+      problems,
       unusedOperationResult(
         curOperation.variableCard_L1!.ln,
         curOperation.variableCard_L1!.col,
         curOperation.variableCard_L1!.colend,
       ),
+      problemSeverityComparator,
     );
-    out_problems.push(
+    insertSorted(
+      problems,
       unusedOperationResult(
         curOperation.variableCard_L2!.ln,
         curOperation.variableCard_L2!.col,
         curOperation.variableCard_L2!.colend,
       ),
+      problemSeverityComparator,
     );
   }
 
@@ -243,14 +271,20 @@ export default function analyze(
   if (!cfgAnalysisReport.halts) {
     const lastCard = cards[cards.length - 1];
 
-    out_problems.push(
+    insertSorted(
+      problems,
       neverHalts(lastCard?.ln ?? 0, lastCard?.col ?? 0, lastCard?.colend ?? 1),
+      problemSeverityComparator,
     );
   }
 
   for (const id of cfgAnalysisReport.unreachable) {
     for (const card of cfg.get(id)!.cards) {
-      out_problems.push(unreachableCard(card.ln, card.col, card.colend));
+      insertSorted(
+        problems,
+        unreachableCard(card.ln, card.col, card.colend),
+        problemSeverityComparator,
+      );
     }
   }
 }
