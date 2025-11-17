@@ -2,12 +2,12 @@ import { Mill } from "../model/types";
 import { ASTNode_VariableCard } from "./parse";
 
 export default function handleVariableCard(
+  toLoadIngressAxis1: boolean,
   card: ASTNode_VariableCard,
   mill: Mill,
-  setMill: (key: keyof Mill, value: Mill[typeof key]) => void,
+  setMill: <K extends keyof Mill>(key: K, value: Mill[K]) => void,
   store: readonly number[],
   setStore: (key: number, value: number) => void,
-  toLoadIngressAxis1: boolean,
 ): boolean {
   if (card.action == "L") {
     if (toLoadIngressAxis1) {

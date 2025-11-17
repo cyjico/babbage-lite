@@ -151,12 +151,12 @@ export default class Interpreter {
         break;
       case ASTNodeType.VariableCard:
         this.#toLoadIngressAxis1 = handleVariableCard(
+          this.#toLoadIngressAxis1,
           card,
           this.mill,
           this.#setMill,
           this.store,
           this.#setStore,
-          this.#toLoadIngressAxis1,
         );
         break;
     }
