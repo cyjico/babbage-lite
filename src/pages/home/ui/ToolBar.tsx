@@ -14,7 +14,7 @@ export default function ToolBar() {
         <details
           class={`text-center relative outline-none${interpreter.status() === InterpreterStatus.Halted ? " visible hover:cursor-pointer hover:bg-rebeccapurple" : " hidden"}`}
           on:click={(ev) => {
-            if (interpreter.status() === InterpreterStatus.Halted)
+            if (interpreter.status() !== InterpreterStatus.Halted)
               ev.preventDefault();
           }}
         >
