@@ -4,7 +4,7 @@ Once again, the Analytical Engine taught by my professor was simplified for lect
 
 * [Number cards](#number-cards) (`N<address> <value>`)
 * [Variable cards](#variable-cards) (`L<address>`, `S<address>`)
-* [Operation cards](#operation-cards) (`+`, `-`, `*`, `/`)
+* [Operation cards](#operation-cards) (`+`, `-`, `*`, `/`, `%`)
 * [Action cards](#action-cards) (`P`, `B`, `H`)
 * [Combinatorial cards](#combinatorial-cards) (`CB+<skips>`, `CF+<skips>`, `CB?<skips>`, `CF?<skips>`)
 
@@ -143,6 +143,7 @@ CB?<skips>  # jump backward skips - 1 (from current line) cards if the run-up le
 * Subtraction: *Run-up Lever* sets only when sign differs between the first ingress axis and egress axis.
 * Division: *Run-up Lever* sets only when the divisor is 0.
 * Multiplication: *Run-up Lever* never sets.
+* Modulo: *Run-up Lever* sets only when the divisor is 0.
 
 #### Quick Mental Model
 
