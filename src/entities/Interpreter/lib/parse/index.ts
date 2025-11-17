@@ -20,7 +20,7 @@ export default function parse(tokens: readonly Token[], problems: Problem[]) {
     switch (token.type) {
       case TokenType.NumberCard: {
         const node = nodifyNumericLiteral(tokens[i]);
-        if (!node) {
+        if (!node || token.ln !== node.ln) {
           insertSorted(
             problems,
             expectedTokenAfterToken(
