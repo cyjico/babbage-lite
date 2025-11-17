@@ -10,19 +10,22 @@ import wrap from "@/shared/lib/wrap";
 import handleVariableCard from "../lib/handleVariableCard";
 
 export default class Interpreter {
-  mill: Mill;
+  readonly mill: Mill;
   #setMill: SetStoreFunction<Mill>;
-  store: number[];
+  readonly store: number[];
   #setStore: SetStoreFunction<number[]>;
 
-  chain: ASTNode_Card[] = [];
-  readerPosition: Accessor<number>;
+  get currentCard() {
+    return this.#chain[this.readerPosition()];
+  }
+  #chain: ASTNode_Card[] = [];
+  readonly readerPosition: Accessor<number>;
   #setReaderPosition: Setter<number>;
 
-  printingApparatus: Accessor<string>;
+  readonly printingApparatus: Accessor<string>;
   #setPrintingApparatus: Setter<string>;
 
-  status: Accessor<InterpreterStatus>;
+  readonly status: Accessor<InterpreterStatus>;
   #setStatus: Setter<InterpreterStatus>;
 
   #animateTimeoutId?: number = undefined;
@@ -59,7 +62,7 @@ export default class Interpreter {
     const cards = parse(lex(lines, problems), problems);
     analyze(cards, problems);
 
-    this.chain =
+    this.#chain =
       problems.length === 0 || problems[0].severity !== ProblemSeverity.Error
         ? cards
         : [];
@@ -67,7 +70,7 @@ export default class Interpreter {
   }
 
   mount() {
-    if (this.status() !== InterpreterStatus.Halted || this.chain.length === 0)
+    if (this.status() !== InterpreterStatus.Halted || this.#chain.length === 0)
       return;
 
     this.#setMill(
@@ -124,10 +127,10 @@ export default class Interpreter {
   }
 
   step(breakpts: Set<number>) {
-    const card = this.chain[this.readerPosition()];
+    const card = this.#chain[this.readerPosition()];
 
     // For the machine to read, it would have to move reader
-    this.#setReaderPosition((prev) => (prev + 1) % this.chain.length);
+    this.#setReaderPosition((prev) => (prev + 1) % this.#chain.length);
 
     switch (card.type) {
       case ASTNodeType.NumberCard:
@@ -157,7 +160,7 @@ export default class Interpreter {
           this.#setReaderPosition((prev) =>
             wrap(
               prev + card.skips * (card.direction === "F" ? 1 : -1),
-              this.chain.length,
+              this.#chain.length,
             ),
           );
         }
@@ -174,7 +177,7 @@ export default class Interpreter {
         break;
     }
 
-    if (breakpts.has(this.chain[this.readerPosition()].ln)) this.pause();
+    if (breakpts.has(this.#chain[this.readerPosition()].ln)) this.pause();
   }
 
   pause() {

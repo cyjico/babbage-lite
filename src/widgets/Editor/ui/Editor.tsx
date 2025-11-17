@@ -127,7 +127,12 @@ export default function Editor(props: { class?: string }) {
           {(value, idx) => {
             return (
               <div
-                class={`line${interpreter.status() !== InterpreterStatus.Halted && interpreter.chain[interpreter.readerPosition()].ln === idx() ? " --active" : ""}`}
+                class={`line${
+                  interpreter.status() !== InterpreterStatus.Halted &&
+                  interpreter.currentCard.ln === idx()
+                    ? " --active"
+                    : ""
+                }`}
                 data-id={`${idx()}`}
               >
                 {value.length === 0 ? <br /> : value}
