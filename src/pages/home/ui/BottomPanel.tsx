@@ -1,5 +1,4 @@
-import createProblemOutput from "@/shared/lib/createProblemOutput";
-import { ProblemSeverity } from "@/shared/model/types";
+import { Problem, ProblemSeverity } from "@/shared/model/types";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
 import { useEditorContext } from "@/widgets/Editor";
 import { createEffect, For } from "solid-js";
@@ -29,12 +28,9 @@ export default function BottomPanel() {
             label: `ATTENDANT'S EXAMINATION${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
             class: "overflow-y-auto grow list-disc",
             content: (
-              <For each={editorDebugger.problems()} fallback={<li />}>
-                {(v) => (
-                  <li class="whitespace-pre-wrap">
-                    {v.severity == ProblemSeverity.Error ? "❌ " : "⚠️ "}
-                    {createProblemOutput(editorState.lines, v)}
-                  </li>
+              <For each={editorDebugger.problems()}>
+                {(problem) => (
+                  <>{createProblemOutput(problem, editorState.lines)}</>
                 )}
               </For>
             ),
@@ -73,4 +69,59 @@ export default function BottomPanel() {
       />
     </>
   );
+}
+
+function createProblemOutput(problem: Problem, lines: string[]) {
+  const line = lines[problem.ln];
+
+  switch (problem.severity) {
+    case ProblemSeverity.Error:
+      return (
+        <div class="my-2">
+          <p>
+            <span class="text-red-400 font-bold">✕</span> {problem.message} (
+            {problem.code}) [Ln {problem.ln + 1}, Col {problem.col + 1}]
+          </p>
+          <p class="ml-6 border-l-2 pl-4">
+            {line.slice(0, problem.col)}
+            <span class="border-b-2 border-red-400">
+              {line.slice(problem.col, problem.colend)}
+            </span>
+            {line.slice(problem.colend)}
+          </p>
+        </div>
+      );
+    case ProblemSeverity.Warning:
+      return (
+        <div class="my-2">
+          <p>
+            <span class="text-orange-300 font-bold">⚠︎</span> {problem.message}{" "}
+            ({problem.code}) [Ln {problem.ln + 1}, Col {problem.col + 1}]
+          </p>
+          <p class="ml-6 border-l-2 pl-4">
+            {line.slice(0, problem.col)}
+            <span class="border-b-2 border-orange-300">
+              {line.slice(problem.col, problem.colend)}
+            </span>
+            {line.slice(problem.colend)}
+          </p>
+        </div>
+      );
+    case ProblemSeverity.Information:
+      return (
+        <div class="my-2">
+          <p>
+            <span class="text-blue-400 font-bold">ⓘ</span> {problem.message} (
+            {problem.code}) [Ln {problem.ln + 1}, Col {problem.col + 1}]
+          </p>
+          <p class="ml-6 border-l-2 pl-4">
+            {line.slice(0, problem.col)}
+            <span class="border-b-2 border-blue-400">
+              {line.slice(problem.col, problem.colend)}
+            </span>
+            {line.slice(problem.colend)}
+          </p>
+        </div>
+      );
+  }
 }

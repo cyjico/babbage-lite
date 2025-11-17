@@ -37,8 +37,8 @@ export function unexpectedToken(
 }
 
 export function expectedTokenAfterToken(
-  expected: string,
-  beforeExpected: string,
+  expectedToken: string,
+  afterToken: string,
   ln: number,
   col: number,
   colend: number,
@@ -46,7 +46,7 @@ export function expectedTokenAfterToken(
   return {
     severity: ProblemSeverity.Error,
     code: 2003,
-    message: `Expected token '${expected}' after '${beforeExpected}'.`,
+    message: `Expected token '${expectedToken}' after '${afterToken}'.`,
     ln,
     col,
     colend,
@@ -61,11 +61,10 @@ export function multipleCardsOnTheSameLine(
   return {
     severity: ProblemSeverity.Error,
     code: 2004,
+    message: `Multiple cards on the same line.`,
     ln,
     col,
     colend,
-    // Technically, they are nodes of type node cards
-    message: `Multiple cards on the same line.`,
   };
 }
 
@@ -73,24 +72,7 @@ export function multipleCardsOnTheSameLine(
 
 // #region (3xxx) semantic
 
-// TODO: Unused problem
-export function undefinedAddress(
-  address: number,
-  ln: number,
-  col: number,
-  colend: number,
-): Problem {
-  return {
-    severity: ProblemSeverity.Error,
-    code: 3001,
-    message: `Undefined address '${"0".repeat(
-      3 - address.toString().length,
-    )}${address}'.`,
-    ln,
-    col,
-    colend,
-  };
-}
+// TODO: 3001
 
 export function unusedAddress(
   address: number,
@@ -119,9 +101,9 @@ export function multipleDefinitions(
   return {
     severity: ProblemSeverity.Error,
     code: 3003,
-    message: `Multiple definitions of store address '${"0".repeat(
-      3 - address.toString().length,
-    )}${address}'.`,
+    message: `Multiple definitions of store address '${address
+      .toString()
+      .padStart(3, "0")}'.`,
     ln,
     col,
     colend,
@@ -184,8 +166,7 @@ export function cardReaderMovementOutOfBounds(
   return {
     severity: ProblemSeverity.Warning,
     code: 3007,
-    message:
-      "Card reader movement is out of bounds. The reader will loop through.",
+    message: "Card reader movement is out of bounds; will loop through.",
     ln,
     col,
     colend,
@@ -218,21 +199,7 @@ export function unusedLoad(ln: number, col: number, colend: number): Problem {
   };
 }
 
-// TODO: Unused problem
-export function cycleDetected(
-  ln: number,
-  col: number,
-  colend: number,
-): Problem {
-  return {
-    severity: ProblemSeverity.Error,
-    code: 3010,
-    message: `Cycle detected.`,
-    ln,
-    col,
-    colend,
-  };
-}
+// TODO: 3010
 
 export function unreachableCard(
   ln: number,

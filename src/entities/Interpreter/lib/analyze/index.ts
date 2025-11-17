@@ -57,7 +57,7 @@ export default function analyze(
         if (definedAddresses.has(card.address)) {
           insertSorted(
             problems,
-            multipleDefinitions(card.address, card.ln, card.col, card.colend),
+            multipleDefinitions(card.address, card.ln, card.col, card.number.colend),
             problemSeverityComparator,
           );
           break;
@@ -235,7 +235,7 @@ export default function analyze(
   for (const [address, ref_node] of unusedAddresses) {
     insertSorted(
       problems,
-      unusedAddress(address, ref_node.ln, ref_node.col, ref_node.colend),
+      unusedAddress(address, ref_node.ln, ref_node.col, ref_node.number.colend),
       problemSeverityComparator,
     );
   }
