@@ -4,7 +4,7 @@ import lex from "../lib/lex";
 import parse, { ASTNode_Card, ASTNodeType } from "../lib/parse";
 import { InterpreterStatus, Mill } from "./types";
 import { createStore, produce, SetStoreFunction } from "solid-js/store";
-import { Accessor, createSignal, Setter } from "solid-js";
+import { Accessor, batch, createSignal, Setter } from "solid-js";
 import playBell from "@/shared/lib/playBell";
 import wrap from "@/shared/lib/wrap";
 import handleVariableCard from "../lib/handleVariableCard";
@@ -91,25 +91,34 @@ export default class Interpreter {
   execute(breakpts: Accessor<Set<number>>) {
     if (this.status() !== InterpreterStatus.Paused) return;
 
-    const callback = () => {
-      // Break into smaller chunks for "smoothness"
-      for (
-        let i = 0;
-        i <= 128 && this.status() === InterpreterStatus.Running;
-        i++
-      )
-        this.step(breakpts());
+    const runChunk = (chunkSize: number) => {
+      batch(() => {
+        const brkpts = breakpts();
 
-      if (this.status() === InterpreterStatus.Running)
-        this.#executeIdleCallbackId = requestIdleCallback(callback, {
-          timeout: 1023,
-        });
+        const start = performance.now();
+        for (
+          let i = 0;
+          i < chunkSize && this.status() === InterpreterStatus.Running;
+          i++
+        )
+          this.step(brkpts);
+
+        if (this.status() === InterpreterStatus.Running) {
+          const nextChunkSize = Math.max(
+            64,
+            Math.round((chunkSize * 32) / (performance.now() - start)),
+          );
+
+          this.#executeIdleCallbackId = requestIdleCallback(
+            () => runChunk(nextChunkSize),
+            { timeout: 1000 },
+          );
+        }
+      });
     };
 
     this.#setStatus(InterpreterStatus.Running);
-    this.#executeIdleCallbackId = requestIdleCallback(callback, {
-      timeout: 1023,
-    });
+    runChunk(512);
   }
 
   animate(breakpts: Accessor<Set<number>>, timeout = 250) {
