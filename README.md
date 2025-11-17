@@ -11,17 +11,17 @@ Below are some key differences between the original machine and the _certain pro
 |                           | **Original Analytical Engine**                                                         | **Simplified Analytical Engine**                                                  |
 | :------------------------ | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | **Number Representation** | Has a decimal-based gear system where each gear represented a digit (0-9).             | Will handle real numbers of any size.                                             |
-| **Registers & Memory**    | Includes 2 primed ingress axes and 1 primed egress axis for complex data manipulation. | Does not require primed ingress axes or primed egress axes.                       |
+| **Registers & Memory**    | Includes 2 primed ingress axes and 1 primed egress axis for complex data manipulation. | Does not use primed ingress axes or primed egress axes.                       |
 | **Operation Cards**       | Includes addition, subtraction, multiplication, and division.                          | Also includes modulo due to not having primed ingress axes or primed egress axes. |
 
-## Examples
+## Examples & Syntax
 
-Sample programs demonstrating the interpreter's capabilities can be found in the [examples](./docs/examples) directory:
+Sample programs demonstrating the interpreter's capabilities can be found in the **[examples](./docs/examples)** directory (feel free to modify/use these):
 
-- **[prime_number.txt](./docs/examples/prime_number.txt)**
-- **[repeated_subtraction.txt](./docs/examples/repeated_subtraction.txt)**
+- [prime_number.txt](./docs/examples/prime_number.txt)
+- [repeated_subtraction.txt](./docs/examples/repeated_subtraction.txt)
 
-Feel free to use these as a starting point for writing your own Analytical Engine programs!
+A quick-start syntax reference can be found in **[syntax.md](./docs/syntax.md)**.
 
 ## Contributing
 

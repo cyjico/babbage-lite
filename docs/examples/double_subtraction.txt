@@ -43,7 +43,6 @@ L3
 L000
 P     # print remainder + 0
 B
-H
 # --- PROGRAM CALCULATES THE REMAINDER USING DOUBLE SUBTRACTION ---
 # Translated from the following pseudocode:
 #

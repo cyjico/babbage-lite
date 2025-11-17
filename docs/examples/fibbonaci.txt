@@ -37,5 +37,4 @@ L000
 L5
 CB?22   # -- WHILE 0 < counter (only because 0 is non-negative)
 B
-H
 # --- PRINTS FIRST 10 FIBONACCI NUMBERS --- #
