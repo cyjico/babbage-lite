@@ -2,7 +2,7 @@ import "./Editor.css";
 import { For, onCleanup, onMount } from "solid-js";
 import { useEditorContext } from "../ContextProvider";
 import captureSelectionDOM from "../infra/captureSelectionDOM";
-import createBeforeInputHandler from "../lib/createBeforeInputHandler";
+import createInputHandler from "../lib/createInputHandler";
 import updateSelectionDOM from "../infra/updateSelectionDOM";
 import { InterpreterStatus } from "@/entities/Interpreter";
 
@@ -10,10 +10,7 @@ export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
   const { interpreter, editorState, editorDebugger, editorHistory } =
     useEditorContext();
-  const beforeInputHandler = createBeforeInputHandler(
-    editorState,
-    editorHistory,
-  );
+  const inputHandler = createInputHandler(editorState, editorHistory);
 
   const selectionChangeListener = (_: Event) =>
     captureSelectionDOM(editorState.setSel);
@@ -74,8 +71,8 @@ export default function Editor(props: { class?: string }) {
         ref={content}
         contentEditable="plaintext-only"
         class="content"
-        onMouseDown={() => beforeInputHandler.endGroup()}
-        onBeforeInput={(ev) => {
+        on:pointerdown={() => inputHandler.endGroup()}
+        on:beforeinput={(ev) => {
           ev.preventDefault();
 
           switch (ev.inputType) {
@@ -88,11 +85,16 @@ export default function Editor(props: { class?: string }) {
 
           if (interpreter.status() !== InterpreterStatus.Halted) return;
 
-          beforeInputHandler.handle(ev);
+          inputHandler.handleBeforeInput(ev);
 
           scheduleUpdateSelectionDOM();
         }}
-        onKeyDown={(ev) => {
+        on:keydown={(ev) => {
+          if (inputHandler.handleKeyDown(ev)) {
+            scheduleUpdateSelectionDOM();
+            return;
+          }
+
           // metaKey is for Apple
           if (ev.ctrlKey || ev.metaKey) {
             if (ev.key === "z") {
@@ -100,17 +102,19 @@ export default function Editor(props: { class?: string }) {
 
               queueMicrotask(() => {
                 editorHistory.undo();
-                beforeInputHandler.endGroup();
+                inputHandler.endGroup();
               });
               scheduleUpdateSelectionDOM();
+              return;
             } else if (ev.key === "y") {
               ev.preventDefault();
 
               queueMicrotask(() => {
                 editorHistory.redo();
-                beforeInputHandler.endGroup();
+                inputHandler.endGroup();
               });
               scheduleUpdateSelectionDOM();
+              return;
             }
           }
 
@@ -119,8 +123,10 @@ export default function Editor(props: { class?: string }) {
             ev.key === "Home" ||
             ev.key === "End" ||
             ev.key.startsWith("Page")
-          )
-            beforeInputHandler.endGroup();
+          ) {
+            inputHandler.endGroup();
+            return;
+          }
         }}
       >
         <For each={editorState.lines}>

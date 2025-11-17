@@ -13,7 +13,7 @@ const enum InputEventKind {
   Delete,
 }
 
-export default function createBeforeInputHandler(
+export default function createInputHandler(
   editorState: EditorState,
   editorHistory: EditorHistory,
 ) {
@@ -24,7 +24,7 @@ export default function createBeforeInputHandler(
 
   let prevKind = InputEventKind.None;
   return {
-    handle: (ev: InputEvent) => {
+    handleBeforeInput: (ev: InputEvent) => {
       ev.preventDefault();
 
       const kind = getInputEventKindFromInputEvent(ev);
@@ -55,6 +55,19 @@ export default function createBeforeInputHandler(
         default:
           console.warn("Unhandled Event (please report): ", ev.inputType);
           break;
+      }
+    },
+    handleKeyDown: (ev: KeyboardEvent) => {
+      switch (ev.key) {
+        case "Tab":
+          ev.preventDefault();
+
+          if (prevKind !== InputEventKind.Whitespace) editorHistory._commit();
+          prevKind = InputEventKind.Whitespace;
+
+          insertText("\t");
+
+          return true;
       }
     },
     endGroup: () => {
