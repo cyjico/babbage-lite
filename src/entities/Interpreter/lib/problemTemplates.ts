@@ -73,6 +73,7 @@ export function multipleCardsOnTheSameLine(
 
 // #region (3xxx) semantic
 
+// TODO: Unused problem
 export function undefinedAddress(
   address: number,
   ln: number,
@@ -136,7 +137,7 @@ export function operationOverrides(
   return {
     severity: ProblemSeverity.Warning,
     code: 3004,
-    message: `Operation oveerrides previous operation at line ${
+    message: `Operation overrides previous operation at line ${
       overriddenLn + 1
     }.`,
     ln,
@@ -217,7 +218,7 @@ export function unusedLoad(ln: number, col: number, colend: number): Problem {
   };
 }
 
-// UNUSED
+// TODO: Unused problem
 export function cycleDetected(
   ln: number,
   col: number,
