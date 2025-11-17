@@ -44,15 +44,14 @@ export default function Editor(props: { class?: string }) {
           on:pointerdown={(ev) => {
             ev.preventDefault();
 
-            if (interpreter.status() === InterpreterStatus.Halted)
-              editorDebugger.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
+            editorDebugger.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
           }}
         >
           <For each={Array.from(editorDebugger.breakpts().values())}>
             {(line) => {
               return (
                 <div
-                  class={`breakpoint${interpreter.status() === InterpreterStatus.Halted ? " hover:opacity-50" : ""}`}
+                  class="breakpoint hover:opacity-50"
                   style={{
                     transform: `translateY(${calculateRemFromLine(line, 1.5)}rem)`,
                   }}
