@@ -2,7 +2,7 @@ import {
   expectedTokenAfterToken,
   multipleCardsOnTheSameLine,
   unexpectedToken,
-} from "@/shared/lib/problemTemplates";
+} from "../problemTemplates";
 import { Problem } from "@/shared/model/types";
 import { Token, TokenType } from "../lex";
 import nodifyNumericLiteral from "./nodifyNumericLiteral";

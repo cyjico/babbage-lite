@@ -1,4 +1,4 @@
-import { unrecognizedCharacters } from "@/shared/lib/problemTemplates";
+import { unrecognizedCharacters } from "../problemTemplates";
 import { Problem } from "@/shared/model/types";
 import findEndOfDecimals from "./findEndOfDecimals";
 import getKeyword from "./getKeyword";

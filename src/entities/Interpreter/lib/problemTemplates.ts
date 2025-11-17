@@ -1,4 +1,4 @@
-import { Problem, ProblemSeverity } from "../model/types";
+import { Problem, ProblemSeverity } from "@/shared/model/types";
 
 // #region (1xxx) lexical
 

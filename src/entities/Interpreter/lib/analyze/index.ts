@@ -9,7 +9,7 @@ import {
   unusedAddress,
   unusedLoad,
   unusedOperationResult,
-} from "@/shared/lib/problemTemplates";
+} from "../problemTemplates";
 import { Problem } from "@/shared/model/types";
 import {
   ASTNode_Card,
