@@ -14,8 +14,8 @@ export default class Interpreter {
   readonly store: number[];
   #setStore: SetStoreFunction<number[]>;
 
-  get currentCard() {
-    return this.#chain[this.readerPosition()];
+  get curLn() {
+    return this.#chain[this.readerPosition()]?.ln ?? 0;
   }
   #chain: ASTNode_Card[] = [];
   readonly readerPosition: Accessor<number>;

@@ -135,7 +135,7 @@ export default function Editor(props: { class?: string }) {
               <div
                 class={`line${
                   interpreter.status() !== InterpreterStatus.Halted &&
-                  interpreter.currentCard.ln === idx()
+                  interpreter.curLn === idx()
                     ? " --active"
                     : ""
                 }`}
