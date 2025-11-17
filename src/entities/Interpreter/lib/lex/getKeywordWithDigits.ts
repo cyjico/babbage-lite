@@ -1,7 +1,6 @@
-import isWhitespace from "@/shared/lib/isWhitespace";
 import { ValueOfMap } from "@/shared/lib/types";
 import { TokenType, TokenWithType } from "./types";
-import { isDigit } from "./utils";
+import { isDigit, isWhitespace } from "./utils";
 
 const keywordToTokenType = new Map([
   ["N", TokenType.NumberCard],

@@ -1,6 +1,6 @@
-import isWhitespace from "@/shared/lib/isWhitespace";
 import { ValueOfMap } from "@/shared/lib/types";
 import { TokenType, TokenWithType } from "./types";
+import { isWhitespace } from "./utils";
 
 const keywordToTokenType = new Map([
   ["P", TokenType.ActionCard],

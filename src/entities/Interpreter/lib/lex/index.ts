@@ -1,4 +1,3 @@
-import isWhitespace from "@/shared/lib/isWhitespace";
 import { unrecognizedCharacters } from "@/shared/lib/problemTemplates";
 import { Problem } from "@/shared/model/types";
 import findEndOfDecimals from "./findEndOfDecimals";
@@ -7,6 +6,7 @@ import getKeywordWithDigits from "./getKeywordWithDigits";
 import { Token, TokenType } from "./types";
 import insertSorted from "@/shared/lib/insertSorted";
 import problemSeverityComparator from "../problemSeverityComparator";
+import { isWhitespace } from "./utils";
 
 export default function lex(lines: readonly string[], problems: Problem[]) {
   const tokens: Token[] = [];
