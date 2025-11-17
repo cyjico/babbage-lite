@@ -22,8 +22,8 @@ export default function BottomPanel() {
     <>
       <TabbedPanel
         class_labelContainer="grid grid-cols-2 justify-center"
-        class_labelInactive="pl-2 opacity-50 bg-myblack hover:bg-mygrey hover:opacity-100"
-        class_labelActive="pl-2"
+        class_labelInactive="pl-2 select-none opacity-50 bg-myblack hover:bg-mygrey hover:opacity-100"
+        class_labelActive="pl-2 select-none"
         tabs={[
           {
             label: `ATTENDANT'S EXAMINATION${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
@@ -44,7 +44,7 @@ export default function BottomPanel() {
             class: "overflow-y-auto grow",
             content: (
               <>
-                <div class="sticky shadow-lg top-0 bg-mydarkgrey grid grid-cols-2">
+                <div class="sticky shadow-lg top-0 bg-mydarkgrey grid grid-cols-2 select-none">
                   <button
                     class="hover:bg-mygrey"
                     on:click={() => interpreter.clearPrintingApparatus()}
