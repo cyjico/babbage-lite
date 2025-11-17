@@ -1,12 +1,12 @@
 # Babbage Lite
 
-**Babbage Lite** is an **Analytical Engine** interpreter based on a _certain professor's_ simplified lesson on Charles Babbage's Analytical Engine at _a certain university_. It is inspired by John Walker's [Analytical Engine Emulator](https://fourmilab.ch/babbage/emulator.html).
+**Babbage Lite** is an **Analytical Engine** interpreter based on a *certain professor's* simplified lesson on Charles Babbage's Analytical Engine at *a certain university*. It is inspired by John Walker's [Analytical Engine Emulator](https://fourmilab.ch/babbage/emulator.html).
 
 This interpreter aims to provide a simplified yet functional approach to understanding Babbage's design and its basic principles.
 
 ## Key Differences Between the Original Model & the Simplified Model
 
-Below are some key differences between the original machine and the _certain professor's_ simplified model:
+Below are some key differences between the original machine and the *certain professor's* simplified model:
 
 |                           | **Original Analytical Engine**                                                         | **Simplified Analytical Engine**                                                  |
 | :------------------------ | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
@@ -36,6 +36,9 @@ Contributions are welcome! Here's how you can contribute:
 ## Acknowledgements
 
 - Bell Sound by [Universfield](https://pixabay.com/users/universfield-28281460/) from [Pixabay](https://pixabay.com/)
+- Idea inspired by John Walker's [Analytical Engine Emulator](https://fourmilab.ch/babbage/emulator.html) and my *certain professor* who made sure we understood him
+
+> *"Do you follow?"*
 
 ## License
 
