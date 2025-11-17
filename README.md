@@ -33,6 +33,10 @@ Contributions are welcome! Here's how you can contribute:
 4. Push to the branch (`git push origin feature-xyz`).
 5. Open a pull request.
 
+## Acknowledgements
+
+- Bell Sound by [Universfield](https://pixabay.com/users/universfield-28281460/) from [Pixabay](https://pixabay.com/)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
