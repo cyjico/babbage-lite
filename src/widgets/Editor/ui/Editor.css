@@ -17,6 +17,7 @@
   align-items: stretch;
   padding-right: 1rem;
   background-color: #1e1e1ee7;
+  user-select: none;
 
   .gutter {
     content-visibility: auto;
