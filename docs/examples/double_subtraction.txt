@@ -11,7 +11,7 @@ S3		# remainder = dividened + 0
 -
 L3
 L2
-CF?26	# WHILE NOT `remainder < divisor`
+CF?26	# -- WHILE NOT `remainder < divisor`
 +
 L2
 L000
@@ -23,12 +23,12 @@ S4		# multiple = multiple * 2
 -
 L3
 L4
-CF?5	# -- WHILE NOT `remainder < multiple (* 2)`
+CF?5	# ---- WHILE NOT `remainder < multiple (* 2)`
 *
 L4
 L222
 S4
-CB+9	# -- END WHILE
+CB+9	# ---- END WHILE
 /
 L4
 L222
@@ -37,7 +37,7 @@ S4
 L3
 L4
 S3
-CB+30	# END WHILE
+CB+30	# -- END WHILE
 +
 L3
 L000
@@ -61,14 +61,3 @@ H
 #         remainder = remainder - multiple
 # 
 #     return remainder
-#
-# For easier time:
-#
-# -
-# x
-# y
-# ...
-#
-# Can be understood as:
-# If x is non-negative: x < y, then ...
-# If x is negative: x ≥ y, then ...
