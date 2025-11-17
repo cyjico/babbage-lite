@@ -1,3 +1,4 @@
+import { InterpreterStatus } from "@/entities/Interpreter";
 import { useEditorContext } from "@/widgets/Editor";
 import { For } from "solid-js";
 
@@ -5,7 +6,11 @@ export default function SidePanel() {
   const { interpreter } = useEditorContext();
 
   return (
-    <div class="flex flex-col h-full">
+    <div
+      class={`flex flex-col h-full${
+        interpreter.status() === InterpreterStatus.Halted ? " opacity-25" : ""
+      }`}
+    >
       <span>Operation: {interpreter.mill.operation}</span>
       <span>Run-up Lever: {interpreter.mill.runUpLever ? "Set" : "Unset"}</span>
       <span>Ingress Axis 1: {interpreter.mill.ingressAxis1}</span>
