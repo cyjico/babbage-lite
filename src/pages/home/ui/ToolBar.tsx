@@ -59,7 +59,7 @@ export default function ToolBar() {
               : "hidden"
           }
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:click={() => interpreter.execute()}
+          on:click={() => interpreter.execute(editorDebugger.breakpts)}
         >
           Execute
         </button>
@@ -83,7 +83,7 @@ export default function ToolBar() {
               : "hidden"
           }
           disabled={interpreter.status() !== InterpreterStatus.Halted}
-          on:click={() => interpreter.mount(editorDebugger.breakpts())}
+          on:click={() => interpreter.mount()}
         >
           Mount
         </button>
@@ -107,7 +107,7 @@ export default function ToolBar() {
               : "invisible"
           }
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:click={() => interpreter.step()}
+          on:click={() => interpreter.step(editorDebugger.breakpts())}
         >
           Step
         </button>
@@ -119,7 +119,7 @@ export default function ToolBar() {
               : "hidden"
           }
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:click={() => interpreter.animate()}
+          on:click={() => interpreter.animate(editorDebugger.breakpts)}
         >
           Animate
         </button>

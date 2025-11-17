@@ -13,4 +13,3 @@ export const enum InterpreterStatus {
   Paused,
   Running,
 }
-

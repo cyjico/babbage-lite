@@ -29,8 +29,6 @@ export default class Interpreter {
 
   #toLoadIngressAxis1: boolean = true;
 
-  #breakpts: Set<number> = new Set();
-
   constructor() {
     [this.mill, this.#setMill] = createStore<Mill>({
       operation: "",
@@ -67,14 +65,13 @@ export default class Interpreter {
     return problems;
   }
 
-  mount(breakpts: Set<number>) {
+  mount() {
     if (this.status() !== InterpreterStatus.Halted) return;
 
-    this.#breakpts = breakpts;
     this.#setStatus(InterpreterStatus.Paused);
   }
 
-  execute() {
+  execute(breakpts: Accessor<Set<number>>) {
     if (this.status() !== InterpreterStatus.Paused) return;
 
     const callback = () => {
@@ -84,9 +81,9 @@ export default class Interpreter {
         i <= 128 && this.status() !== InterpreterStatus.Halted;
         i++
       )
-        this.step();
+        this.step(breakpts());
 
-      if (this.status() !== InterpreterStatus.Halted)
+      if (this.status() === InterpreterStatus.Running)
         this.#executeIdleCallbackId = requestIdleCallback(callback, {
           timeout: 1023,
         });
@@ -98,13 +95,13 @@ export default class Interpreter {
     });
   }
 
-  animate(timeout = 250) {
+  animate(breakpts: Accessor<Set<number>>, timeout = 250) {
     if (this.status() !== InterpreterStatus.Paused) return;
 
     const callback = () => {
-      this.step();
+      this.step(breakpts());
 
-      if (this.status() !== InterpreterStatus.Halted)
+      if (this.status() === InterpreterStatus.Running)
         this.#animateTimeoutId = setTimeout(callback, timeout);
     };
 
@@ -112,10 +109,7 @@ export default class Interpreter {
     callback();
   }
 
-  /**
-   * @returns True if, on that step, the interpreter paused or halted.
-   */
-  step() {
+  step(breakpts: Set<number>) {
     const card = this.chain[this.readerPosition()];
 
     // For the machine to read, it would have to move reader
@@ -123,7 +117,6 @@ export default class Interpreter {
 
     switch (card.type) {
       case ASTNodeType.NumberCard:
-        // Assume we don't have errors regarding multiple defintions
         this.#setStore(card.address, card.number.value);
         break;
       case ASTNodeType.OperationCard:
@@ -212,7 +205,7 @@ export default class Interpreter {
         break;
     }
 
-    if (this.#breakpts.has(this.chain[this.readerPosition()].ln)) this.pause();
+    if (breakpts.has(this.chain[this.readerPosition()].ln)) this.pause();
   }
 
   pause() {
