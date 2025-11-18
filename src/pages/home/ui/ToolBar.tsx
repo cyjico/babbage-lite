@@ -75,7 +75,7 @@ export default function ToolBar() {
             disabled={interpreter.status() !== InterpreterStatus.Halted}
             on:pointerdown={() => interpreter.load()}
           >
-            Mount
+            Load
           </button>
         </Show>
 
