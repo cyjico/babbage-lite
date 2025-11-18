@@ -1,4 +1,4 @@
-import { ASTNode_Card } from "../../parse";
+import { ASTNode_Card } from "../parse/types";
 
 export type CFGBlock_ID = number;
 

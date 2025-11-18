@@ -1,5 +1,5 @@
 import { Mill } from "../model/types";
-import { ASTNode_VariableCard } from "./parse";
+import { ASTNode_VariableCard } from "./parse/types";
 
 export default function handleVariableCard(
   toLoadIngressAxis1: boolean,

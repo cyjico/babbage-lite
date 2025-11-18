@@ -4,7 +4,7 @@ import {
   unexpectedToken,
 } from "../problemTemplates";
 import { Problem } from "@/shared/model/types";
-import { Token, TokenType } from "../lex";
+import { Token, TokenType } from "../lex/types";
 import nodifyNumericLiteral from "./nodifyNumericLiteral";
 import { ASTNode_Card, ASTNodeType } from "./types";
 import problemSeverityComparator from "../problemSeverityComparator";
@@ -117,5 +117,3 @@ export default function parse(tokens: readonly Token[], problems: Problem[]) {
 
   return cards;
 }
-
-export * from "./types";

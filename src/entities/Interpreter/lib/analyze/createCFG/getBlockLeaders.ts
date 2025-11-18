@@ -1,4 +1,4 @@
-import { ASTNode_Card, ASTNodeType } from "../../parse";
+import { ASTNode_Card, ASTNodeType } from "../../parse/types";
 
 /**
  * Block leaders are the first cards of basic blocks in a control flow graph.

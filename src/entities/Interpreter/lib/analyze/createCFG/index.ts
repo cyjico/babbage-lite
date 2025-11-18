@@ -1,6 +1,6 @@
-import { ASTNode_Card, ASTNodeType } from "../../parse";
+import { ASTNode_Card, ASTNodeType } from "../../parse/types";
 import getBlockLeaders from "./getBlockLeaders";
-import { CFG, CFGEdge, CFGBlock, CFGBlock_ID } from "./types";
+import { CFG, CFGEdge, CFGBlock, CFGBlock_ID } from "../types";
 
 function createCFGBlock(id: CFGBlock_ID, edges: CFGEdge[] = []): CFGBlock {
   return {
@@ -66,5 +66,3 @@ function finalizeBlock(block: CFGBlock, nextIdx: number, cardsLen: number) {
     }
   }
 }
-
-export * from "./types";

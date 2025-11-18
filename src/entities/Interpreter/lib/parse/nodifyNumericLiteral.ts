@@ -1,4 +1,4 @@
-import { Token, TokenType } from "../lex";
+import { Token, TokenType } from "../lex/types";
 import { ASTNodeType, ASTNode_NumericLiteral } from "./types";
 
 export default function nodifyNumericLiteral(

@@ -87,5 +87,3 @@ export default function lex(lines: readonly string[], problems: Problem[]) {
 
   return tokens;
 }
-
-export * from "./types";

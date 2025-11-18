@@ -1,28 +1,28 @@
-import { Problem, ProblemSeverity } from "@/shared/model/types";
-import analyze from "../lib/analyze";
-import lex from "../lib/lex";
-import parse, { ASTNode_Card, ASTNodeType } from "../lib/parse";
-import { InterpreterStatus, Mill } from "./types";
-import { createStore, produce, SetStoreFunction } from "solid-js/store";
-import { Accessor, batch, createSignal, Setter } from "solid-js";
 import playBell from "@/shared/lib/playBell";
+import { Problem, ProblemSeverity } from "@/shared/model/types";
+import { Accessor, Setter, createSignal, batch } from "solid-js";
+import { SetStoreFunction, createStore, produce } from "solid-js/store";
+import analyze from "../lib/analyze";
 import handleVariableCard from "../lib/handleVariableCard";
+import lex from "../lib/lex";
+import parse from "../lib/parse";
+import { Mill, InterpreterStatus } from "./types";
+import { ASTNode_Card, ASTNodeType } from "../lib/parse/types";
 
 export default class Interpreter {
   readonly mill: Mill;
   #setMill: SetStoreFunction<Mill>;
   readonly store: number[];
   #setStore: SetStoreFunction<number[]>;
+  readonly readerPosition: Accessor<number>;
+  #setReaderPosition: Setter<number>;
+  readonly printingApparatus: Accessor<string>;
+  #setPrintingApparatus: Setter<string>;
 
   get chain(): ReadonlyArray<ASTNode_Card> {
     return this.#chain;
   }
   #chain: ASTNode_Card[] = [];
-  readonly readerPosition: Accessor<number>;
-  #setReaderPosition: Setter<number>;
-
-  readonly printingApparatus: Accessor<string>;
-  #setPrintingApparatus: Setter<string>;
 
   readonly status: Accessor<InterpreterStatus>;
   #setStatus: Setter<InterpreterStatus>;
@@ -41,9 +41,7 @@ export default class Interpreter {
       egressAxis: 0,
     });
     [this.store, this.#setStore] = createStore(new Array<number>(1000).fill(0));
-
     [this.readerPosition, this.#setReaderPosition] = createSignal<number>(0);
-
     [this.printingApparatus, this.#setPrintingApparatus] =
       createSignal<string>("");
 

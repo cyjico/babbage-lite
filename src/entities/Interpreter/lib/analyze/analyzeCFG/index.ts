@@ -1,4 +1,4 @@
-import { CFG, CFGBlock_ID } from "../createCFG";
+import { CFG, CFGBlock_ID } from "../types";
 
 export default function analyzeCFG(cfg: CFG) {
   const visited = new Set<CFGBlock_ID>();

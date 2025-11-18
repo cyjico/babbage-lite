@@ -16,7 +16,7 @@ import {
   ASTNode_OperationCard,
   ASTNode_VariableCard,
   ASTNodeType,
-} from "../parse";
+} from "../parse/types";
 import { createCFG } from "./createCFG";
 import analyzeCFG from "./analyzeCFG";
 import insertSorted from "@/shared/lib/insertSorted";

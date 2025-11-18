@@ -13,11 +13,11 @@ export default function SidePanel() {
         interpreter.status() === InterpreterStatus.Halted ? " opacity-25" : ""
       }`}
     >
-      <span>Operation: {interpreter.mill.operation}</span>
-      <span>Run-up Lever: {interpreter.mill.runUpLever ? "Set" : "Unset"}</span>
-      <span>Ingress Axis 1: {interpreter.mill.ingressAxis1}</span>
-      <span>Ingress Axis 2: {interpreter.mill.ingressAxis2}</span>
-      <span>Egress Axis: {interpreter.mill.egressAxis}</span>
+      <p>Operation: {interpreter.mill.operation}</p>
+      <p>Run-up Lever: {interpreter.mill.runUpLever ? "Set" : "Unset"}</p>
+      <p>Ingress Axis 1: {interpreter.mill.ingressAxis1}</p>
+      <p>Ingress Axis 2: {interpreter.mill.ingressAxis2}</p>
+      <p>Egress Axis: {interpreter.mill.egressAxis}</p>
 
       <hr />
 

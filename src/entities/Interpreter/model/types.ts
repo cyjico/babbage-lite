@@ -1,4 +1,4 @@
-import { ASTNode_OperationCard } from "../lib/parse";
+import { ASTNode_OperationCard } from "../lib/parse/types";
 
 export interface Mill {
   operation: ASTNode_OperationCard["operation"] | "";
