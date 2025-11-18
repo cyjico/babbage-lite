@@ -4,7 +4,10 @@ import { useEditorContext } from "../EditorContextProvider";
 import captureSelectionDOM from "../infra/captureSelectionDOM";
 import createInputHandler from "../lib/createInputHandler";
 import updateSelectionDOM from "../infra/updateSelectionDOM";
-import { InterpreterStatus, useInterpreterContext } from "@/entities/Interpreter";
+import {
+  InterpreterStatus,
+  useInterpreterContext,
+} from "@/entities/Interpreter";
 import { localStorageSetItem } from "@/shared/infra/localStorageSetItem";
 
 export default function Editor(props: { class?: string }) {
