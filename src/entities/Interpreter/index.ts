@@ -1,5 +1,8 @@
 import Interpreter from "./model/Interpreter";
 import { InterpreterStatus } from "./model/types";
+import InterpreterContextProvider, {
+  useInterpreterContext,
+} from "./ui/InterpreterContextProvider";
 
-export { InterpreterStatus };
+export { InterpreterStatus, useInterpreterContext, InterpreterContextProvider };
 export default Interpreter;

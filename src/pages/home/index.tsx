@@ -11,12 +11,15 @@ import SidePanel from "./ui/SidePanel";
 import BottomPanel from "./ui/BottomPanel";
 import { createSignal, onMount } from "solid-js";
 import { LocalStorageEvent } from "@/shared/infra/localStorageSetItem";
+import { InterpreterContextProvider } from "@/entities/Interpreter";
 
 export default function HomePage() {
   return (
-    <EditorContextProvider>
-      <Workspace />
-    </EditorContextProvider>
+    <InterpreterContextProvider>
+      <EditorContextProvider>
+        <Workspace />
+      </EditorContextProvider>
+    </InterpreterContextProvider>
   );
 }
 

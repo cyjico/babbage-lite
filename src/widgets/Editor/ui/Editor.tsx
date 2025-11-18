@@ -1,16 +1,16 @@
 import "./Editor.css";
 import { For, onCleanup, onMount } from "solid-js";
-import { useEditorContext } from "../ContextProvider";
+import { useEditorContext } from "../EditorContextProvider";
 import captureSelectionDOM from "../infra/captureSelectionDOM";
 import createInputHandler from "../lib/createInputHandler";
 import updateSelectionDOM from "../infra/updateSelectionDOM";
-import { InterpreterStatus } from "@/entities/Interpreter";
+import { InterpreterStatus, useInterpreterContext } from "@/entities/Interpreter";
 import { localStorageSetItem } from "@/shared/infra/localStorageSetItem";
 
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
-  const { interpreter, editorState, editorDebugger, editorHistory } =
-    useEditorContext();
+  const { interpreter, diagnostics } = useInterpreterContext();
+  const { editorState, editorHistory } = useEditorContext();
   const inputHandler = createInputHandler(editorState, editorHistory);
 
   const selectionChangeListener = (_: Event) =>
@@ -42,10 +42,10 @@ export default function Editor(props: { class?: string }) {
           on:pointerdown={(ev) => {
             ev.preventDefault();
 
-            editorDebugger.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
+            diagnostics.toggleBreakpt(calculateLineFromPointer(ev, 1.5));
           }}
         >
-          <For each={Array.from(editorDebugger.breakpts().values())}>
+          <For each={Array.from(diagnostics.breakpts().values())}>
             {(line) => {
               return (
                 <div

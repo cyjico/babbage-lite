@@ -1,5 +1,5 @@
 import { createEffect, createSignal } from "solid-js";
-import { useEditorContext } from "../Editor/ContextProvider";
+import { useEditorContext } from "../Editor/EditorContextProvider";
 
 export default function EditorStatusBar(props: { class?: string }) {
   const { editorState } = useEditorContext();

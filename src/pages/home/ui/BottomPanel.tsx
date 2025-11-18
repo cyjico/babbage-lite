@@ -1,10 +1,12 @@
+import { useInterpreterContext } from "@/entities/Interpreter";
 import { Problem, ProblemSeverity } from "@/shared/model/types";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
 import { useEditorContext } from "@/widgets/Editor";
 import { createEffect, For } from "solid-js";
 
 export default function BottomPanel() {
-  const { interpreter, editorState, editorDebugger } = useEditorContext();
+  const { interpreter, diagnostics } = useInterpreterContext();
+  const { editorState } = useEditorContext();
 
   let printerRef!: HTMLParagraphElement;
 
@@ -25,10 +27,10 @@ export default function BottomPanel() {
         class_labelActive="pl-2 select-none"
         tabs={[
           {
-            label: `ATTENDANT'S EXAMINATION${editorDebugger.problems().length > 0 ? ` (${editorDebugger.problems().length})` : ""}`,
+            label: `ATTENDANT'S EXAMINATION${diagnostics.problems().length > 0 ? ` (${diagnostics.problems().length})` : ""}`,
             class: "overflow-y-auto grow list-disc",
             content: (
-              <For each={editorDebugger.problems()}>
+              <For each={diagnostics.problems()}>
                 {(problem) => (
                   <>{createProblemOutput(problem, editorState.lines)}</>
                 )}

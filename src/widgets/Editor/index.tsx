@@ -1,4 +1,4 @@
-import EditorContextProvider, { useEditorContext } from "./ContextProvider";
+import EditorContextProvider, { useEditorContext } from "./EditorContextProvider";
 import Editor from "./ui/Editor";
 
 export { EditorContextProvider, useEditorContext };

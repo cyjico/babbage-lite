@@ -1,8 +1,5 @@
 import { SetStoreFunction } from "solid-js/store";
-import { Accessor } from "solid-js";
-import { Direction, Problem } from "@/shared/model/types";
-import type EditorHistory from "./EditorHistory";
-import Interpreter from "@/entities/Interpreter";
+import { Direction } from "@/shared/model/types";
 
 /**
  * Separate from ..._serialized to prevent accidentally saving one to the other
@@ -36,15 +33,4 @@ export interface EditorState {
 export interface EditorState_serialized {
   sel: EditorSelection_serialized;
   lines: string[];
-}
-
-export interface EditorContextProviderValue {
-  interpreter: Interpreter;
-  editorState: EditorState;
-  editorDebugger: {
-    problems: Accessor<Problem[]>;
-    breakpts: Accessor<Set<number>>;
-    toggleBreakpt: (line: number) => void;
-  };
-  editorHistory: EditorHistory;
 }

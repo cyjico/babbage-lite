@@ -52,7 +52,7 @@ export default class Interpreter {
     );
   }
 
-  prepare(lines: string[]) {
+  compile(lines: string[]) {
     if (this.status() !== InterpreterStatus.Halted) return [];
 
     const problems: Problem[] = [];
@@ -69,7 +69,7 @@ export default class Interpreter {
     return problems;
   }
 
-  mount() {
+  load() {
     if (this.status() !== InterpreterStatus.Halted || this.#chain.length === 0)
       return;
 

@@ -1,11 +1,15 @@
 import { useEditorContext } from "@/widgets/Editor";
 import openTextFile from "../infra/openTextFile";
 import exportTextFile from "../infra/exportTextFile";
-import { InterpreterStatus } from "@/entities/Interpreter";
+import {
+  InterpreterStatus,
+  useInterpreterContext,
+} from "@/entities/Interpreter";
 import { localStorageSetItem } from "@/shared/infra/localStorageSetItem";
 
 export default function ToolBar() {
-  const { interpreter, editorState, editorDebugger } = useEditorContext();
+  const { interpreter, diagnostics } = useInterpreterContext();
+  const { editorState } = useEditorContext();
 
   let filePicker!: HTMLInputElement;
 
@@ -71,7 +75,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:pointerdown={() => interpreter.execute(editorDebugger.breakpts)}
+          on:pointerdown={() => interpreter.execute(diagnostics.breakpts)}
         >
           Execute
         </button>
@@ -91,7 +95,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Halted ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Halted}
-          on:pointerdown={() => interpreter.mount()}
+          on:pointerdown={() => interpreter.load()}
         >
           Mount
         </button>
@@ -111,7 +115,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:pointerdown={() => interpreter.step(editorDebugger.breakpts())}
+          on:pointerdown={() => interpreter.step(diagnostics.breakpts())}
         >
           Step
         </button>
@@ -121,7 +125,7 @@ export default function ToolBar() {
             interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
-          on:pointerdown={() => interpreter.animate(editorDebugger.breakpts)}
+          on:pointerdown={() => interpreter.animate(diagnostics.breakpts)}
         >
           Animate
         </button>

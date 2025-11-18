@@ -1,9 +1,11 @@
-import { InterpreterStatus } from "@/entities/Interpreter";
-import { useEditorContext } from "@/widgets/Editor";
+import {
+  InterpreterStatus,
+  useInterpreterContext,
+} from "@/entities/Interpreter";
 import { For } from "solid-js";
 
 export default function SidePanel() {
-  const { interpreter } = useEditorContext();
+  const { interpreter } = useInterpreterContext();
 
   return (
     <div
