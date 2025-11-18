@@ -1,4 +1,4 @@
-import { createSignal, For, JSX } from "solid-js";
+import { createSignal, Index, JSX } from "solid-js";
 
 export default function TabbedPanel(props: {
   class_labelContainer?: string;
@@ -15,13 +15,13 @@ export default function TabbedPanel(props: {
   return (
     <>
       <div class={props.class_labelContainer ?? ""}>
-        <For each={props.tabs}>
+        <Index each={props.tabs}>
           {(item, index) => {
             return (
               <p
-                on:pointerdown={() => setActiveTab(index())}
+                on:pointerdown={() => setActiveTab(index)}
                 class={
-                  index() === activeTab()
+                  index === activeTab()
                     ? (props.class_labelActive ??
                       props.class_labelInactive ??
                       "")
@@ -29,26 +29,26 @@ export default function TabbedPanel(props: {
                       " hover:cursor-pointer"
                 }
               >
-                {item.label}
+                {item().label}
               </p>
             );
           }}
-        </For>
+        </Index>
       </div>
 
-      <For each={props.tabs}>
+      <Index each={props.tabs}>
         {(item, index) => {
           return (
             <>
               <div
-                class={`${item.class ?? ""} ${activeTab() !== index() ? "hidden" : ""}`}
+                class={`${item().class ?? ""} ${activeTab() !== index ? "hidden" : ""}`}
               >
-                {item.content}
+                {item().content}
               </div>
             </>
           );
         }}
-      </For>
+      </Index>
     </>
   );
 }
