@@ -9,7 +9,7 @@ import ResizableHorizontalPanel from "@/shared/ui/ResizableHorizontalPanel";
 import ToolBar from "./ui/ToolBar";
 import SidePanel from "./ui/SidePanel";
 import BottomPanel from "./ui/BottomPanel";
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, Show } from "solid-js";
 import { LocalStorageEvent } from "@/shared/infra/localStorageSetItem";
 import { InterpreterContextProvider } from "@/entities/Interpreter";
 
@@ -46,13 +46,11 @@ function Workspace() {
 
   return (
     <>
-      <div
-        class={`fixed top-12 left-4 bg-rebeccapurple px-4 py-2 shadow-2xl shadow-black z-50 ${
-          isShowingSavedNotif() ? "" : " hidden"
-        }`}
-      >
-        File saved!
-      </div>
+      <Show when={isShowingSavedNotif()}>
+        <div class="fixed top-12 left-4 bg-rebeccapurple px-4 py-2 shadow-2xl shadow-black z-50">
+          File saved!
+        </div>
+      </Show>
 
       <header class="pt-3">
         <ToolBar />

@@ -2,7 +2,7 @@ import {
   InterpreterStatus,
   useInterpreterContext,
 } from "@/entities/Interpreter";
-import { For } from "solid-js";
+import { Index } from "solid-js";
 
 export default function SidePanel() {
   const { interpreter } = useInterpreterContext();
@@ -36,14 +36,14 @@ export default function SidePanel() {
             </tr>
           </thead>
           <tbody>
-            <For each={interpreter.store}>
+            <Index each={interpreter.store}>
               {(value, idx) => (
                 <tr>
-                  <td>{idx().toString().padStart(3, "0")}</td>
-                  <td>{value}</td>
+                  <td>{idx.toString().padStart(3, "0")}</td>
+                  <td>{value()}</td>
                 </tr>
               )}
-            </For>
+            </Index>
           </tbody>
         </table>
       </div>
