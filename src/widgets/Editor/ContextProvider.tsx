@@ -26,23 +26,7 @@ export default function EditorContextProvider(props: ParentProps) {
     direction: Direction.None,
     toString: () => "",
   });
-  const [lines, setLines] = createStore<string[]>([
-    "# This program will print from 1 to 10",
-    "N000 0       # cur_num",
-    "N001 10      # end_num",
-    "N002 1       # increment",
-    "+",
-    "L000         # Load cur_num",
-    "L002         # Load increment => EGRESS = cur_num + increment",
-    "S000         # Set cur_num to EGRESS",
-    "P            # Print the result of the last arithmetic operation performed",
-    "-",
-    "L000         # Load cur_num",
-    "L001         # Load end_num => EGRESS = cur_num - end_num",
-    "CB?9         # If the result is negative, run-up lever (also known as lever) is set.",
-    "H            # Halt the program",
-    "# --- PROGRAM WILL PRINT FROM 1 TO 10 --- #",
-  ]);
+  const [lines, setLines] = createStore<string[]>([""]);
   const editorState = { sel, setSel, lines, setLines };
 
   const problems = createMemo(() => interpreter.prepare(lines));
