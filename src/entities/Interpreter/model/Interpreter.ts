@@ -57,7 +57,7 @@ export default class Interpreter {
 
     const problems: Problem[] = [];
 
-    // 1. lexical analysis -> syntax analysis -> semantic analysis
+    // lexical analysis -> syntax analysis -> semantic analysis
     const cards = parse(lex(lines, problems), problems);
     analyze(cards, problems);
 
@@ -65,6 +65,7 @@ export default class Interpreter {
       problems.length === 0 || problems[0].severity !== ProblemSeverity.Error
         ? cards
         : [];
+
     return problems;
   }
 

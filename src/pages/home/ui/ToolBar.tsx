@@ -2,6 +2,7 @@ import { useEditorContext } from "@/widgets/Editor";
 import openTextFile from "../infra/openTextFile";
 import exportTextFile from "../infra/exportTextFile";
 import { InterpreterStatus } from "@/entities/Interpreter";
+import { localStorageSetItem } from "@/shared/infra/localStorageSetItem";
 
 export default function ToolBar() {
   const { interpreter, editorState, editorDebugger } = useEditorContext();
@@ -47,6 +48,14 @@ export default function ToolBar() {
               on:pointerdown={() => filePicker.click()}
             >
               Open
+            </button>
+            <button
+              class="p-1 hover:bg-rebeccapurple"
+              on:pointerdown={() =>
+                localStorageSetItem("savedFileContent", editorState.lines)
+              }
+            >
+              Save
             </button>
             <button
               class="p-1 hover:bg-rebeccapurple"

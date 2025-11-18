@@ -5,6 +5,7 @@ import captureSelectionDOM from "../infra/captureSelectionDOM";
 import createInputHandler from "../lib/createInputHandler";
 import updateSelectionDOM from "../infra/updateSelectionDOM";
 import { InterpreterStatus } from "@/entities/Interpreter";
+import { localStorageSetItem } from "@/shared/infra/localStorageSetItem";
 
 export default function Editor(props: { class?: string }) {
   let content!: HTMLDivElement;
@@ -97,24 +98,34 @@ export default function Editor(props: { class?: string }) {
 
           // metaKey is for Apple
           if (ev.ctrlKey || ev.metaKey) {
-            if (ev.key === "z") {
-              ev.preventDefault();
+            switch (ev.key) {
+              case "S":
+              case "s":
+                ev.preventDefault();
 
-              queueMicrotask(() => {
-                editorHistory.undo();
-                inputHandler.endGroup();
-              });
-              scheduleUpdateSelectionDOM();
-              return;
-            } else if (ev.key === "y") {
-              ev.preventDefault();
+                if (interpreter.status() === InterpreterStatus.Halted)
+                  localStorageSetItem("savedFileContent", editorState.lines);
+                break;
+              case "Z":
+              case "z":
+                ev.preventDefault();
 
-              queueMicrotask(() => {
-                editorHistory.redo();
-                inputHandler.endGroup();
-              });
-              scheduleUpdateSelectionDOM();
-              return;
+                queueMicrotask(() => {
+                  editorHistory.undo();
+                  inputHandler.endGroup();
+                });
+                scheduleUpdateSelectionDOM();
+                return;
+              case "Y":
+              case "y":
+                ev.preventDefault();
+
+                queueMicrotask(() => {
+                  editorHistory.redo();
+                  inputHandler.endGroup();
+                });
+                scheduleUpdateSelectionDOM();
+                return;
             }
           }
 
