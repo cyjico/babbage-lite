@@ -8,14 +8,15 @@ export default function BottomPanel() {
   const { interpreter, diagnostics } = useInterpreterContext();
   const { editorState } = useEditorContext();
 
-  let printerRef!: HTMLParagraphElement;
+  let printerContentRef!: HTMLParagraphElement;
 
   createEffect(() => {
     // re-run when content changes
     interpreter.printingApparatus();
 
     queueMicrotask(() => {
-      printerRef.scrollTop = printerRef.scrollHeight;
+      const printer = printerContentRef.parentElement!;
+      printer.scrollTo(0, printer.scrollHeight);
     });
   });
 
@@ -61,7 +62,7 @@ export default function BottomPanel() {
                   </button>
                 </div>
 
-                <p ref={printerRef} class="whitespace-pre-wrap">
+                <p ref={printerContentRef} class="whitespace-pre-wrap">
                   {interpreter.printingApparatus()}
                 </p>
               </>
