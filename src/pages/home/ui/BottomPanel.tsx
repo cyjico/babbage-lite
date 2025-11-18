@@ -8,14 +8,14 @@ export default function BottomPanel() {
   const { interpreter, diagnostics } = useInterpreterContext();
   const { editorState } = useEditorContext();
 
-  let printerContentRef!: HTMLParagraphElement;
+  let headerRef!: HTMLParagraphElement;
 
   createEffect(() => {
     // re-run when content changes
-    interpreter.printingApparatus();
+    interpreter.printingApparatus.length;
 
     queueMicrotask(() => {
-      const printer = printerContentRef.parentElement!;
+      const printer = headerRef.parentElement!;
       printer.scrollTo(0, printer.scrollHeight);
     });
   });
@@ -24,8 +24,8 @@ export default function BottomPanel() {
     <>
       <TabbedPanel
         class_labelContainer="grid grid-cols-2 justify-center"
-        class_labelInactive="pl-2 select-none opacity-50 bg-myblack hover:bg-mygrey hover:opacity-100"
-        class_labelActive="pl-2 select-none"
+        class_labelInactive="pl-2 select-none break-all opacity-50 bg-myblack hover:bg-mygrey hover:opacity-100"
+        class_labelActive="pl-2 select-none break-all"
         tabs={[
           {
             label: `ATTENDANT'S EXAMINATION${diagnostics.problems().length > 0 ? ` (${diagnostics.problems().length})` : ""}`,
@@ -43,7 +43,10 @@ export default function BottomPanel() {
             class: "overflow-y-auto grow",
             content: (
               <>
-                <div class="sticky shadow-lg top-0 bg-mydarkgrey grid grid-cols-2 select-none">
+                <div
+                  ref={headerRef}
+                  class="sticky shadow-lg top-0 bg-mydarkgrey grid grid-cols-2 select-none"
+                >
                   <button
                     class="hover:bg-mygrey"
                     on:pointerdown={() => interpreter.clearPrintingApparatus()}
@@ -54,7 +57,7 @@ export default function BottomPanel() {
                     class="hover:bg-mygrey"
                     on:pointerdown={() =>
                       navigator.clipboard.writeText(
-                        interpreter.printingApparatus(),
+                        interpreter.printingApparatus.join("\n"),
                       )
                     }
                   >
@@ -62,9 +65,9 @@ export default function BottomPanel() {
                   </button>
                 </div>
 
-                <p ref={printerContentRef} class="whitespace-pre-wrap">
-                  {interpreter.printingApparatus()}
-                </p>
+                <For each={interpreter.printingApparatus}>
+                  {(line) => <p>{line}</p>}
+                </For>
               </>
             ),
           },

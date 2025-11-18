@@ -16,8 +16,8 @@ export default class Interpreter {
   #setStore: SetStoreFunction<number[]>;
   readonly readerPosition: Accessor<number>;
   #setReaderPosition: Setter<number>;
-  readonly printingApparatus: Accessor<string>;
-  #setPrintingApparatus: Setter<string>;
+  readonly printingApparatus: string[];
+  #setPrintingApparatus: SetStoreFunction<string[]>;
 
   get chain(): ReadonlyArray<ASTNode_Card> {
     return this.#chain;
@@ -42,8 +42,9 @@ export default class Interpreter {
     });
     [this.store, this.#setStore] = createStore(new Array<number>(1000).fill(0));
     [this.readerPosition, this.#setReaderPosition] = createSignal<number>(0);
-    [this.printingApparatus, this.#setPrintingApparatus] =
-      createSignal<string>("");
+    [this.printingApparatus, this.#setPrintingApparatus] = createStore<
+      string[]
+    >([]);
 
     [this.status, this.#setStatus] = createSignal<InterpreterStatus>(
       InterpreterStatus.Halted,
@@ -152,7 +153,8 @@ export default class Interpreter {
         switch (card.action) {
           case "P":
             this.#setPrintingApparatus(
-              (prev) => prev + `${this.mill.egressAxis}\n`,
+              this.printingApparatus.length,
+              this.mill.egressAxis.toString(),
             );
             break;
           case "H":
@@ -213,6 +215,6 @@ export default class Interpreter {
   }
 
   clearPrintingApparatus() {
-    this.#setPrintingApparatus("");
+    this.#setPrintingApparatus([]);
   }
 }
