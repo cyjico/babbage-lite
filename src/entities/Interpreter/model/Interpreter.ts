@@ -10,16 +10,16 @@ import { Mill, InterpreterStatus } from "./types";
 import { ASTNode_Card, ASTNodeType } from "../lib/parse/types";
 
 export default class Interpreter {
-  readonly mill: Mill;
+  readonly mill: Readonly<Mill>;
   #setMill: SetStoreFunction<Mill>;
-  readonly store: number[];
+  readonly store: readonly number[];
   #setStore: SetStoreFunction<number[]>;
   readonly readerPosition: Accessor<number>;
   #setReaderPosition: Setter<number>;
   readonly printingApparatus: string[];
   #setPrintingApparatus: SetStoreFunction<string[]>;
 
-  get chain(): ReadonlyArray<ASTNode_Card> {
+  get chain(): readonly ASTNode_Card[] {
     return this.#chain;
   }
   #chain: ASTNode_Card[] = [];
@@ -31,6 +31,9 @@ export default class Interpreter {
   #executeIdleCallbackId?: number = undefined;
 
   #toLoadIngressAxis1: boolean = true;
+
+  onStep?: (self: Interpreter) => void;
+  onHalt?: (self: Interpreter) => void;
 
   constructor() {
     [this.mill, this.#setMill] = createStore<Mill>({
@@ -185,6 +188,8 @@ export default class Interpreter {
         break;
     }
 
+    this.onStep?.(this);
+
     if (this.readerPosition() >= this.#chain.length) this.halt();
     else if (breakpts.has(this.#chain[this.readerPosition()].ln)) this.pause();
   }
@@ -212,6 +217,8 @@ export default class Interpreter {
     this.#setStatus(InterpreterStatus.Halted);
 
     this.#toLoadIngressAxis1 = true;
+
+    this.onHalt?.(this);
   }
 
   clearPrintingApparatus() {

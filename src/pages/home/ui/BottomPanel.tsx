@@ -1,4 +1,6 @@
-import { useInterpreterContext } from "@/entities/Interpreter";
+import {
+  useInterpreterContext,
+} from "@/entities/Interpreter";
 import { Problem, ProblemSeverity } from "@/shared/model/types";
 import TabbedPanel from "@/shared/ui/TabbedPanel";
 import { useEditorContext } from "@/widgets/Editor";
@@ -15,8 +17,8 @@ export default function BottomPanel() {
     interpreter.printingApparatus.length;
 
     queueMicrotask(() => {
-      const printer = headerRef.parentElement!;
-      printer.scrollTo(0, printer.scrollHeight);
+      const printer = headerRef.parentElement;
+      printer?.scrollTo(0, printer.scrollHeight);
     });
   });
 

@@ -6,31 +6,29 @@ import {
   useInterpreterContext,
 } from "@/entities/Interpreter";
 import { localStorageSetItem } from "@/shared/infra/localStorageSetItem";
-import { Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
+import Logger from "@/features/Logger";
 
 export default function ToolBar() {
   const { interpreter, diagnostics } = useInterpreterContext();
   const { editorState } = useEditorContext();
-
   let filePicker!: HTMLInputElement;
+
+  const logger = new Logger();
+  let [isLoggerOpen, setIsLoggerOpen] = createSignal(false);
+  let [willStreamLogs, setWillStreamLogs] = createSignal(false);
 
   return (
     <>
-      <div class="grid grid-flow-col grid-cols-4 items-center select-none">
+      <div class="grid grid-cols-5 items-center select-none">
         <Show when={interpreter.status() === InterpreterStatus.Halted}>
           <details
             class="text-center relative outline-none hover:bg-rebeccapurple hover:cursor-pointer"
-            on:pointerdown={(ev) => {
-              if (interpreter.status() !== InterpreterStatus.Halted)
-                ev.preventDefault();
-            }}
+            on:pointerleave={(ev) => ev.currentTarget!.removeAttribute("open")}
           >
             <summary>File</summary>
             <div
               class="absolute left-0 right-0 bg-mygrey z-10 whitespace-nowrap flex flex-col shadow-2xl"
-              on:pointerleave={(ev) =>
-                ev.currentTarget.parentElement!.removeAttribute("open")
-              }
               on:pointerdown={(ev) =>
                 ev.currentTarget.parentElement!.removeAttribute("open")
               }
@@ -69,19 +67,21 @@ export default function ToolBar() {
               </button>
             </div>
           </details>
-
-          <button
-            class="hover:bg-rebeccapurple"
-            disabled={interpreter.status() !== InterpreterStatus.Halted}
-            on:pointerdown={() => interpreter.load()}
-          >
-            Load
-          </button>
         </Show>
 
         <button
           class={`${
-            interpreter.status() === InterpreterStatus.Paused ? "" : "hidden "
+            interpreter.status() !== InterpreterStatus.Halted ? "hidden " : ""
+          }hover:bg-rebeccapurple`}
+          disabled={interpreter.status() !== InterpreterStatus.Halted}
+          on:pointerdown={() => interpreter.load()}
+        >
+          Load
+        </button>
+
+        <button
+          class={`${
+            interpreter.status() !== InterpreterStatus.Paused ? "hidden " : ""
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() !== InterpreterStatus.Paused}
           on:pointerdown={() => interpreter.execute(diagnostics.breakpts)}
@@ -91,9 +91,9 @@ export default function ToolBar() {
 
         <button
           class={`${
-            interpreter.status() === InterpreterStatus.Running ? "" : "hidden "
+            interpreter.status() !== InterpreterStatus.Running ? "hidden " : ""
           }hover:bg-rebeccapurple`}
-          disabled={interpreter.status() === InterpreterStatus.Paused}
+          disabled={interpreter.status() !== InterpreterStatus.Running}
           on:pointerdown={() => interpreter.pause()}
         >
           Pause
@@ -101,7 +101,7 @@ export default function ToolBar() {
 
         <button
           class={`${
-            interpreter.status() !== InterpreterStatus.Halted ? "" : "hidden "
+            interpreter.status() === InterpreterStatus.Halted ? "hidden " : ""
           }hover:bg-rebeccapurple`}
           disabled={interpreter.status() === InterpreterStatus.Halted}
           on:pointerdown={() => interpreter.halt()}
@@ -109,23 +109,71 @@ export default function ToolBar() {
           Halt
         </button>
 
-        <Show when={interpreter.status() === InterpreterStatus.Paused}>
-          <button
-            class="hover:bg-rebeccapurple"
-            disabled={interpreter.status() !== InterpreterStatus.Paused}
-            on:pointerdown={() => interpreter.animate(diagnostics.breakpts)}
-          >
-            Animate
-          </button>
+        <button
+          class={`${
+            interpreter.status() !== InterpreterStatus.Paused
+              ? "invisible "
+              : ""
+          }hover:bg-rebeccapurple`}
+          disabled={interpreter.status() !== InterpreterStatus.Paused}
+          on:pointerdown={() => interpreter.animate(diagnostics.breakpts)}
+        >
+          Animate
+        </button>
 
-          <button
-            class="hover:bg-rebeccapurple"
-            disabled={interpreter.status() !== InterpreterStatus.Paused}
-            on:pointerdown={() => interpreter.step(diagnostics.breakpts())}
-          >
-            Step
-          </button>
-        </Show>
+        <button
+          class={`${
+            interpreter.status() !== InterpreterStatus.Paused
+              ? "invisible "
+              : ""
+          }hover:bg-rebeccapurple`}
+          disabled={interpreter.status() !== InterpreterStatus.Paused}
+          on:pointerdown={() => interpreter.step(diagnostics.breakpts())}
+        >
+          Step
+        </button>
+
+        <button
+          class={`${
+            willStreamLogs() === isLoggerOpen()
+              ? "hover:bg-rebeccapurple "
+              : "hover:cursor-auto opacity-25 "
+          }`}
+          on:pointerdown={async () => {
+            if (!willStreamLogs()) {
+              // false -> true
+              setWillStreamLogs(true);
+              await logger.open();
+              setIsLoggerOpen(true);
+
+              interpreter.onStep = async (interp) => {
+                await logger.log(interp);
+              };
+
+              interpreter.onHalt = async () => {
+                interpreter.onStep = undefined;
+                interpreter.onHalt = undefined;
+
+                setIsLoggerOpen(false);
+                await logger.close();
+                setWillStreamLogs(false);
+              };
+            } else {
+              interpreter.onStep = undefined;
+              interpreter.onHalt = undefined;
+
+              setIsLoggerOpen(false);
+              await logger.close();
+              setWillStreamLogs(false);
+            }
+          }}
+        >
+          {!willStreamLogs()
+            ? "Stream Logs"
+            : isLoggerOpen()
+              ? "Streaming"
+              : "Closing Stream"}
+        </button>
       </div>
     </>
   );

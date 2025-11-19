@@ -9,7 +9,7 @@ import ResizableHorizontalPanel from "@/shared/ui/ResizableHorizontalPanel";
 import ToolBar from "./ui/ToolBar";
 import SidePanel from "./ui/SidePanel";
 import BottomPanel from "./ui/BottomPanel";
-import { createSignal, onMount, Show } from "solid-js";
+import { createSignal, onCleanup, Show } from "solid-js";
 import { LocalStorageEvent } from "@/shared/infra/localStorageSetItem";
 import { InterpreterContextProvider } from "@/entities/Interpreter";
 
@@ -31,18 +31,17 @@ function Workspace() {
   if (savedFileContent !== null)
     editorState.setLines(JSON.parse(savedFileContent) as string[]);
 
-  onMount(() => {
-    function handler(evt: Event) {
-      const customEvt = evt as LocalStorageEvent<unknown>;
+  function handler(evt: Event) {
+    const customEvt = evt as LocalStorageEvent<unknown>;
 
-      if (customEvt.detail.key === "savedFileContent") {
-        setIsShowingSavedNotif(true);
-        setTimeout(() => setIsShowingSavedNotif(false), 1000);
-      }
+    if (customEvt.detail.key === "savedFileContent") {
+      setIsShowingSavedNotif(true);
+      setTimeout(() => setIsShowingSavedNotif(false), 1000);
     }
+  }
 
-    window.addEventListener("localstoragechange", handler);
-  });
+  window.addEventListener("localstoragechange", handler);
+  onCleanup(() => window.removeEventListener("localstoragechange", handler));
 
   return (
     <>

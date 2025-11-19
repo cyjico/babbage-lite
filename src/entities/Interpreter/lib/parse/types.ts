@@ -7,45 +7,42 @@ export const enum ASTNodeType {
   NumericLiteral,
 }
 
-/**
- * Helper for a ASTNode
- */
-interface ASTNode_<T extends ASTNodeType> {
+interface ASTNode<T extends ASTNodeType> {
   type: T;
   ln: number;
   col: number;
   colend: number;
 }
 
-export interface ASTNode_NumberCard extends ASTNode_<ASTNodeType.NumberCard> {
+export interface ASTNode_NumberCard extends ASTNode<ASTNodeType.NumberCard> {
   address: number;
   number: ASTNode_NumericLiteral;
 }
 
 export interface ASTNode_OperationCard
-  extends ASTNode_<ASTNodeType.OperationCard> {
+  extends ASTNode<ASTNodeType.OperationCard> {
   operation: "+" | "-" | "*" | "/" | "%";
 }
 
-export interface ASTNode_ActionCard extends ASTNode_<ASTNodeType.ActionCard> {
+export interface ASTNode_ActionCard extends ASTNode<ASTNodeType.ActionCard> {
   action: "P" | "B" | "H";
 }
 
 export interface ASTNode_CombinatorialCard
-  extends ASTNode_<ASTNodeType.CombinatorialCard> {
+  extends ASTNode<ASTNodeType.CombinatorialCard> {
   direction: "F" | "B";
   condition: "+" | "?";
   skips: number;
 }
 
 export interface ASTNode_VariableCard
-  extends ASTNode_<ASTNodeType.VariableCard> {
+  extends ASTNode<ASTNodeType.VariableCard> {
   action: "L" | "S";
   address: number;
 }
 
 export interface ASTNode_NumericLiteral
-  extends ASTNode_<ASTNodeType.NumericLiteral> {
+  extends ASTNode<ASTNodeType.NumericLiteral> {
   value: number;
 }
 

@@ -6,3 +6,4 @@ import InterpreterContextProvider, {
 
 export { InterpreterStatus, useInterpreterContext, InterpreterContextProvider };
 export default Interpreter;
+export * from "./lib/parse/types";
