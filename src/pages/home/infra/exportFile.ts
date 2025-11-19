@@ -1,4 +1,4 @@
-export default function exportTextFile(lines: string[]) {
+export default function exportFile(lines: string[]) {
   const url = URL.createObjectURL(
     new Blob(
       lines.map((line) => line + "\n"),
@@ -8,7 +8,7 @@ export default function exportTextFile(lines: string[]) {
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = "babbage.txt";
+  a.download = "babbage.ae";
   a.click();
 
   URL.revokeObjectURL(url);

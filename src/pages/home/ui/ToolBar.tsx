@@ -1,6 +1,6 @@
 import { useEditorContext } from "@/widgets/Editor";
-import openTextFile from "../infra/openTextFile";
-import exportTextFile from "../infra/exportTextFile";
+import openFile from "../infra/openFile";
+import exportFile from "../infra/exportFile";
 import {
   InterpreterStatus,
   useInterpreterContext,
@@ -41,7 +41,7 @@ export default function ToolBar() {
               </button>
               <input
                 ref={filePicker}
-                on:change={(ev) => openTextFile(ev, editorState.setLines)}
+                on:change={(ev) => openFile(ev, editorState.setLines)}
                 type="file"
                 class="hidden"
               />
@@ -61,7 +61,7 @@ export default function ToolBar() {
               </button>
               <button
                 class="p-1 hover:bg-rebeccapurple"
-                on:pointerdown={() => exportTextFile(editorState.lines)}
+                on:pointerdown={() => exportFile(editorState.lines)}
               >
                 Export
               </button>

@@ -69,11 +69,11 @@ S3
 ## Operation Cards
 
 ```txt
-+   # addition
--   # subtraction
-*   # multiplication
-/   # division
-%   # modulo
++   . addition
+-   . subtraction
+*   . multiplication
+/   . division
+%   . modulo
 ```
 
 Sets the arithmetic operation to be performed.
@@ -82,9 +82,9 @@ Example:
 
 ```txt
 +
-L1  # load into the first ingress axis
-L2  # load into the second ingress axis
-S3  # store from egress axis into store `003`
+L1  . load into the first ingress axis
+L2  . load into the second ingress axis
+S3  . store from egress axis into store `003`
 ```
 
 ---
@@ -122,8 +122,8 @@ Halts the machine.
 ### Unconditional Jump
 
 ```txt
-CF+<skips>   # jump forward skips + 1 (from current line) cards
-CB+<skips>   # jump backward skips - 1 (from current line) cards
+CF+<skips>   . jump forward skips + 1 (from current line) cards
+CB+<skips>   . jump backward skips - 1 (from current line) cards
 ```
 
 Why the `+ 1`/`- 1`? To put it simply, the reader must move for a card to be read.
@@ -133,8 +133,8 @@ Why the `+ 1`/`- 1`? To put it simply, the reader must move for a card to be rea
 ### Conditional Jump
 
 ```txt
-CF?<skips>  # jump forward skips + 1 (from current line) cards if the run-up lever is set
-CB?<skips>  # jump backward skips - 1 (from current line) cards if the run-up lever is set
+CF?<skips>  . jump forward skips + 1 (from current line) cards if the run-up lever is set
+CB?<skips>  . jump backward skips - 1 (from current line) cards if the run-up lever is set
 ```
 
 *Run-up Lever* is set/unset on every arithmetic operation:
@@ -172,9 +172,9 @@ is **roughly equivalent** to:
 Example:
 
 ```txt
-N0 5    # counter
-N1 1    # constant 1
-N2 0    # constant 0
+N0 5    . counter
+N1 1    . constant 1
+N2 0    . constant 0
 
 # DO { ...
 -

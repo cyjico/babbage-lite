@@ -13,6 +13,8 @@ export default function lex(lines: readonly string[], problems: Problem[]) {
 
   for (let ln = 0; ln < lines.length; ln++) {
     const line = lines[ln];
+    // Handle comments (starts with 'empty')
+    if (line.length == 0 || isWhitespace(line[0])) continue;
 
     let col = 0;
     while (col < line.length) {
@@ -24,10 +26,9 @@ export default function lex(lines: readonly string[], problems: Problem[]) {
         continue;
       }
 
-      // Handle comments
-      if (curChar === "#") {
-        col = line.length;
-        continue;
+      // Handle comments (.)
+      if (curChar === ".") {
+        break;
       }
 
       {

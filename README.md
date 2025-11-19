@@ -18,8 +18,8 @@ Below are some key differences between the original machine and the *certain pro
 
 Sample programs demonstrating the interpreter's capabilities can be found in the **[examples](./docs/examples)** directory (feel free to modify/use these):
 
-- [prime_number.txt](./docs/examples/prime_number.txt)
-- [repeated_subtraction.txt](./docs/examples/repeated_subtraction.txt)
+- [prime_number.ae](./docs/examples/prime_number.ae)
+- [repeated_subtraction.ae](./docs/examples/repeated_subtraction.ae)
 
 A quick-start syntax reference can be found in **[syntax.md](./docs/syntax.md)**.
 
